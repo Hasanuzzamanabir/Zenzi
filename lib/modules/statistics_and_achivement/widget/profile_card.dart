@@ -11,26 +11,29 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(8.w),
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.backgroundbasecolor),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.backgroundbasecolor.withOpacity(0.5),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// Profile Image
           CircleAvatar(
-            radius: 30.r,
+            radius: 32.r,
             backgroundImage: const AssetImage(
               'assets/images/profile_picture.png',
             ),
           ),
 
-          SizedBox(width: 12.w),
+          SizedBox(width: 14.w),
 
-          /// Text Section (IMPORTANT)
+          /// Text Section
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,16 +45,16 @@ class ProfileCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
                   'Steven Smith',
                   style: AppTextStyle.h2,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: .spaceBetween,
                   children: [
                     Text(
                       'Level: Grounded',
@@ -63,14 +66,16 @@ class ProfileCard extends StatelessWidget {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.componentgreenish,
-                        borderRadius: BorderRadius.circular(12.r),
+                        color: AppColors.componentgreenish.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: AppColors.componentgreenish.withOpacity(0.5),
+                        ),
                       ),
-
                       child: Text(
                         '598 pts',
                         style: AppTextStyle.h3.copyWith(
@@ -84,9 +89,7 @@ class ProfileCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(width: 8.w),
-
-          /// Points Badge
+          /// Points Badge (Far Right)
         ],
       ),
     );

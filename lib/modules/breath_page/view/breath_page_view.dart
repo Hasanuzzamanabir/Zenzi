@@ -60,8 +60,10 @@ class BreathPageView extends StatelessWidget {
       ),
 
       body: ListView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.only(top: 32.h, left: 16.w, right: 16.w),
         children: [
+          _infoCard(),
+          SizedBox(height: 16.h),
           _infoCard(),
           SizedBox(height: 16.h),
 

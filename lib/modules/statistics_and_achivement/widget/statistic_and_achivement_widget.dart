@@ -14,11 +14,16 @@ class StatisticAndAchivementWidget extends StatelessWidget {
 
     return Obx(() {
       return Container(
+        padding: EdgeInsets.all(4.w),
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           color: AppColors.primarylight,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: AppColors.backgroundbasecolor.withOpacity(0.8),
+            width: 1.5,
+          ),
         ),
-        // padding: EdgeInsets.s(4.w),
         child: Row(
           children: List.generate(controller.selectedTabs.length, (
             selectedTabIndex,
@@ -36,18 +41,18 @@ class StatisticAndAchivementWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   padding: EdgeInsets.symmetric(
-                    horizontal: 32.w,
-                    vertical: 10.h,
+                    horizontal: 16.w,
+                    vertical: 11.h,
                   ),
                   child: Center(
                     child: Text(
                       controller.selectedTabs[selectedTabIndex],
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         color: isSelected
                             ? Colors.white
                             : AppColors.componentgreenish,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

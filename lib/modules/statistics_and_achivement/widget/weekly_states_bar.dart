@@ -26,7 +26,7 @@ class WeeklyStatsBar extends StatelessWidget {
             'This Week\'s Stats (minutes)',
             style: TextStyle(
               color: AppColors.primarytext,
-              fontSize: 14.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -12,31 +12,34 @@ class StatisticPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(8.w),
-      child: Column(
-        children: [
-          ProfileCard(color: AppColors.backgroundhorizon),
-          SizedBox(height: 16.h),
-          CustomCalendar(),
-          SizedBox(height: 16.h),
-          WeeklyStatsBar(
-            meditationData: [20, 35, 40, 55, 70, 45, 60],
-            musicData: [10, 15, 25, 30, 35, 20, 25],
-          ),
-          SizedBox(height: 16.h),
-          StatCard(
-            title: 'Total Meditation Session',
-            value: '46',
-            backgroundColor: AppColors.primarycolor,
-          ),
-          SizedBox(height: 12.h),
-          StatCard(
-            title: 'Total Breathing Exercise',
-            value: '65 days',
-            backgroundColor: AppColors.backgroundhorizon,
-          ),
-          SizedBox(height: 20.h),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        child: Column(
+          children: [
+            SizedBox(height: 8.h),
+            ProfileCard(color: AppColors.backgroundhorizon),
+            SizedBox(height: 20.h),
+            CustomCalendar(),
+            SizedBox(height: 20.h),
+            WeeklyStatsBar(
+              meditationData: [20, 35, 40, 55, 70, 45, 60],
+              musicData: [10, 15, 25, 30, 35, 20, 25],
+            ),
+            SizedBox(height: 20.h),
+            StatCard(
+              title: 'Total Meditation Session',
+              value: '46',
+              backgroundColor: AppColors.primarycolor,
+            ),
+            SizedBox(height: 16.h),
+            StatCard(
+              title: 'Total Breathing Exercise',
+              value: '65 days',
+              backgroundColor: AppColors.backgroundhorizon,
+            ),
+            SizedBox(height: 30.h),
+          ],
+        ),
       ),
     );
   }

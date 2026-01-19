@@ -78,7 +78,7 @@ class MusicPage extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20),
         child: Column(
           children: [
             SizedBox(height: 16.h),
