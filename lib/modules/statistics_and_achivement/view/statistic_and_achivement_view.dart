@@ -5,6 +5,7 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/statistics_and_achivement/controller/statistic_and_achivement_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/statistics_and_achivement/widget/statistic_and_achiveme_widget_view.dart';
 import 'package:zenzi/modules/statistics_and_achivement/widget/statistic_and_achivement_widget.dart';
@@ -16,9 +17,9 @@ class StatisticAndAchivementView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(StatisticAndAchivementTabBarWidgetController());
 
-    return Scaffold(
+    return ThemedScaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundcolor,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
           onPressed: () => Get.back(),
@@ -26,7 +27,6 @@ class StatisticAndAchivementView extends StatelessWidget {
         title: Text("Statistics & Achievement", style: AppTextStyle.h2),
         centerTitle: true,
       ),
-      backgroundColor: AppColors.primarydarker,
 
       body: Padding(
         padding: EdgeInsets.all(16.h),

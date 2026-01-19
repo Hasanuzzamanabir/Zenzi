@@ -6,14 +6,14 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class AffirmationView extends StatelessWidget {
   const AffirmationView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),

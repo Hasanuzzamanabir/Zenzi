@@ -6,6 +6,7 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class EditProfile extends StatelessWidget {
   const EditProfile({super.key});
@@ -16,8 +17,7 @@ class EditProfile extends StatelessWidget {
     final emailController = TextEditingController();
     final phoneController = TextEditingController();
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

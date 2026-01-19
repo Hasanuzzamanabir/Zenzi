@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
-  
 class TermsAndConditionPage extends StatelessWidget {
   const TermsAndConditionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundcolor,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Terms & Conditions',
           style: TextStyle(color: AppColors.primarytext),
@@ -130,7 +129,11 @@ class TermsAndConditionPage extends StatelessWidget {
   Widget _buildSectionContent(String content) {
     return Text(
       content,
-      style: TextStyle(color: AppColors.secondarycolor, fontSize: 14, height: 1.5),
+      style: TextStyle(
+        color: AppColors.secondarycolor,
+        fontSize: 14,
+        height: 1.5,
+      ),
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class UpdatePassword extends StatelessWidget {
   const UpdatePassword({super.key});
@@ -15,8 +16,7 @@ class UpdatePassword extends StatelessWidget {
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

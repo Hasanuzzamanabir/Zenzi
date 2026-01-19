@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/chat/controller/chat_controller.dart';
 
 class ChatView extends GetView<ChatController> {
@@ -9,11 +10,10 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ThemedScaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(color: AppColors.backgroundcolor),
         child: SafeArea(
           child: Column(
             children: [

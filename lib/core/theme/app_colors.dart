@@ -7,7 +7,7 @@ class AppColors {
   static const primarycolor = Color(0xFFC68A47);
   static const componentgreenish = Color(0xFF3B2A1C);
   static const primarylight = Color(0xFFF4E6D0);
-  static const primarydarker = Color(0xFF5A3A22);
+
   static const coreprimarydark = Color(0xFFA45F2B);
   static const skysunrise = Color(0xFFC87A3F);
   static const componentnormal = Color(0xFFD59A52);
@@ -15,6 +15,12 @@ class AppColors {
   static const backgroundbasecolor = Color(0xFFE8C99F);
   static const musicbordercolor = Color(0xFFADB8D9);
   static const textfieldiconcolor = Color(0xFF1D3557);
+
+  static const primarydarker = Color(0xFF5A3A22);
+  //app night mode
+  static const appnightmode1 = Color(0xFF221653);
+  static const appnightmode2 = Color(0xFF0A0527);
+
   //playbutton
   static const playbuttoncolor1 = Color(0xFFA96824);
 

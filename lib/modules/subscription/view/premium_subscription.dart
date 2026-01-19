@@ -6,6 +6,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/subscription/widgets/subscription_container.dart';
 
 class PremiumSubscriptionView extends StatelessWidget {
@@ -13,9 +14,7 @@ class PremiumSubscriptionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primarydarker,
-
+    return ThemedScaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(340.h),
         child: AppBar(

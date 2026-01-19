@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/breath_page/box_breathing/views/breathing_view.dart';
 import 'package:zenzi/modules/breath_page/calm_breathing/views/breathing_view.dart';
 import 'package:zenzi/modules/breath_page/energizing_breathing/views/energizing_breathing_view.dart';
@@ -16,9 +17,7 @@ class BreathPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primarydarker,
-
+    return ThemedScaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(180.h),
         child: AppBar(

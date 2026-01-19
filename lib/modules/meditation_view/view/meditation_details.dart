@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class MeditationDetails extends StatelessWidget {
   const MeditationDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

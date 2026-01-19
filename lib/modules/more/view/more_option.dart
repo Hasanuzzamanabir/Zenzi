@@ -7,6 +7,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/favourite/view/favourite_page_view.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
@@ -21,8 +22,7 @@ class MoreOption extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isSubscribed = false; // Change to true when user subscribes
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

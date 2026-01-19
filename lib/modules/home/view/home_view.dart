@@ -8,6 +8,7 @@ import 'package:zenzi/core/widgets/reaction_widget.dart';
 import 'package:zenzi/modules/home/controller/mood_controller.dart';
 import 'package:zenzi/routes/app_routes.dart';
 import 'package:zenzi/modules/notification/view/notification_view.dart';
+import 'package:zenzi/core/theme/app_theme.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -15,6 +16,8 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final moodController = Get.put(MoodController());
+    final int currentHour = DateTime.now().hour;
+    final bool isDay = currentHour >= 6 && currentHour < 18;
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.black, // fallback (important)
@@ -22,9 +25,13 @@ class HomeView extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
+                color: isDay ? AppTheme.dayBackgroundColor : null,
+                gradient: isDay ? null : AppTheme.nightGradient,
                 image: DecorationImage(
-                  image: AssetImage('assets/image/home/home.png'),
+                  image: AssetImage(
+                    isDay ? AppAssets.homepage : AppAssets.homepageEvening,
+                  ),
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
                 ),

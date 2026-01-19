@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/favourite/controller/favourite_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/favourite/widgets/favourite_tab_bar_widget.dart';
 import 'package:zenzi/modules/favourite/widgets/favourite_tab_bar_widget_view.dart';
@@ -15,9 +16,7 @@ class FavouritePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(FavouriteTabBarWidgetController());
 
-    return Scaffold(
-      backgroundColor: AppColors.primarydarker,
-
+    return ThemedScaffold(
       body: Padding(
         padding: EdgeInsets.all(16.h),
         child: Column(

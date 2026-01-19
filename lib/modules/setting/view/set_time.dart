@@ -3,16 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class SetTimeView extends StatelessWidget {
   const SetTimeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF6B4423),
+    return ThemedScaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B4423),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(

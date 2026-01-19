@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/preference/controller/continue_button_controller.dart';
 import 'package:zenzi/modules/preference/controller/progress_indicator_controller.dart';
 import 'package:zenzi/modules/preference/controller/topic_selection_controller.dart';
@@ -38,11 +39,10 @@ class PreferencePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF5A3A22),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.secondarycolor),

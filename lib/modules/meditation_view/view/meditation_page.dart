@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/meditation_view/widget/custom_tab_bar_widget.dart';
 import 'package:zenzi/modules/meditation_view/widget/custom_tab_bar_widget_view.dart';
 
@@ -10,9 +11,7 @@ class MeditationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primarydarker,
-
+    return ThemedScaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(180.h),
         child: AppBar(

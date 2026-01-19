@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/bottom_navigation_bar/view/custom_buttom_navigation_bar.dart';
 
 class AcoountCogratulationsPage extends StatelessWidget {
@@ -13,8 +14,7 @@ class AcoountCogratulationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: Stack(
           children: [

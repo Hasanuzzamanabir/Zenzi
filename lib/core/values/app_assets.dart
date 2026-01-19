@@ -27,7 +27,7 @@ class AppAssets {
   static const book = 'assets/icons/bottom_nav_bar/book.png';
   static const pulmonology = 'assets/icons/bottom_nav_bar/pulmonology.png';
   // home
-  static const homepage = 'assets/image/home/home.svg';
+  static const homepage = 'assets/image/home/home.png';
   static const homepageEvening = 'assets/image/home/home_evening.png';
   static const profile = 'assets/image/home/profile.svg';
   static const notification = 'assets/image/home/notification.svg';

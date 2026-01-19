@@ -7,6 +7,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class AccountDeletion extends StatelessWidget {
   const AccountDeletion({super.key});
@@ -15,8 +16,7 @@ class AccountDeletion extends StatelessWidget {
   Widget build(BuildContext context) {
     final passwordController = TextEditingController();
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
+    return ThemedScaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
