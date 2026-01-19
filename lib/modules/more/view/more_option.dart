@@ -37,9 +37,10 @@ class MoreOption extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.backgroundhorizon,
                     borderRadius: BorderRadius.circular(16.r),
-                    border: AppColors.componentnormal != null
-                        ? Border.all(color: AppColors.componentnormal, width: 1)
-                        : null,
+                    border: Border.all(
+                      color: AppColors.componentnormal,
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,9 +219,7 @@ class MoreOption extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.backgroundhorizon,
                     borderRadius: BorderRadius.circular(16.r),
-                    border: AppColors.cardborder != null
-                        ? Border.all(color: AppColors.cardborder, width: 1)
-                        : null,
+                    border: Border.all(color: AppColors.cardborder, width: 1),
                   ),
                   child: Column(
                     children: [
@@ -355,9 +354,10 @@ class MoreOption extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.primarycolor,
                     borderRadius: BorderRadius.circular(16.r),
-                    border: AppColors.secondarycolor != null
-                        ? Border.all(color: AppColors.secondarycolor, width: 1)
-                        : null,
+                    border: Border.all(
+                      color: AppColors.secondarycolor,
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,9 +513,7 @@ class MoreOption extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.coreprimarydark,
                     borderRadius: BorderRadius.circular(12.r),
-                    border: AppColors.primarytext != null
-                        ? Border.all(color: AppColors.primarytext, width: 1)
-                        : null,
+                    border: Border.all(color: AppColors.primarytext, width: 1),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

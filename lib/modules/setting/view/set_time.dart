@@ -32,31 +32,33 @@ class SetTimeView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Set Meditation Time
-            _buildTimeSection(
-              image: AssetImage(AppAssets.stress),
-              title: 'Set Meditation Time',
-            ),
-            SizedBox(height: 20.h),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Set Meditation Time
+              _buildTimeSection(
+                image: AssetImage(AppAssets.stress),
+                title: 'Set Meditation Time',
+              ),
+              SizedBox(height: 20.h),
 
-            // Set Sleeping time
-            _buildTimeSection(
-              image: AssetImage(AppAssets.hotel),
-              title: 'Set Sleeping time',
-            ),
-            SizedBox(height: 20.h),
+              // Set Sleeping time
+              _buildTimeSection(
+                image: AssetImage(AppAssets.hotel),
+                title: 'Set Sleeping time',
+              ),
+              SizedBox(height: 20.h),
 
-            // Set breathing exercise time
-            _buildTimeSection(
-              image: AssetImage(AppAssets.pulmonology),
-              title: 'Set breathing exercise time',
-            ),
-          ],
+              // Set breathing exercise time
+              _buildTimeSection(
+                image: AssetImage(AppAssets.pulmonology),
+                title: 'Set breathing exercise time',
+              ),
+            ],
+          ),
         ),
       ),
     );

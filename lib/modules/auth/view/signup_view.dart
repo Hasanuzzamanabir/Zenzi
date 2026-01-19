@@ -8,7 +8,6 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
-import 'package:zenzi/modules/auth/view/acoount_cogratulations_Page.dart';
 import 'package:zenzi/modules/auth/view/log_in_view.dart';
 import 'package:zenzi/modules/auth/view/otp_verification.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';

@@ -170,7 +170,7 @@ class AppRoute {
       page: () => MusicPage(),
       binding: MusicPageBinding(),
     ),
-    GetPage(name: playMusic, page: () => PlayMusic()),
+    GetPage(name: playMusic, page: () => const PlayMusic()),
     //journal
     GetPage(name: journalView, page: () => JournalView()),
     GetPage(name: dailyPage, page: () => DailyPage()),

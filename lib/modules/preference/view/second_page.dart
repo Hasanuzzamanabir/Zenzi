@@ -6,7 +6,6 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/modules/preference/controller/continue_button_controller.dart';
 import 'package:zenzi/modules/preference/controller/progress_indicator_controller.dart';
 import 'package:zenzi/modules/preference/controller/time_slot_controller.dart';
-import 'package:zenzi/modules/preference/controller/topic_selection_controller.dart';
 import 'package:zenzi/modules/preference/view/third_page.dart';
 import 'package:zenzi/modules/preference/widgets/time_slot_card.dart';
 

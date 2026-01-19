@@ -27,11 +27,11 @@ class BreathPageView extends StatelessWidget {
 
           flexibleSpace: Container(
             padding: EdgeInsets.fromLTRB(20.w, 60.h, 20.w, 20.h),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [AppColors.appbarcolorone, AppColors.appbarcolortwo],
+                colors: AppColors.appBarGradientColors,
               ),
             ),
 
@@ -59,60 +59,60 @@ class BreathPageView extends StatelessWidget {
         ),
       ),
 
-      body: ListView(
-        padding: EdgeInsets.only(top: 32.h, left: 16.w, right: 16.w),
-        children: [
-          _infoCard(),
-          SizedBox(height: 16.h),
-          _infoCard(),
-          SizedBox(height: 16.h),
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.only(top: 32.h, left: 16.w, right: 16.w),
+          children: [
+            _infoCard(),
+            SizedBox(height: 16.h),
 
-          _exerciseCard(
-            title: "Box Breathing",
-            subtitle: "Equal counts for calm and \n balance",
-            duration: "4-4-4-4",
-            icon: AppAssets.box,
-            onTap: () {
-              Get.to(() => const BoxBreathingView());
-            },
-          ),
+            _exerciseCard(
+              title: "Box Breathing",
+              subtitle: "Equal counts for calm and \n balance",
+              duration: "4-4-4-4",
+              icon: AppAssets.box,
+              onTap: () {
+                Get.to(() => const BoxBreathingView());
+              },
+            ),
 
-          _exerciseCard(
-            title: "4-7-8 Breathing",
-            subtitle: "Deep relaxation and sleep\npreparation",
-            duration: "4-7-8",
-            icon: AppAssets.fourb,
-            onTap: () {
-              Get.to(() => const FourSevenEightBreathingView());
-            },
-          ),
+            _exerciseCard(
+              title: "4-7-8 Breathing",
+              subtitle: "Deep relaxation and sleep\npreparation",
+              duration: "4-7-8",
+              icon: AppAssets.fourb,
+              onTap: () {
+                Get.to(() => const FourSevenEightBreathingView());
+              },
+            ),
 
-          _exerciseCard(
-            title: "Calm Breathing",
-            subtitle: "Simple and gentle to stress relief",
-            duration: "5-5",
-            icon: AppAssets.calm,
-            onTap: () {
-              Get.to(() => const CalmBreathingView());
-            },
-          ),
+            _exerciseCard(
+              title: "Calm Breathing",
+              subtitle: "Simple and gentle to stress relief",
+              duration: "5-5",
+              icon: AppAssets.calm,
+              onTap: () {
+                Get.to(() => const CalmBreathingView());
+              },
+            ),
 
-          _exerciseCard(
-            title: "Energizing Breath",
-            subtitle: "Quick rhythm for focus and energy",
-            duration: "1-1",
-            icon: AppAssets.energy,
-            onTap: () {
-              Get.to(() => const EnergizingBreathingView());
-            },
-          ),
+            _exerciseCard(
+              title: "Energizing Breath",
+              subtitle: "Quick rhythm for focus and energy",
+              duration: "1-1",
+              icon: AppAssets.energy,
+              onTap: () {
+                Get.to(() => const EnergizingBreathingView());
+              },
+            ),
 
-          SizedBox(height: 20.h),
-          _breathingTipsCard(),
-          SizedBox(height: 20.h),
-          _quoteCard(),
-          SizedBox(height: 20.h),
-        ],
+            SizedBox(height: 20.h),
+            _breathingTipsCard(),
+            SizedBox(height: 20.h),
+            _quoteCard(),
+            SizedBox(height: 20.h),
+          ],
+        ),
       ),
     );
   }

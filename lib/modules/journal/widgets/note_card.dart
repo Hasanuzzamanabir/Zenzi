@@ -61,7 +61,7 @@ class NoteCard extends StatelessWidget {
     }
 
     return Dismissible(
-      key: Key('${date}__${description}'),
+      key: Key('${date}__$description'),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         onDismissed?.call();

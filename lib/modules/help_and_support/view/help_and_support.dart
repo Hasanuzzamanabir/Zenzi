@@ -65,78 +65,80 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
         centerTitle: true,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Full Name',
-              style: TextStyle(
-                color: AppColors.primarytext,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            AppTextField(
-              hintText: 'e.g. John Doe',
-              controller: _nameController,
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'Email',
-              style: TextStyle(
-                color: AppColors.primarytext,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            AppTextField(
-              hintText: 'e.g. John@gmail.com',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'Description',
-              style: TextStyle(
-                color: AppColors.primarytext,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Container(
-              width: 370.w,
-              height: 180.h,
-              decoration: BoxDecoration(
-                color: AppColors.secondarycolor,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: AppColors.secondarycolor, width: 1),
-              ),
-              child: TextField(
-                controller: _descriptionController,
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
-                style: TextStyle(color: AppColors.darktext, fontSize: 14.sp),
-                decoration: InputDecoration(
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: AppColors.secondarycolor.withOpacity(0.6),
-                    fontSize: 14.sp,
-                  ),
-                  filled: false,
-                  contentPadding: EdgeInsets.all(16.w),
-                  //border: InputBorder.none,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Full Name',
+                style: TextStyle(
+                  color: AppColors.primarytext,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-            SizedBox(height: 30.h),
-            AppButton(title: 'Send', onTap: _handleSend),
-          ],
+              SizedBox(height: 8.h),
+              AppTextField(
+                hintText: 'e.g. John Doe',
+                controller: _nameController,
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Email',
+                style: TextStyle(
+                  color: AppColors.primarytext,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              AppTextField(
+                hintText: 'e.g. John@gmail.com',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Description',
+                style: TextStyle(
+                  color: AppColors.primarytext,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                width: 370.w,
+                height: 180.h,
+                decoration: BoxDecoration(
+                  color: AppColors.secondarycolor,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: AppColors.secondarycolor, width: 1),
+                ),
+                child: TextField(
+                  controller: _descriptionController,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  style: TextStyle(color: AppColors.darktext, fontSize: 14.sp),
+                  decoration: InputDecoration(
+                    hintText: '',
+                    hintStyle: TextStyle(
+                      color: AppColors.secondarycolor.withOpacity(0.6),
+                      fontSize: 14.sp,
+                    ),
+                    filled: false,
+                    contentPadding: EdgeInsets.all(16.w),
+                    //border: InputBorder.none,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30.h),
+              AppButton(title: 'Send', onTap: _handleSend),
+            ],
+          ),
         ),
       ),
     );

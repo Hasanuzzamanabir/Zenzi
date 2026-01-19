@@ -5,13 +5,10 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/modules/bottom_navigation_bar/view/custom_buttom_navigation_bar.dart';
-import 'package:zenzi/modules/home/view/home_view.dart';
 import 'package:zenzi/modules/preference/controller/continue_button_controller.dart';
 import 'package:zenzi/modules/preference/controller/progress_indicator_controller.dart';
 import 'package:zenzi/modules/preference/controller/time_slot_controller.dart';
 import 'package:zenzi/modules/preference/controller/topic_selection_controller.dart';
-import 'package:zenzi/modules/preference/view/third_page.dart';
-import 'package:zenzi/modules/preference/widgets/time_slot_card.dart';
 
 class ThirdPage extends StatelessWidget {
   final controller = Get.find<TopicSelectionController>();

@@ -93,4 +93,12 @@ class AppColors {
   static const searchtextcolor = Color(0xFF1D3557);
   static const sectiontextcolor = Color(0xFF3E4555);
   static const premiumbuttontextcolor = Color(0xFF3E4555);
+
+  static List<Color> get appBarGradientColors {
+    final now = DateTime.now();
+    final isNight = now.hour >= 18 || now.hour < 6;
+    return isNight
+        ? [const Color(0xFF1C1249), const Color(0xFF0E072D)]
+        : [appbarcolorone, appbarcolortwo];
+  }
 }

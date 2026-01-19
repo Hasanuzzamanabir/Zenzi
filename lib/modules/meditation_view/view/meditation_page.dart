@@ -21,11 +21,11 @@ class MeditationPage extends StatelessWidget {
 
           flexibleSpace: Container(
             padding: EdgeInsets.fromLTRB(20.w, 60.h, 20.w, 20.h),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [AppColors.appbarcolorone, AppColors.appbarcolortwo],
+                colors: AppColors.appBarGradientColors,
               ),
             ),
 
@@ -77,15 +77,17 @@ class MeditationPage extends StatelessWidget {
         ),
       ),
 
-      body: Column(
-        children: [
-          SizedBox(height: 20.h),
-          CustomTabBarWidget(),
-          SizedBox(height: 20.h),
-          Expanded(
-            child: SingleChildScrollView(child: CustomTabBarWidgetView()),
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 20.h),
+            CustomTabBarWidget(),
+            SizedBox(height: 20.h),
+            Expanded(
+              child: SingleChildScrollView(child: CustomTabBarWidgetView()),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -33,9 +33,9 @@ class CustomButtomNavigationBar extends StatelessWidget {
         () => Container(
           decoration: BoxDecoration(
             color: AppColors.navbackground,
-            border: Border(
-              top: BorderSide(color: AppColors.unselectednavicon, width: 0),
-            ),
+            // border: Border(
+            //   top: BorderSide(color: AppColors.unselectednavicon, width: 0),
+            // ),
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,

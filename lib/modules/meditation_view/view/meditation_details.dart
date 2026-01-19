@@ -2,12 +2,76 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player/video_player.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
-class MeditationDetails extends StatelessWidget {
+class MeditationDetails extends StatefulWidget {
   const MeditationDetails({super.key});
+
+  @override
+  State<MeditationDetails> createState() => _MeditationDetailsState();
+}
+
+class _MeditationDetailsState extends State<MeditationDetails> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideo();
+  }
+
+  void _initializeVideo() {
+    setState(() {
+      _isInitialized = false;
+      _hasError = false;
+    });
+
+    // Using a more reliable and smaller sample URL
+    _controller =
+        VideoPlayerController.networkUrl(
+            Uri.parse('https://vjs.zencdn.net/v/oceans.mp4'),
+          )
+          ..initialize()
+              .then((_) {
+                if (mounted) {
+                  setState(() {
+                    _isInitialized = true;
+                  });
+                  _controller.setLooping(true);
+                  _controller.play();
+                }
+              })
+              .catchError((error) {
+                debugPrint("Video initialization failed: $error");
+                if (mounted) {
+                  setState(() {
+                    _hasError = true;
+                  });
+                }
+              });
+
+    _controller.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +114,7 @@ class MeditationDetails extends StatelessWidget {
                     ),
                     SizedBox(height: 12.h),
                     Text(
-                      'Duration : 56 min',
+                      'Duration : ${_formatDuration(_controller.value.duration)}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 14.sp,
@@ -146,23 +210,81 @@ class MeditationDetails extends StatelessWidget {
   }
 
   Widget _buildVideoCard() {
-    return Builder(
-      builder: (context) => Container(
-        margin: EdgeInsets.symmetric(horizontal: 24.w),
-        height: 260.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          image: DecorationImage(
-            image: AssetImage(AppAssets.videocard),
-            fit: BoxFit.cover,
-          ),
-        ),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.w),
+      height: 260.h,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
         child: Stack(
           children: [
+            // Video or Thumbnail
+            _isInitialized
+                ? SizedBox.expand(
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _controller.value.size.width,
+                        height: _controller.value.size.height,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
+                  )
+                : Container(
+                    color: Colors.black38,
+                    child: Center(
+                      child: _hasError
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 40.sp,
+                                ),
+                                SizedBox(height: 12.h),
+                                Text(
+                                  "Failed to load video",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                                SizedBox(height: 12.h),
+                                TextButton(
+                                  onPressed: _initializeVideo,
+                                  child: Text(
+                                    "Retry",
+                                    style: TextStyle(
+                                      color: AppColors.primarycolor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(color: Colors.white),
+                                SizedBox(height: 12.h),
+                                Text(
+                                  "Loading Video...",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+
             // Gradient overlay for better text visibility
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -204,22 +326,58 @@ class MeditationDetails extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    AppAssets.secondaryButtons2,
-                    width: 40.w,
-                    height: 40.w,
+                  GestureDetector(
+                    onTap: () {
+                      _controller.seekTo(
+                        _controller.value.position - Duration(seconds: 10),
+                      );
+                    },
+                    child: Image.asset(
+                      AppAssets.secondaryButtons2,
+                      width: 40.w,
+                      height: 40.w,
+                    ),
                   ),
                   SizedBox(width: 16.w),
-                  Image.asset(
-                    AppAssets.mainController,
-                    width: 64.w,
-                    height: 64.w,
+                  GestureDetector(
+                    onTap: () {
+                      _controller.value.isPlaying
+                          ? _controller.pause()
+                          : _controller.play();
+                    },
+                    child: Container(
+                      width: 64.w,
+                      height: 64.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage(AppAssets.mainController),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          _controller.value.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                          color: Colors.white,
+                          size: 32.w,
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(width: 16.w),
-                  Image.asset(
-                    AppAssets.secondaryButtons,
-                    width: 40.w,
-                    height: 40.w,
+                  GestureDetector(
+                    onTap: () {
+                      _controller.seekTo(
+                        _controller.value.position + Duration(seconds: 10),
+                      );
+                    },
+                    child: Image.asset(
+                      AppAssets.secondaryButtons,
+                      width: 40.w,
+                      height: 40.w,
+                    ),
                   ),
                 ],
               ),
@@ -270,7 +428,7 @@ class MeditationDetails extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4.r),
                                 ),
                                 child: Text(
-                                  '23:14',
+                                  _formatDuration(_controller.value.position),
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 11.sp,
@@ -285,7 +443,7 @@ class MeditationDetails extends StatelessWidget {
 
                       // Right Side: Duration
                       Text(
-                        '21:48 / 56:32',
+                        '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13.sp,
@@ -301,7 +459,10 @@ class MeditationDetails extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(2.r),
                     child: LinearProgressIndicator(
-                      value: 21.8 / 56.53, // 21:48 out of 56:32
+                      value: _isInitialized
+                          ? _controller.value.position.inMilliseconds /
+                                _controller.value.duration.inMilliseconds
+                          : 0.0,
                       minHeight: 3.h,
                       backgroundColor: Colors.white.withOpacity(0.3),
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

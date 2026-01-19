@@ -33,7 +33,7 @@ class AffirmationView extends StatelessWidget {
                     },
                   ),
                   SizedBox(width: 80.w),
-                  Text('Affirmation', style: AppTextStyle.h7),
+                  Text('Affirmation', style: AppTextStyle.h9),
                 ],
               ),
               SizedBox(height: 16.h),
@@ -79,6 +79,8 @@ class AffirmationView extends StatelessWidget {
                       'I am rooted in the strength of \nmy ancestors. Their \nresilience flows through me.',
                       style: AppTextStyle.h7.copyWith(
                         color: AppColors.primarytext,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
                     ),

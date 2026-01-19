@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:zenzi/modules/music/controller/music_controller.dart';
 import 'package:zenzi/modules/music/widget/musicCardWidget.dart';
 
 class MyFavTab extends StatelessWidget {
@@ -7,21 +9,43 @@ class MyFavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 20.h),
-        Column(
-          children: [
-            MusicCardWidget(isFav: true, isDvided: true),
-            MusicCardWidget(isFav: true, isDvided: true),
-            MusicCardWidget(isFav: true, isDvided: true),
-            MusicCardWidget(isFav: true, isDvided: true),
-            MusicCardWidget(isFav: true, isDvided: true),
-            MusicCardWidget(isFav: true, isDvided: true),
-            SizedBox(height: 30.h),
-          ],
-        ),
-      ],
-    );
+    final controller = Get.find<MusicController>();
+
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.musicList.isEmpty) {
+        return const Center(
+          child: Text(
+            "No favorites found",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          SizedBox(height: 20.h),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: controller.musicList.length > 2
+                ? 2
+                : controller.musicList.length,
+            itemBuilder: (context, index) {
+              final music = controller.musicList[index];
+              return MusicCardWidget(
+                music: music,
+                isFav: true,
+                isDivided: true,
+              );
+            },
+          ),
+          SizedBox(height: 30.h),
+        ],
+      );
+    });
   }
 }

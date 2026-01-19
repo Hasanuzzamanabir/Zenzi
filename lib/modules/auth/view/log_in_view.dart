@@ -8,10 +8,8 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
-import 'package:zenzi/modules/auth/view/acoount_cogratulations_Page.dart';
 import 'package:zenzi/modules/auth/view/forgot_password_view.dart';
 import 'package:zenzi/modules/auth/view/signup_view.dart';
-import 'package:zenzi/modules/home/view/home_view.dart';
 
 import '../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
     show CustomButtomNavigationBar;

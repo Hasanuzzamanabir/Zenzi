@@ -14,15 +14,15 @@ class StatisticAndAchivementWidget extends StatelessWidget {
 
     return Obx(() {
       return Container(
-        padding: EdgeInsets.all(4.w),
+        // padding: EdgeInsets.all(4.w),
         margin: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           color: AppColors.primarylight,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: AppColors.backgroundbasecolor.withOpacity(0.8),
-            width: 1.5,
-          ),
+          borderRadius: BorderRadius.circular(12.r),
+          // border: Border.all(
+          //   color: AppColors.backgroundbasecolor.withOpacity(0.8),
+          //   // width: 1.5,
+          // ),
         ),
         child: Row(
           children: List.generate(controller.selectedTabs.length, (

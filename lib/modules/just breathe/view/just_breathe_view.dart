@@ -14,8 +14,12 @@ class JustBreathePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final JustBreatheController controller = Get.put(JustBreatheController());
 
-    // Brown color from screenshot
-    final Color brownColor = AppColors.coreprimarydark;
+    // Dynamic color based on time (6 PM to 6 AM)
+    final now = DateTime.now();
+    final bool isNight = now.hour >= 18 || now.hour < 6;
+    final Color brownColor = isNight
+        ? const Color(0xFF1D1249)
+        : AppColors.coreprimarydark;
 
     return Scaffold(
       backgroundColor: brownColor,

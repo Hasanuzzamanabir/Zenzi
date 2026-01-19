@@ -1,78 +1,70 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
+import 'package:zenzi/data/models/music_model.dart';
+import 'package:zenzi/modules/music/controller/audio_player_controller.dart';
 import 'package:zenzi/modules/music/view/play_music.dart';
 
-class MusicCardController extends GetxController {
-  var isSelected = false.obs;
-
-  void toggleSelection() {
-    isSelected.value = !isSelected.value;
-  }
-}
-
 class MusicCardWidget extends StatelessWidget {
+  final MusicModel music;
+  final bool isFav;
+  final bool isDivided;
+
   MusicCardWidget({
     super.key,
+    required this.music,
     this.isFav = false,
-    this.name,
-    this.duration,
-    this.isDvided = false,
+    this.isDivided = false,
   });
-
-  final bool isFav;
-  final String? name;
-  final String? duration;
-  final bool isDvided;
-  final controller = Get.put(
-    MusicCardController(),
-    tag: UniqueKey().toString(),
-  );
 
   @override
   Widget build(BuildContext context) {
+    final audioController = Get.find<AudioPlayerController>();
+
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(const PlayMusic());
-            // Handle card tap if needed
+            audioController.playMusic(music);
+            Get.to(() => PlayMusic());
           },
           child: ListTile(
             leading: GestureDetector(
-              onTap: () => controller.toggleSelection(),
-              child: Obx(
-                () => Container(
+              onTap: () => audioController.playMusic(music),
+              child: Obx(() {
+                final isCurrent =
+                    audioController.currentMusic.value?.id == music.id;
+                final isPlaying = isCurrent && audioController.isPlaying.value;
+                return Container(
                   padding: EdgeInsets.all(6.w),
                   decoration: BoxDecoration(
-                    color: controller.isSelected.value
-                        ? AppColors.playbuttoncolor1
-                        : null,
+                    color: isCurrent ? AppColors.playbuttoncolor1 : null,
                     border: Border.all(color: AppColors.secondarycolor),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.play_arrow, color: Colors.white),
-                ),
-              ),
+                  child: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                );
+              }),
             ),
             title: Text(
-              name ?? 'Relaxing Music',
+              music.title,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             subtitle: Text(
-              duration ?? '3:45 mins',
+              music.duration,
               style: TextStyle(color: Colors.white70),
             ),
             trailing: Icon(isFav ? Icons.favorite : null, color: Colors.red),
           ),
         ),
-        if (isDvided) Divider(),
+        if (isDivided) Divider(),
       ],
     );
   }

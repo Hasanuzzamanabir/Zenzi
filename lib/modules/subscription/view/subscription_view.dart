@@ -252,187 +252,201 @@ class SubscriptionView extends StatelessWidget {
         ),
       ),
 
-      body: ListView(
-        padding: EdgeInsets.all(16.w),
-        children: [
-          // What's Included Section Header
-          Center(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "What's Included",
-                style: AppTextStyle.h7.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 16.h),
-
-          // Feature Cards
-          FeatureAccessCard(
-            title: 'Unlimited Meditation',
-            subtitle: 'Access over 1000+ guided meditations',
-            freeDescription: 'Not available',
-            premiumDescription: 'Available',
-            onTap: () {},
-            iconAsset: AppAssets.saved3,
-          ),
-          SizedBox(height: 12.h),
-
-          FeatureAccessCard(
-            iconAsset: AppAssets.saved2,
-            title: 'Premium Music',
-            subtitle: 'Exclusive focus & sleep sounds',
-            freeDescription: 'Not available',
-            premiumDescription: 'Available',
-            onTap: () {},
-          ),
-          SizedBox(height: 12.h),
-
-          FeatureAccessCard(
-            iconAsset: AppAssets.notification4,
-            title: 'Sleep Stories',
-            subtitle: 'Bedtime tales for deep rest',
-            freeDescription: 'Available',
-            premiumDescription: 'Available',
-            onTap: () {},
-          ),
-          SizedBox(height: 12.h),
-
-          FeatureAccessCard(
-            iconAsset: AppAssets.down,
-            title: 'Offline Access',
-            subtitle: 'Download for offline use',
-            freeDescription: 'Not available',
-            premiumDescription: 'Available',
-            onTap: () {},
-          ),
-          SizedBox(height: 30.h),
-
-          // Why Go Premium Section
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFFD77348), Color(0xFFA15D39)],
-              ),
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.secondarycolor, width: 1.w),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    //SizedBox(width: 8.w),
-                    Text(
-                      '✨ Why Go Premium??',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                _buildBulletPoint('Access all meditations without limits'),
-                _buildBulletPoint('Download content for offline listening'),
-                _buildBulletPoint('Exclusive sleep stories and music'),
-                _buildBulletPoint('Learn from expert African teachers'),
-                _buildBulletPoint('Unlock curated wellness journeys'),
-                _buildBulletPoint('Cancel anytime, no commitment'),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.h),
-
-          // Start Premium Button
-          AppButton(
-            title: 'Start Premium • ₦20,000',
-            onTap: () => _showSubscriptionDialog(context),
-            backgroundColor: AppColors.coreprimarydark,
-            textColor: Colors.white,
-
-            leading: Image.asset(AppAssets.crown),
-            height: 50.h,
-          ),
-          SizedBox(height: 12.h),
-
-          // Trial Info
-          Text(
-            '7-day free trial • Cancel anytime • Money-back \nguarantee',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.secondarycolor, fontSize: 16.sp),
-          ),
-          SizedBox(height: 24.h),
-
-          // FAQ Section
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: AppColors.congratsscrennbuttonclr.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.secondarycolor, width: 1.w),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Frequently Asked Questions',
-                  style: TextStyle(
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.all(16.w),
+          children: [
+            // What's Included Section Header
+            Center(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "What's Included",
+                  style: AppTextStyle.h7.copyWith(
                     color: Colors.white,
-                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 12.h),
-                _buildFAQ(
-                  'Can I cancel anytime?',
-                  style: TextStyle(color: AppColors.primarytext, fontSize: 16),
-                ),
-                _buildFAQ(
-                  '— Yes, cancel anytime from your profile settings.',
-                  style: TextStyle(
-                    color: AppColors.secondarycolor,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                _buildFAQ(
-                  'What payment methods do you accept?',
-                  style: TextStyle(color: AppColors.primarytext, fontSize: 16),
-                ),
-                _buildFAQ(
-                  '— We accept cards and bank transfers via Paystack.',
-                  style: TextStyle(
-                    color: AppColors.secondarycolor,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                _buildFAQ(
-                  'Is there a free trial?',
-                  style: TextStyle(color: AppColors.primarytext, fontSize: 16),
-                ),
-                _buildFAQ(
-                  '— Yes! Try Premium free for 7 days.',
-                  style: TextStyle(
-                    color: AppColors.secondarycolor,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          SizedBox(height: 30.h),
-        ],
+            SizedBox(height: 16.h),
+
+            // Feature Cards
+            FeatureAccessCard(
+              title: 'Unlimited Meditation',
+              subtitle: 'Access over 1000+ guided meditations',
+              freeDescription: 'Not available',
+              premiumDescription: 'Available',
+              onTap: () {},
+              iconAsset: AppAssets.saved3,
+            ),
+            SizedBox(height: 12.h),
+
+            FeatureAccessCard(
+              iconAsset: AppAssets.saved2,
+              title: 'Premium Music',
+              subtitle: 'Exclusive focus & sleep sounds',
+              freeDescription: 'Not available',
+              premiumDescription: 'Available',
+              onTap: () {},
+            ),
+            SizedBox(height: 12.h),
+
+            FeatureAccessCard(
+              iconAsset: AppAssets.notification4,
+              title: 'Sleep Stories',
+              subtitle: 'Bedtime tales for deep rest',
+              freeDescription: 'Available',
+              premiumDescription: 'Available',
+              onTap: () {},
+            ),
+            SizedBox(height: 12.h),
+
+            FeatureAccessCard(
+              iconAsset: AppAssets.down,
+              title: 'Offline Access',
+              subtitle: 'Download for offline use',
+              freeDescription: 'Not available',
+              premiumDescription: 'Available',
+              onTap: () {},
+            ),
+            SizedBox(height: 30.h),
+
+            // Why Go Premium Section
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFFD77348), Color(0xFFA15D39)],
+                ),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.secondarycolor, width: 1.w),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      //SizedBox(width: 8.w),
+                      Text(
+                        '✨ Why Go Premium??',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildBulletPoint('Access all meditations without limits'),
+                  _buildBulletPoint('Download content for offline listening'),
+                  _buildBulletPoint('Exclusive sleep stories and music'),
+                  _buildBulletPoint('Learn from expert African teachers'),
+                  _buildBulletPoint('Unlock curated wellness journeys'),
+                  _buildBulletPoint('Cancel anytime, no commitment'),
+                ],
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // Start Premium Button
+            AppButton(
+              title: 'Start Premium • ₦20,000',
+              onTap: () => _showSubscriptionDialog(context),
+              backgroundColor: AppColors.coreprimarydark,
+              textColor: Colors.white,
+
+              leading: Image.asset(AppAssets.crown),
+              height: 50.h,
+            ),
+            SizedBox(height: 12.h),
+
+            // Trial Info
+            Text(
+              '7-day free trial • Cancel anytime • Money-back \nguarantee',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.secondarycolor,
+                fontSize: 16.sp,
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // FAQ Section
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: AppColors.congratsscrennbuttonclr.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.secondarycolor, width: 1.w),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Frequently Asked Questions',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildFAQ(
+                    'Can I cancel anytime?',
+                    style: TextStyle(
+                      color: AppColors.primarytext,
+                      fontSize: 16,
+                    ),
+                  ),
+                  _buildFAQ(
+                    '— Yes, cancel anytime from your profile settings.',
+                    style: TextStyle(
+                      color: AppColors.secondarycolor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  _buildFAQ(
+                    'What payment methods do you accept?',
+                    style: TextStyle(
+                      color: AppColors.primarytext,
+                      fontSize: 16,
+                    ),
+                  ),
+                  _buildFAQ(
+                    '— We accept cards and bank transfers via Paystack.',
+                    style: TextStyle(
+                      color: AppColors.secondarycolor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  _buildFAQ(
+                    'Is there a free trial?',
+                    style: TextStyle(
+                      color: AppColors.primarytext,
+                      fontSize: 16,
+                    ),
+                  ),
+                  _buildFAQ(
+                    '— Yes! Try Premium free for 7 days.',
+                    style: TextStyle(
+                      color: AppColors.secondarycolor,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30.h),
+          ],
+        ),
       ),
     );
   }

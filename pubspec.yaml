@@ -63,6 +63,8 @@ dependencies:
   pinput: ^5.0.0
   flutter_staggered_grid_view: ^0.7.0
   audioplayers: ^6.5.1
+  video_player: ^2.8.1
+  video_player_win: ^2.3.0
 
 
 dev_dependencies:
@@ -107,6 +109,8 @@ flutter:
     - assets/fonts/
     - assets/image/preference/
     - assets/gifs/
+    - assets/audio/
+    - assets/audio/focus_attention.mp3
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

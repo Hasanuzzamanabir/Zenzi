@@ -29,10 +29,12 @@ class HistoryPage extends StatelessWidget {
               ],
               dayColorBuilder: (day) {
                 if ([1, 2, 3].contains(day)) return const Color(0xFF6BBE76);
-                if ([5, 9, 15, 16, 17, 18, 19, 20].contains(day))
+                if ([5, 9, 15, 16, 17, 18, 19, 20].contains(day)) {
                   return const Color(0xFFC0CA33);
-                if ((day >= 10 && day <= 13) || (day >= 21 && day <= 27))
+                }
+                if ((day >= 10 && day <= 13) || (day >= 21 && day <= 27)) {
                   return const Color(0xFFF57C20);
+                }
                 return const Color(0xFFEEEEEE);
               },
             ),

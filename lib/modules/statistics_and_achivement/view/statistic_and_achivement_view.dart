@@ -20,7 +20,7 @@ class StatisticAndAchivementView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundcolor,
+        backgroundColor: AppColors.appBarGradientColors[0],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
           onPressed: () => Get.back(),

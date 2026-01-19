@@ -41,7 +41,10 @@ class ProfileCard extends StatelessWidget {
               children: [
                 Text(
                   'Good Morning',
-                  style: AppTextStyle.h4,
+                  style: AppTextStyle.h4.copyWith(
+                    color: AppColors.primarytext,
+                    fontWeight: FontWeight.w400,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
