@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
@@ -19,6 +18,20 @@ class MusicPage extends StatelessWidget {
     Get.put(MusicController());
     Get.put(AudioPlayerController());
     final controller = Get.put(MusicTabBarWidgetController());
+
+    // Automatically select tab if initialIndex is passed as an argument
+    final arguments = Get.arguments;
+    if (arguments != null &&
+        arguments is Map &&
+        arguments.containsKey('initialIndex')) {
+      final int initialIndex = arguments['initialIndex'];
+      if (initialIndex >= 0 && initialIndex < controller.selectedTabs.length) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.selectTab(initialIndex);
+        });
+      }
+    }
+
     //final controller = Get.put(StatisticAndAchivementTabBarWidgetController());
 
     return ThemedScaffold(

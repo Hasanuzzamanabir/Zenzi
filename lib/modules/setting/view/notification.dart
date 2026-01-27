@@ -18,10 +18,16 @@ class NotificationPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
+          icon: Icon(Icons.arrow_back, color: AppColors.secondarycolor),
           onPressed: () => Get.back(),
         ),
-        title: Text("Notification", style: AppTextStyle.h2),
+        title: Text(
+          "Notification",
+          style: AppTextStyle.h2.copyWith(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/controllers/breathing_controller.dart';
 import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/painters/breathing_painter.dart';
 
@@ -13,6 +15,32 @@ class FourSevenEightBreathingView extends StatelessWidget {
     );
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Center(
+              child: Obx(
+                () => Text(
+                  "${controller.cycle}/${controller.totalCycles} cycles",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           // 1. Background Gradient (Teal to Green)
@@ -79,22 +107,10 @@ class FourSevenEightBreathingView extends StatelessWidget {
                     ),
                     // Static "Zzz" in center
                     child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          // Zzz Graphic (using Text for crisp look as requested)
-                          // Creating a Zzz shape or using icon
-                          // Screenshot shows "Z z Z" in blue.
-                          Text(
-                            "z\n   Z\n      Z",
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0D47A1), // Deep Blue Zzz
-                              height: 0.8,
-                            ),
-                          ),
-                        ],
+                      child: Image.asset(
+                        AppAssets.fourSevenBreath,
+                        width: 56.w,
+                        height: 56.h,
                       ),
                     ),
                   ),
@@ -103,23 +119,7 @@ class FourSevenEightBreathingView extends StatelessWidget {
             ),
           ),
 
-          // 3. Top Right Cycle Count
-          Positioned(
-            top: 50,
-            right: 20,
-            child: Obx(
-              () => Text(
-                "${controller.cycle}/${controller.totalCycles} cycles",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-
-          // 4. Large Timer at Top Center
+          // 3. Large Timer at Top Center
           Positioned(
             top: 100,
             left: 0,
@@ -139,7 +139,7 @@ class FourSevenEightBreathingView extends StatelessWidget {
             ),
           ),
 
-          // 5. Bottom Section
+          // 4. Bottom Section
           Positioned(
             bottom: 60,
             left: 0,
@@ -213,16 +213,6 @@ class FourSevenEightBreathingView extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-
-          // Back Button
-          Positioned(
-            top: 50,
-            left: 20,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {},
             ),
           ),
         ],

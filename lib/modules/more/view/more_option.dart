@@ -8,7 +8,6 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
-import 'package:zenzi/modules/favourite/view/favourite_page_view.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
 import 'package:zenzi/modules/more/widget/seeting_item.dart';
@@ -51,7 +50,11 @@ class MoreOption extends StatelessWidget {
                           CircleAvatar(
                             radius: 30.r,
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.person, size: 30.sp),
+                            child: Image.asset(
+                              AppAssets.profile,
+                              width: 50.w,
+                              height: 50.h,
+                            ),
                           ),
                           SizedBox(width: 12.w),
                           Expanded(
@@ -406,7 +409,7 @@ class MoreOption extends StatelessWidget {
                       SizedBox(height: 12.h),
                       TextButton(
                         onPressed: () {
-                          Get.to(() => const FavouritePageView());
+                          Get.toNamed(AppRoute.journalView);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -490,7 +493,7 @@ class MoreOption extends StatelessWidget {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            Get.to(() => const FavouritePageView());
+                            Get.toNamed(AppRoute.getFavouritePageView());
                           },
                           child: Text(
                             'View all favorites',
@@ -509,10 +512,11 @@ class MoreOption extends StatelessWidget {
 
                 // Settings Section
                 Container(
-                  width: 373.w,
+                  width: double.maxFinite,
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: AppColors.coreprimarydark,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(color: AppColors.primarytext, width: 1),
                   ),
                   child: Column(
@@ -637,7 +641,9 @@ class MoreOption extends StatelessWidget {
                         icon: Icons.exit_to_app,
                         title: 'Log Out',
                         isLogout: true,
-                        onTap: () {},
+                        onTap: () {
+                          Get.offAllNamed(AppRoute.loginView);
+                        },
                         isLast: true,
                       ),
                     ],

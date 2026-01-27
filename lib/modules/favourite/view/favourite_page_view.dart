@@ -8,12 +8,16 @@ import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/favourite/controller/favourite_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/favourite/widgets/favourite_tab_bar_widget.dart';
 import 'package:zenzi/modules/favourite/widgets/favourite_tab_bar_widget_view.dart';
+import 'package:zenzi/modules/music/controller/audio_player_controller.dart';
+import 'package:zenzi/modules/music/controller/music_controller.dart';
 
 class FavouritePageView extends StatelessWidget {
   const FavouritePageView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(MusicController());
+    Get.put(AudioPlayerController());
     final controller = Get.put(FavouriteTabBarWidgetController());
 
     return ThemedScaffold(
@@ -40,7 +44,7 @@ class FavouritePageView extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      "Gratitude Journal",
+                      "Favourites",
                       style: AppTextStyle.h4.copyWith(
                         color: AppColors.primarytext,
                       ),

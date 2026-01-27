@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zenzi/core/theme/app_colors.dart';
 
 class CalendarThemeTwo {
   final Color background;
@@ -8,10 +9,10 @@ class CalendarThemeTwo {
   final Color dateText;
 
   const CalendarThemeTwo({
-    this.background = const Color(0xFF965A2E),
-    this.border = const Color(0xFFC89B65),
+    this.background = AppColors.coreprimarydark,
+    this.border = AppColors.componentnormal,
     this.textWhite = Colors.white,
     this.weekdayText = const Color(0xFFFAEBD7),
-    this.dateText = const Color(0xFF4A3B2A),
+    this.dateText = const Color(0xFF484848),
   });
 }

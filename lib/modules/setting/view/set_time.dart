@@ -79,8 +79,8 @@ class SetTimeView extends StatelessWidget {
               title,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -130,8 +130,8 @@ class SetTimeView extends StatelessWidget {
                   'AM',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
@@ -159,8 +159,8 @@ class SetTimeView extends StatelessWidget {
         time,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );

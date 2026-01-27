@@ -15,8 +15,24 @@ import '../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
     show CustomButtomNavigationBar;
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
-class LogInView extends StatelessWidget {
+class LogInView extends StatefulWidget {
   const LogInView({super.key});
+
+  @override
+  State<LogInView> createState() => _LogInViewState();
+}
+
+class _LogInViewState extends State<LogInView> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isObscure = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +96,7 @@ class LogInView extends StatelessWidget {
                           SizedBox(height: 9.h),
                           AppTextField(
                             hintText: 'Enter your email',
-                            controller: TextEditingController(),
+                            controller: _emailController,
                           ),
                           SizedBox(height: 12.h),
                           Align(
@@ -95,11 +111,20 @@ class LogInView extends StatelessWidget {
                           SizedBox(height: 9.h),
                           AppTextField(
                             hintText: 'Enter your password',
-                            controller: TextEditingController(),
-                            isPassword: true,
-                            suffixIcon: Icon(
-                              Icons.remove_red_eye_outlined,
-                              color: AppColors.textfieldiconcolor,
+                            controller: _passwordController,
+                            isPassword: _isObscure,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                              icon: Icon(
+                                _isObscure
+                                    ? Icons.remove_red_eye_outlined
+                                    : Icons.visibility_off_outlined,
+                                color: AppColors.textfieldiconcolor,
+                              ),
                             ),
                           ),
                           SizedBox(height: 10.h),
@@ -163,7 +188,7 @@ class LogInView extends StatelessWidget {
                               ),
                               children: [
                                 TextSpan(
-                                  text: '   Create account',
+                                  text: '  Create new account',
                                   style: AppTextStyle.h5.copyWith(
                                     color: AppColors.primarycolor,
                                   ),

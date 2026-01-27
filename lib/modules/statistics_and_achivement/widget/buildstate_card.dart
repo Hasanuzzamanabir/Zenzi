@@ -29,7 +29,11 @@ class StatCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(color: AppColors.primarytext, fontSize: 14.sp),
+            style: TextStyle(
+              color: AppColors.primarytext,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w400,
+            ),
           ),
           SizedBox(height: 8.h),
           Text(
@@ -37,7 +41,7 @@ class StatCard extends StatelessWidget {
             style: TextStyle(
               color: AppColors.primarytext,
               fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],

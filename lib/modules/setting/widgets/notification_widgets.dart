@@ -38,7 +38,7 @@ class NotificationWidgets extends StatelessWidget {
                   style: AppTextStyle.h5.copyWith(
                     color: AppColors.primarytext,
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -48,7 +48,8 @@ class NotificationWidgets extends StatelessWidget {
                   subtitle,
                   style: AppTextStyle.h5.copyWith(
                     color: AppColors.secondarycolor,
-                    fontSize: 13.sp,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -61,7 +62,7 @@ class NotificationWidgets extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeColor: AppColors.primarytext,
-            activeTrackColor: AppColors.appbarcolortwo,
+            activeTrackColor: AppColors.congratsscrennbuttonclr,
             inactiveThumbColor: Colors.grey,
             inactiveTrackColor: Colors.grey.shade400,
           ),

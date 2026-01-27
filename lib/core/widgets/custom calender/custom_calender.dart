@@ -28,7 +28,7 @@ class CustomCalendar extends StatelessWidget {
       decoration: BoxDecoration(
         color: CalendarColors.backgroundBrown,
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: CalendarColors.borderGold, width: 1.5.w),
+        border: Border.all(color: CalendarColors.borderGold, width: 1.0.w),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

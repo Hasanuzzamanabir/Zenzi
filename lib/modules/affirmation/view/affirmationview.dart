@@ -71,7 +71,6 @@ class AffirmationView extends StatelessWidget {
                     AppAssets.affirmationcard,
                     width: 350.w,
                     height: 400.h,
-                    fit: BoxFit.cover,
                   ),
                   Padding(
                     padding: EdgeInsets.all(16.w),

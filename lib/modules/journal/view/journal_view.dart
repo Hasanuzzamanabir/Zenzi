@@ -22,19 +22,9 @@ class JournalView extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 60.h),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.secondarycolor,
-                    size: 24.sp,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
 
                 Expanded(
                   child: Align(

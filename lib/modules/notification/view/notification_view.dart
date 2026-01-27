@@ -18,48 +18,41 @@ class NotificationView extends StatelessWidget {
     final controller = Get.put(NotificationTabBarWidgetController());
 
     return ThemedScaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(height: 60.h),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.secondarycolor,
-                    size: 24.sp,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.secondarycolor,
+            size: 24.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              NotificationTabBarWidget(),
+              SizedBox(height: 16.h),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: NotificationTabBarWidgetView(),
                 ),
-
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Downloads",
-                      style: AppTextStyle.h4.copyWith(
-                        color: AppColors.primarytext,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 16.h),
-            NotificationTabBarWidget(),
-            SizedBox(height: 16.h),
-            Expanded(
-              child: SingleChildScrollView(
-                child: NotificationTabBarWidgetView(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

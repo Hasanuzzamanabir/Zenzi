@@ -73,11 +73,9 @@ class ProfileCard extends StatelessWidget {
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.componentgreenish.withOpacity(0.2),
+                        color: AppColors.darktext,
                         borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(
-                          color: AppColors.componentgreenish.withOpacity(0.5),
-                        ),
+                        //
                       ),
                       child: Text(
                         '598 pts',

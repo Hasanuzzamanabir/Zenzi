@@ -13,6 +13,27 @@ class AccountSetting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ThemedScaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.secondarycolor,
+            size: 24.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          'Account setting',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -20,22 +41,6 @@ class AccountSetting extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16.h),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
-                    onPressed: () {
-                      Get.back();
-                    },
-                  ),
-                  SizedBox(width: 8.w),
-                  Text('Account setting', style: AppTextStyle.h2),
-                ],
-              ),
-              SizedBox(height: 16.h),
-
-              SizedBox(height: 24.h),
-
               // Edit Profile Button
               _buildMenuItem(
                 title: 'Edit Profile',

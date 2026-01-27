@@ -116,15 +116,15 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                     Text(
                       'Duration : ${_formatDuration(_controller.value.duration)}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
+                        color: AppColors.secondarycolor,
                         fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 12.h),
                     Text(
                       'Information',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.secondarycolor,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                       ),
@@ -559,10 +559,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
         SizedBox(width: 12.w),
         Text(
           text,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 14.sp,
-          ),
+          style: TextStyle(color: AppColors.secondarycolor, fontSize: 14.sp),
         ),
       ],
     );
@@ -602,8 +599,9 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               Text(
                 'Challenge days',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
-                  fontSize: 13.sp,
+                  color: AppColors.secondarycolor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

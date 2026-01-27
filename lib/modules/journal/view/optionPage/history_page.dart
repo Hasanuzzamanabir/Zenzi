@@ -5,12 +5,37 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/modules/journal/widgets/note_card.dart';
 
 import 'package:zenzi/core/widgets/custom calender two/custom_calender_two.dart';
+import 'package:zenzi/modules/journal/widgets/mood_legend_row.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Explicit mood mapping for selected days (remaining days will be white)
+    final Map<int, String> moodByDay = {
+      1: 'Great',
+      3: 'Good',
+      4: 'Great',
+      6: 'Good',
+      8: 'Okay',
+      9: 'Anxious',
+      11: 'Okay',
+      12: 'Anxious',
+      15: 'Okay',
+      16: 'Anxious',
+      18: 'Okay',
+      20: 'Anxious',
+      21: 'Low',
+      22: 'Anxious',
+      24: 'Low',
+      25: 'Anxious',
+      27: 'Low',
+      28: 'Anxious',
+      30: 'Low',
+      31: 'Anxious',
+    };
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -28,18 +53,30 @@ class HistoryPage extends StatelessWidget {
                 [27, 28, 29, 30, 31, null, null],
               ],
               dayColorBuilder: (day) {
-                if ([1, 2, 3].contains(day)) return const Color(0xFF6BBE76);
-                if ([5, 9, 15, 16, 17, 18, 19, 20].contains(day)) {
-                  return const Color(0xFFC0CA33);
+                final mood = moodByDay[day];
+                // If day is not present in moodByDay → return white color
+                if (mood == null) return Colors.white;
+
+                switch (mood) {
+                  case 'Great':
+                    return MoodLegendRow.greatColor;
+                  case 'Good':
+                    return MoodLegendRow.goodColor;
+                  case 'Okay':
+                    return MoodLegendRow.okayColor;
+                  case 'Low':
+                    return MoodLegendRow.lowColor;
+                  case 'Anxious':
+                    return MoodLegendRow.anxiousColor;
+                  default:
+                    return Colors.white;
                 }
-                if ((day >= 10 && day <= 13) || (day >= 21 && day <= 27)) {
-                  return const Color(0xFFF57C20);
-                }
-                return const Color(0xFFEEEEEE);
               },
             ),
-            // Previous Note Title
             SizedBox(height: 20.h),
+            const MoodLegendRow(),
+            // Previous Note Title
+            SizedBox(height: 30.h),
             Text(
               'Previous Note',
               style: AppTextStyle.h6.copyWith(color: AppColors.primarytext),

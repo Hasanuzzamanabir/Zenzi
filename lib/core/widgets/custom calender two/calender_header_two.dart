@@ -23,7 +23,7 @@ class CalendarHeader extends StatelessWidget {
         Container(
           height: 1,
           width: double.infinity,
-          color: Colors.white.withOpacity(0.2),
+          color: Color(0xFFE4E5E7),
           margin: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ],

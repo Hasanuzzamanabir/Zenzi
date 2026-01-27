@@ -30,10 +30,10 @@ class SettingItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.only(
-        topLeft: isFirst ? Radius.circular(8.r) : Radius.zero,
-        topRight: isFirst ? Radius.circular(8.r) : Radius.zero,
-        bottomLeft: isLast ? Radius.circular(8.r) : Radius.zero,
-        bottomRight: isLast ? Radius.circular(8.r) : Radius.zero,
+        topLeft: isFirst ? Radius.circular(16.r) : Radius.zero,
+        topRight: isFirst ? Radius.circular(16.r) : Radius.zero,
+        bottomLeft: isLast ? Radius.circular(16.r) : Radius.zero,
+        bottomRight: isLast ? Radius.circular(16.r) : Radius.zero,
       ),
       child: Container(
         height: 54.h,

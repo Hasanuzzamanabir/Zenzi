@@ -10,6 +10,8 @@ import 'package:zenzi/modules/chat/bindings/chat_bindings.dart';
 import 'package:zenzi/modules/chat/view/chat_view.dart';
 import 'package:zenzi/modules/download/view/download_view.dart';
 import 'package:zenzi/modules/help_and_support/view/help_and_support.dart';
+import 'package:zenzi/modules/favourite/bindings/favourite_binding.dart';
+import 'package:zenzi/modules/favourite/view/favourite_page_view.dart';
 import 'package:zenzi/modules/home/view/home_view.dart';
 import 'package:zenzi/modules/journal/view/journal_view.dart';
 import 'package:zenzi/modules/journal/view/optionPage/daily_page.dart';
@@ -21,6 +23,7 @@ import 'package:zenzi/modules/meditation_view/view/meditation_details.dart';
 import 'package:zenzi/modules/meditation_view/view/meditation_page.dart';
 import 'package:zenzi/modules/music/bindings/music_page_binding.dart';
 import 'package:zenzi/modules/music/view/music_page.dart';
+
 import 'package:zenzi/modules/music/view/play_music.dart';
 import 'package:zenzi/modules/notification/view/notification_view.dart';
 import 'package:zenzi/modules/preference/binding/preference_page_bindings.dart';
@@ -79,6 +82,7 @@ class AppRoute {
   //music page
   static const String musicPage = '/musicPage';
   static const String playMusic = '/playMusic';
+  static const String sleepTab = '/sleepTab';
   //journal page
   static const String journalView = '/journalView';
   static const String dailyPage = '/dailyPage';
@@ -137,6 +141,7 @@ class AppRoute {
   static String getLevelupView() => levelupView;
   static String getPreferencePage() => preferencePage;
   static String getJustBreathePageView() => justBreathePageView;
+  static String getSleepTab() => sleepTab;
 
   static List<GetPage> routes = [
     GetPage(name: splashView, page: () => SplashScreen()),
@@ -201,5 +206,10 @@ class AppRoute {
     // GetPage(name: statisticPage, page: () => StatisticPage()),
     // GetPage(name: achivementPage, page: () => AchivementPage()),
     GetPage(name: justBreathePageView, page: () => JustBreathePageView()),
+    GetPage(
+      name: favouritePageView,
+      page: () => const FavouritePageView(),
+      binding: FavouriteBinding(),
+    ),
   ];
 }

@@ -20,6 +20,10 @@ class AppAssets {
   static const calm = 'assets/icons/breath/calm.png';
   static const energy = 'assets/icons/breath/energy.png';
 
+  static const thunder = 'assets/icons/breath/thunder_br_icon.png';
+  static const fourSevenBreath = 'assets/icons/breath/4_7_br_icon.png';
+  static const calm_breath = 'assets/icons/breath/calm_br_icon.png';
+
   //bottom navigation bar icons
   static const home = 'assets/icons/bottom_nav_bar/home_icon.png';
   static const more = 'assets/icons/bottom_nav_bar/more.png';
@@ -29,7 +33,7 @@ class AppAssets {
   // home
   static const homepage = 'assets/image/home/home.png';
   static const homepageEvening = 'assets/image/home/home_evening.png';
-  static const profile = 'assets/image/home/profile.svg';
+  static const profile = 'assets/image/home/profile.png';
   static const notification = 'assets/image/home/notification.svg';
   static const meditate = 'assets/image/home/meditate.png';
   static const askzenzi = 'assets/image/home/askzenzi.png';

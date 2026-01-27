@@ -19,14 +19,33 @@ class StatisticAndAchivementView extends StatelessWidget {
     final bool isDay = currentHour >= 6 && currentHour < 18;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.appBarGradientColors[0],
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
-          onPressed: () => Get.back(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          flexibleSpace: isDay
+              ? Container(color: AppColors.backgroundcolor)
+              : Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.appnightmode1,
+                        AppColors.appnightmode2,
+                      ],
+                    ),
+                  ),
+                ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: AppColors.primarytext),
+            onPressed: () => Get.back(),
+          ),
+          title: Text("Statistics & Achievement", style: AppTextStyle.h2),
+          centerTitle: true,
         ),
-        title: Text("Statistics & Achievement", style: AppTextStyle.h2),
-        centerTitle: true,
       ),
       body: Container(
         height: double.infinity,

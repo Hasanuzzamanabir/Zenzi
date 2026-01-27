@@ -110,12 +110,11 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
               ),
               SizedBox(height: 8.h),
               Container(
-                width: 370.w,
+                width: double.maxFinite,
                 height: 180.h,
                 decoration: BoxDecoration(
                   color: AppColors.secondarycolor,
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: AppColors.secondarycolor, width: 1),
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: TextField(
                   controller: _descriptionController,
@@ -124,11 +123,8 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
                   textAlignVertical: TextAlignVertical.top,
                   style: TextStyle(color: AppColors.darktext, fontSize: 14.sp),
                   decoration: InputDecoration(
-                    hintText: '',
-                    hintStyle: TextStyle(
-                      color: AppColors.secondarycolor.withOpacity(0.6),
-                      fontSize: 14.sp,
-                    ),
+                    hintText: 'Write your description here...',
+                    hintStyle: TextStyle(fontSize: 14.sp),
                     filled: false,
                     contentPadding: EdgeInsets.all(16.w),
                     //border: InputBorder.none,

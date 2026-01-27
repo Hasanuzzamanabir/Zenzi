@@ -18,31 +18,31 @@ class EditProfile extends StatelessWidget {
     final phoneController = TextEditingController();
 
     return ThemedScaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppColors.secondarycolor),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          "Edit Profile",
+          style: AppTextStyle.h2.copyWith(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 16.h),
 
-                // Header Row
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.primarytext,
-                      ),
-                      onPressed: () => Get.back(),
-                    ),
-                    SizedBox(width: 8.w),
-                    Text('Edit Profile', style: AppTextStyle.h2),
-                  ],
-                ),
-
-                SizedBox(height: 24.h),
+                //SizedBox(height: 24.h),
 
                 // Title
                 Text(
@@ -69,23 +69,28 @@ class EditProfile extends StatelessWidget {
                 // Profile Image with Edit Icon
                 Stack(
                   children: [
-                    Container(
-                      width: 120.w,
-                      height: 120.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Color(0xFF1976D2), width: 3),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          AppAssets.editprofile,
-                          fit: BoxFit.cover,
+                    Center(
+                      child: Container(
+                        width: 120.w,
+                        height: 120.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Color(0xFF1976D2),
+                            width: 3,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            AppAssets.editprofile,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
-                      right: 0,
+                      bottom: 10,
+                      right: 110,
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
@@ -169,12 +174,60 @@ class EditProfile extends StatelessWidget {
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                 ),
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Date of Birth ',
+                    style: AppTextStyle.h5.copyWith(
+                      color: AppColors.primarytext,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
 
+                SizedBox(height: 8.h),
+
+                // Date of Birth Field
+                AppTextField(
+                  hintText: '13/09/1999',
+                  controller: fullNameController,
+                  suffixIcon: Icon(
+                    Icons.calendar_today_sharp,
+                    color: AppColors.darktext,
+                  ),
+                ),
+
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Gender',
+                    style: AppTextStyle.h5.copyWith(
+                      color: AppColors.primarytext,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 8.h),
+
+                // Full Name Field
+                AppTextField(
+                  hintText: 'Male',
+                  controller: fullNameController,
+                  suffixIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: AppColors.darktext,
+                  ),
+                ),
+
+                //SizedBox(height: 20.h),
                 SizedBox(height: 40.h),
 
                 // Save Button
                 AppButton(
-                  title: 'Save',
+                  title: 'Edit',
                   onTap: () {
                     // Handle save profile
                   },
