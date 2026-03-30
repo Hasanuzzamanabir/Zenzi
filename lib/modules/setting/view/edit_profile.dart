@@ -271,9 +271,16 @@ class _EditProfileState extends State<EditProfile> {
                   width: 370.w,
                   height: 48.h,
                   child: DropdownButtonFormField<String>(
-                    value: selectedGender,
+                    hint: Text(
+                      'Select Gender',
+                      style: TextStyle(
+                        color: AppColors.backgroundcolor,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+
                     isExpanded: true,
-                    dropdownColor: AppColors.whitelite,
+                    dropdownColor: AppColors.secondarycolor,
 
                     icon: Icon(
                       Icons.arrow_drop_down,
