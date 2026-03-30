@@ -12,7 +12,7 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
-import 'package:zenzi/modules/auth/view/forgot_password_view.dart';
+import 'package:zenzi/modules/auth/view/forgot_password/view/forgot_password_view.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/auth/view/signup/view/signup_view.dart';
 

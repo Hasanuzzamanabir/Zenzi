@@ -7,7 +7,7 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/modules/auth/view/acoount_cogratulations_Page.dart';
-import 'package:zenzi/modules/auth/view/new_password.dart';
+import 'package:zenzi/modules/auth/view/new%20password/view/new_password.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
 enum Otpsource { signing, forgetpassword }
@@ -87,7 +87,9 @@ class _OtpVerificationState extends State<OtpVerification> {
                     defaultPinTheme: PinTheme(
                       width: 52.w,
                       height: 52.h,
-                      textStyle: AppTextStyle.h4,
+                      textStyle: AppTextStyle.h4.copyWith(
+                        color: AppColors.backgroundcolor,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.secondarycolor,
                         borderRadius: BorderRadius.circular(8.r),

@@ -134,12 +134,31 @@ class _SignupViewState extends State<SignupView> {
                     SizedBox(height: 14.h),
                     Row(
                       children: [
-                        Image.asset(
-                          AppAssets.checkbox,
-                          width: 24.w,
-                          height: 24.h,
+                        Transform.scale(
+                          scale: 1.2,
+                          child: Obx(
+                            () => Checkbox(
+                              value: _controller.checkBoxValue.value,
+                              onChanged: (abir) {
+                                _controller.toggleCheckBox(abir);
+                              },
+                              fillColor: WidgetStateProperty.resolveWith((
+                                states,
+                              ) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return AppColors.primarycolor;
+                                }
+                                return Colors.transparent;
+                              }),
+                              side: BorderSide(
+                                color: AppColors.primarycolor,
+                                width: 1.5,
+                              ),
+                              checkColor: AppColors.secondarycolor,
+                            ),
+                          ),
                         ),
-                        SizedBox(width: 8.w),
+
                         Expanded(
                           child: RichText(
                             text: TextSpan(
@@ -160,22 +179,43 @@ class _SignupViewState extends State<SignupView> {
                       ],
                     ),
                     SizedBox(height: 20.h),
-                    AppButton(
-                      title: 'Sign Up',
-                      onTap: () {
-                        //Get.to(const OtpVerification(isSigning: true));
-                        final name = _nameController.text.trim();
-                        final email = _emailController.text.trim();
-                        final password = _passwordController.text.trim();
-                        final confirmPassword = _confirmPasswordController.text
-                            .trim();
+                    Obx(() {
+                      final isChecked = _controller.checkBoxValue.value;
+                      return IgnorePointer(
+                        ignoring: !isChecked,
+                        child: Opacity(
+                          opacity: isChecked ? 1 : 0.5,
+                          child: AppButton(
+                            title: 'Sign Up',
+                            isLoading: _controller.isLoading.value,
+                            backgroundColor: isChecked
+                                ? AppColors.primarycolor
+                                : AppColors.buttoncolor,
+                            onTap: () {
+                              if (!isChecked) return;
+                              //Get.to(const OtpVerification(isSigning: true));
+                              final name = _nameController.text.trim();
+                              final email = _emailController.text.trim();
+                              final password = _passwordController.text.trim();
+                              final confirmPassword = _confirmPasswordController
+                                  .text
+                                  .trim();
 
-                        print('Name: $name');
-                        print('Email: $email');
-                        print('Password: $password');
-                        print('Confirm Password: $confirmPassword');
-                      },
-                    ),
+                              debugPrint(
+                                'Name: $name, Email: $email, Password: $password, Confirm Password: $confirmPassword',
+                              );
+
+                              _controller.signUp(
+                                name,
+                                email,
+                                password,
+                                confirmPassword,
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    }),
                     SizedBox(height: 20.h),
                     Row(
                       children: [

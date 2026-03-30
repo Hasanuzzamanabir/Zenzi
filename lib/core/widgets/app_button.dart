@@ -14,6 +14,7 @@ class AppButton extends StatelessWidget {
   final Color? textColor;
   final Widget? leading;
   final Widget? trailing;
+  final bool isLoading;
 
   const AppButton({
     super.key,
@@ -25,6 +26,7 @@ class AppButton extends StatelessWidget {
     this.textColor,
     this.leading,
     this.trailing,
+    this.isLoading = false,
   });
 
   @override
@@ -46,20 +48,30 @@ class AppButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (leading != null) ...[leading!, SizedBox(width: 10.w)],
-            Text(
-              title,
-              style: AppTextStyle.bodyMedium.copyWith(
-                color: textColor ?? Colors.white,
-                fontWeight: FontWeight.w600,
+        child: isLoading
+            ? SizedBox(
+                height: 24.h,
+                width: 24.h,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.secondarycolor,
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (leading != null) ...[leading!, SizedBox(width: 10.w)],
+                  Text(
+                    title,
+                    style: AppTextStyle.bodyMedium.copyWith(
+                      color: textColor ?? Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (trailing != null) ...[SizedBox(width: 10.w), trailing!],
+                ],
               ),
-            ),
-            if (trailing != null) ...[SizedBox(width: 10.w), trailing!],
-          ],
-        ),
       ),
     );
   }

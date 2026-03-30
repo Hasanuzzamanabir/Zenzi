@@ -6,10 +6,24 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
-import 'package:zenzi/modules/auth/view/otp_verification.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
+import 'package:zenzi/modules/auth/view/otp/view/otp_verification.dart';
 
-class ForgotPasswordView extends StatelessWidget {
+class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({super.key});
+
+  @override
+  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
+}
+
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +54,11 @@ class ForgotPasswordView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 13.h),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Email',
-                        style: AppTextStyle.h5.copyWith(
-                          color: AppColors.primarytext,
-                        ),
-                      ),
-                    ),
+                    TextLabel(text: 'Email'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your email',
-                      controller: TextEditingController(),
+                      controller: _emailController,
                     ),
                     SizedBox(height: 30.h),
                     AppButton(
@@ -62,10 +68,15 @@ class ForgotPasswordView extends StatelessWidget {
                       },
                     ),
                     SizedBox(height: 30.h),
-                    Text(
-                      'Back to Login',
-                      style: AppTextStyle.h5.copyWith(
-                        color: AppColors.skysunrise,
+                    GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Text(
+                        'Back to Login',
+                        style: AppTextStyle.h5.copyWith(
+                          color: AppColors.skysunrise,
+                        ),
                       ),
                     ),
                   ],
