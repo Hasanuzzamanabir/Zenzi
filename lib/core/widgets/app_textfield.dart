@@ -6,7 +6,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
   final String hintText;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final bool isPassword;
   final Widget? suffixIcon;
   final TextInputType keyboardType;
@@ -15,7 +15,7 @@ class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     required this.hintText,
-    required this.controller,
+    this.controller,
     this.isPassword = false,
     this.suffixIcon,
     this.keyboardType = TextInputType.text,

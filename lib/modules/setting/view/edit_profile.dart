@@ -191,7 +191,7 @@ class EditProfile extends StatelessWidget {
                 // Date of Birth Field
                 AppTextField(
                   hintText: '13/09/1999',
-                  controller: fullNameController,
+
                   suffixIcon: Icon(
                     Icons.calendar_today_sharp,
                     color: AppColors.darktext,
@@ -215,7 +215,7 @@ class EditProfile extends StatelessWidget {
                 // Full Name Field
                 AppTextField(
                   hintText: 'Male',
-                  controller: fullNameController,
+
                   suffixIcon: Icon(
                     Icons.arrow_drop_down,
                     color: AppColors.darktext,
