@@ -291,6 +291,14 @@ class _EditProfileState extends State<EditProfile> {
                         vertical: 14.h,
                       ),
 
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                        borderSide: BorderSide(
+                          color: AppColors.secondarycolor,
+                          width: 1,
+                        ),
+                      ),
+
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                         borderSide: BorderSide(
