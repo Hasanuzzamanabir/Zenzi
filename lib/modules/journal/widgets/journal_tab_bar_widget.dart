@@ -9,7 +9,8 @@ class JournaTabBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<JournalTabBarWidgetController>();
+    // final controller = Get.find<JournalTabBarWidgetController>();
+    final controller = Get.put(JournalTabBarWidgetController());
 
     return Obx(() {
       return Container(

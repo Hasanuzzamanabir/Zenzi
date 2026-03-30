@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
-import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/notification/controller/notificatioin_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/notification/widgets/notification_tab_bar_widget.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
-import 'package:zenzi/core/theme/app_text_style.dart';
 
 class NoteCard extends StatelessWidget {
   const NoteCard({
@@ -36,7 +35,7 @@ class NoteCard extends StatelessWidget {
           Text(
             'Date: $date',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
             ),

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -66,7 +65,7 @@ class PremiumSubscriptionView extends StatelessWidget {
                           child: Container(
                             padding: EdgeInsets.all(20.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.25),
+                              color: Colors.white.withValues(alpha: 0.25),
                               shape: BoxShape.circle,
                             ),
                             child: Image.asset(
@@ -274,7 +273,9 @@ class PremiumSubscriptionView extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: AppColors.congratsscrennbuttonclr.withOpacity(0.8),
+                      color: AppColors.congratsscrennbuttonclr.withValues(
+                        alpha: 0.8,
+                      ),
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
                         color: AppColors.secondarycolor,
@@ -350,33 +351,33 @@ class PremiumSubscriptionView extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletPoint(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '✓ ',
-            style: TextStyle(
-              color: AppColors.componentnormal,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildBulletPoint(String text) {
+  //   return Padding(
+  //     padding: EdgeInsets.only(bottom: 8.h),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           '✓ ',
+  //           style: TextStyle(
+  //             color: AppColors.componentnormal,
+  //             fontSize: 14.sp,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Text(
+  //             text,
+  //             style: TextStyle(
+  //               color: Colors.white.withOpacity(0.9),
+  //               fontSize: 14.sp,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildFAQ(String text, {required TextStyle style}) {
     return Padding(

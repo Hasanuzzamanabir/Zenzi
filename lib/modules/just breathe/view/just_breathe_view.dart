@@ -32,13 +32,13 @@ class JustBreathePageView extends StatelessWidget {
               minTextAdapt: true,
             );
             final double screenW = constraints.maxWidth;
-            final double screenH = constraints.maxHeight;
+            // final double screenH = constraints.maxHeight;
 
             // Animation area
             final double animSize = screenW * 0.74;
             final double animTop = 128.h;
             final double animRectRadius = 36.r;
-            final Color rectColor = AppColors.coreprimarydark.withOpacity(0.92);
+            //final Color rectColor = AppColors.coreprimarydark.withOpacity(0.92);
 
             // Text
             final double textLeft = 28.w;
@@ -90,7 +90,7 @@ class JustBreathePageView extends StatelessWidget {
                         Text(
                           "Zenzi wellness",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.92),
+                            color: Colors.white.withValues(alpha: 0.92),
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.8,
@@ -117,7 +117,8 @@ class JustBreathePageView extends StatelessWidget {
                     width: screenW * 0.59,
                     child: SlideActionBtn(
                       onSubmit: () {
-                        Get.to(const LogInView());
+                        // Get.to(const LogInView());
+                        Get.offAll(() => const LogInView());
                       },
                     ),
                   ),
@@ -151,7 +152,7 @@ class _SlideActionBtnState extends State<SlideActionBtn> {
     final double handleSize = 46.h;
     final double textPadding = 12.w;
     final double textFont = 16.sp;
-    final Color pillColor = const Color(0xFFE2C7B0).withOpacity(0.62);
+    final Color pillColor = const Color(0xFFE2C7B0).withValues(alpha: 0.62);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -205,7 +206,9 @@ class _SlideActionBtnState extends State<SlideActionBtn> {
                                 widthFactor: 0.6,
                                 child: Icon(
                                   Icons.keyboard_arrow_right,
-                                  color: Color(0xFF838383).withOpacity(0.9),
+                                  color: Color(
+                                    0xFF838383,
+                                  ).withValues(alpha: 0.9),
                                   size: 24.sp,
                                 ),
                               ),
@@ -213,7 +216,9 @@ class _SlideActionBtnState extends State<SlideActionBtn> {
                                 widthFactor: 0.6,
                                 child: Icon(
                                   Icons.keyboard_arrow_right,
-                                  color: Color(0xFFA6A6A6).withOpacity(0.9),
+                                  color: Color(
+                                    0xFFA6A6A6,
+                                  ).withValues(alpha: 0.9),
                                   size: 24.sp,
                                 ),
                               ),

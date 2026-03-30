@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zenzi/modules/music/view/music_section.dart/my_fav.dart';
 import 'package:zenzi/modules/notification/controller/notificatioin_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/notification/view/all.dart';
 import 'package:zenzi/modules/notification/view/reminders.dart';

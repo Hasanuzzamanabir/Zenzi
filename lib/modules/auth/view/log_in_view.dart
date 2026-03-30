@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
@@ -37,16 +38,19 @@ class _LogInViewState extends State<LogInView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AppAssets.login),
-                fit: BoxFit.cover,
-              ),
-            ),
+          Align(
+            alignment: Alignment.topRight,
+            child: SvgPicture.asset('assets/image/auth/logIconOne.svg'),
           ),
+
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: SvgPicture.asset('assets/image/auth/logIconTwo.svg'),
+          ),
+
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -56,9 +60,10 @@ class _LogInViewState extends State<LogInView> {
                       minHeight: constraints.maxHeight,
                     ),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 24.w,
-                        vertical: 20.h,
+                      padding: EdgeInsets.only(
+                        left: 24.w,
+                        right: 20.h,
+                        bottom: MediaQuery.of(context).viewInsets.bottom + 60.h,
                       ),
                       child: Column(
                         children: [

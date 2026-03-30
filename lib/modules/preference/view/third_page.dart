@@ -124,9 +124,7 @@ class ThirdPage extends StatelessWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return Obx(() {
-                        final isSelected = controller.selectedIndexes.contains(
-                          index,
-                        );
+                        controller.selectedIndexes.contains(index);
 
                         return GestureDetector(
                           onTap: () => controller.toggleSelection(index),
