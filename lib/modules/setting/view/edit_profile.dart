@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
@@ -8,15 +12,57 @@ import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final fullNameController = TextEditingController();
-    final emailController = TextEditingController();
-    final phoneController = TextEditingController();
+  State<EditProfile> createState() => _EditProfileState();
+}
 
+class _EditProfileState extends State<EditProfile> {
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final dateController = TextEditingController();
+  final List<String> genderOptions = ['Male', 'Female', 'Other'];
+  String selectedGender = 'Male';
+
+  @override
+  void dispose() {
+    super.dispose();
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    dateController.dispose();
+  }
+
+  Future<void> _selectValidityDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1990),
+      lastDate: DateTime(2100),
+    );
+    if (picked == null) return;
+
+    setState(() {
+      dateController.text = DateFormat('MM/dd/yyyy').format(picked);
+    });
+  }
+
+  XFile? pickedImage;
+  final ImagePicker _picker = ImagePicker();
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        pickedImage = image;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ThemedScaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -81,10 +127,15 @@ class EditProfile extends StatelessWidget {
                           ),
                         ),
                         child: ClipOval(
-                          child: Image.asset(
-                            AppAssets.editprofile,
-                            fit: BoxFit.cover,
-                          ),
+                          child: pickedImage != null
+                              ? Image.file(
+                                  File(pickedImage!.path),
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  AppAssets.editprofile,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
                     ),
@@ -92,15 +143,17 @@ class EditProfile extends StatelessWidget {
                       bottom: 10,
                       right: 110,
                       child: Container(
-                        padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
                           color: Color(0xFF1976D2),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 18.sp,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 18.sp,
+                          ),
+                          onPressed: _pickImage,
                         ),
                       ),
                     ),
@@ -191,7 +244,9 @@ class EditProfile extends StatelessWidget {
                 // Date of Birth Field
                 AppTextField(
                   hintText: '13/09/1999',
-
+                  controller: dateController,
+                  readOnly: true,
+                  onTap: () => _selectValidityDate(context),
                   suffixIcon: Icon(
                     Icons.calendar_today_sharp,
                     color: AppColors.darktext,
@@ -212,13 +267,52 @@ class EditProfile extends StatelessWidget {
 
                 SizedBox(height: 8.h),
 
-                // Full Name Field
-                AppTextField(
-                  hintText: 'Male',
+                SizedBox(
+                  width: 370.w,
+                  height: 48.h,
+                  child: DropdownButtonFormField<String>(
+                    value: selectedGender,
+                    isExpanded: true,
+                    dropdownColor: AppColors.whitelite,
 
-                  suffixIcon: Icon(
-                    Icons.arrow_drop_down,
-                    color: AppColors.darktext,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: AppColors.darktext,
+                    ),
+                    style: TextStyle(
+                      color: AppColors.darktext,
+                      fontSize: 14.sp,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.secondarycolor,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                        borderSide: BorderSide(
+                          color: AppColors.secondarycolor,
+                          width: 1.2,
+                        ),
+                      ),
+                    ),
+                    items: genderOptions
+                        .map(
+                          (gender) => DropdownMenuItem<String>(
+                            value: gender,
+                            child: Text(gender),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        selectedGender = value;
+                      });
+                    },
                   ),
                 ),
 

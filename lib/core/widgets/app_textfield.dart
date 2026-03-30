@@ -11,6 +11,8 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputType keyboardType;
   final dynamic prefixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const AppTextField({
     super.key,
@@ -20,6 +22,8 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -31,6 +35,8 @@ class AppTextField extends StatelessWidget {
         controller: controller,
         obscureText: isPassword,
         keyboardType: keyboardType,
+        readOnly: readOnly,
+        onTap: onTap,
         style: TextStyle(color: AppColors.darktext, fontSize: 14.sp),
         decoration: InputDecoration(
           hintText: hintText,
