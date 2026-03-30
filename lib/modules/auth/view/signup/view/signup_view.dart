@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
@@ -11,11 +13,30 @@ import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
-import 'package:zenzi/modules/auth/view/otp_verification.dart';
+import 'package:zenzi/modules/auth/view/signup/controller/signup_controller.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends StatefulWidget {
   const SignupView({super.key});
+
+  @override
+  State<SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<SignupView> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  late final SignupController _controller;
+
+  @override
+  initState() {
+    super.initState();
+    _controller = Get.put(SignupController());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,35 +80,55 @@ class SignupView extends StatelessWidget {
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your name',
-                      controller: TextEditingController(),
+                      controller: _nameController,
                     ),
                     SizedBox(height: 12.h),
                     TextLabel(text: 'Email'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your email',
-                      controller: TextEditingController(),
+                      controller: _emailController,
                     ),
                     SizedBox(height: 12.h),
                     TextLabel(text: 'Password'),
                     SizedBox(height: 9.h),
-                    AppTextField(
-                      hintText: 'Enter your password',
-                      controller: TextEditingController(),
-                      suffixIcon: Icon(
-                        Icons.remove_red_eye_outlined,
-                        color: AppColors.textfieldiconcolor,
+                    Obx(
+                      () => AppTextField(
+                        hintText: 'Enter your password',
+                        controller: _passwordController,
+                        isPassword: _controller.isPasswordObscured.value,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            _controller.togglePasswordVisibility();
+                          },
+                          icon: Icon(
+                            _controller.isPasswordObscured.value
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                          ),
+                          color: AppColors.textfieldiconcolor,
+                        ),
                       ),
                     ),
                     SizedBox(height: 12.h),
                     TextLabel(text: 'Confirm Password'),
                     SizedBox(height: 9.h),
-                    AppTextField(
-                      hintText: 'Enter your confirm password',
-                      controller: TextEditingController(),
-                      suffixIcon: Icon(
-                        Icons.visibility_off_outlined,
-                        color: AppColors.textfieldiconcolor,
+                    Obx(
+                      () => AppTextField(
+                        hintText: 'Enter your confirm password',
+                        controller: _confirmPasswordController,
+                        isPassword: _controller.isConfirmPasswordObscured.value,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            _controller.toggleConfirmPasswordVisibility();
+                          },
+                          icon: Icon(
+                            _controller.isConfirmPasswordObscured.value
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                          ),
+                          color: AppColors.textfieldiconcolor,
+                        ),
                       ),
                     ),
                     SizedBox(height: 14.h),
@@ -122,7 +163,17 @@ class SignupView extends StatelessWidget {
                     AppButton(
                       title: 'Sign Up',
                       onTap: () {
-                        Get.to(const OtpVerification(isSigning: true));
+                        //Get.to(const OtpVerification(isSigning: true));
+                        final name = _nameController.text.trim();
+                        final email = _emailController.text.trim();
+                        final password = _passwordController.text.trim();
+                        final confirmPassword = _confirmPasswordController.text
+                            .trim();
+
+                        print('Name: $name');
+                        print('Email: $email');
+                        print('Password: $password');
+                        print('Confirm Password: $confirmPassword');
                       },
                     ),
                     SizedBox(height: 20.h),

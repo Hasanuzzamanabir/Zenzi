@@ -3,7 +3,7 @@ import 'package:zenzi/modules/affirmation/view/affirmationview.dart';
 import 'package:zenzi/modules/auth/view/forgot_password_view.dart';
 import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/auth/view/otp_verification.dart';
-import 'package:zenzi/modules/auth/view/signup_view.dart';
+import 'package:zenzi/modules/auth/view/signup/view/signup_view.dart';
 import 'package:zenzi/modules/bottom_navigation_bar/view/custom_buttom_navigation_bar.dart';
 import 'package:zenzi/modules/breath_page/view/breath_page_view.dart';
 import 'package:zenzi/modules/chat/bindings/chat_bindings.dart';
