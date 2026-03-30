@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
-import 'package:zenzi/modules/auth/view/log_in_view.dart';
+import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/just%20breathe/controller/just_breathe_controller.dart';
 import '../painters/just_breathe_painter.dart';
 

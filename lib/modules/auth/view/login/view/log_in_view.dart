@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/modules/auth/view/forgot_password_view.dart';
+import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/auth/view/signup_view.dart';
 
-import '../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
+import '../../../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
     show CustomButtomNavigationBar;
-//import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
 class LogInView extends StatefulWidget {
   const LogInView({super.key});
@@ -26,7 +29,13 @@ class LogInView extends StatefulWidget {
 class _LogInViewState extends State<LogInView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isObscure = true;
+  late final LoginController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(LoginController());
+  }
 
   @override
   void dispose() {
@@ -89,46 +98,30 @@ class _LogInViewState extends State<LogInView> {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 12.h),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Email',
-                              style: AppTextStyle.h5.copyWith(
-                                color: AppColors.primarytext,
-                              ),
-                            ),
-                          ),
+                          TextLabel(text: 'Email'),
                           SizedBox(height: 9.h),
                           AppTextField(
                             hintText: 'Enter your email',
                             controller: _emailController,
                           ),
                           SizedBox(height: 12.h),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Password',
-                              style: AppTextStyle.h5.copyWith(
-                                color: AppColors.primarytext,
-                              ),
-                            ),
-                          ),
+                          TextLabel(text: 'Password'),
                           SizedBox(height: 9.h),
-                          AppTextField(
-                            hintText: 'Enter your password',
-                            controller: _passwordController,
-                            isPassword: _isObscure,
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _isObscure = !_isObscure;
-                                });
-                              },
-                              icon: Icon(
-                                _isObscure
-                                    ? Icons.remove_red_eye_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: AppColors.textfieldiconcolor,
+                          Obx(
+                            () => AppTextField(
+                              hintText: 'Enter your password',
+                              controller: _passwordController,
+                              isPassword: _controller.isObscure.value,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _controller.togglePasswordVisibility();
+                                },
+                                icon: Icon(
+                                  _controller.isObscure.value
+                                      ? Icons.remove_red_eye_outlined
+                                      : Icons.visibility_off_outlined,
+                                  color: AppColors.textfieldiconcolor,
+                                ),
                               ),
                             ),
                           ),

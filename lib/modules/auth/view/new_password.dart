@@ -6,7 +6,7 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
-import 'package:zenzi/modules/auth/view/log_in_view.dart';
+import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 
 class NewPasswordView extends StatelessWidget {
   const NewPasswordView({super.key});

@@ -10,6 +10,7 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 
 class EditProfile extends StatefulWidget {
@@ -163,16 +164,7 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(height: 40.h),
 
                 // Full Name Label
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Full Name',
-                    style: AppTextStyle.h5.copyWith(
-                      color: AppColors.primarytext,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
+                TextLabel(text: 'Full Name'),
 
                 SizedBox(height: 8.h),
 
@@ -185,16 +177,9 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(height: 20.h),
 
                 // Email Label
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Email',
-                    style: AppTextStyle.h5.copyWith(
-                      color: AppColors.primarytext,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
+                TextLabel(text: 'Email'),
+
+                SizedBox(height: 8.h),
 
                 SizedBox(height: 8.h),
 
@@ -208,16 +193,7 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(height: 20.h),
 
                 // Phone Number Label
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'phone Number',
-                    style: AppTextStyle.h5.copyWith(
-                      color: AppColors.primarytext,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
+                TextLabel(text: 'Phone Number'),
 
                 SizedBox(height: 8.h),
 
@@ -228,16 +204,7 @@ class _EditProfileState extends State<EditProfile> {
                   keyboardType: TextInputType.phone,
                 ),
                 SizedBox(height: 20.h),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Date of Birth ',
-                    style: AppTextStyle.h5.copyWith(
-                      color: AppColors.primarytext,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
+                TextLabel(text: 'Date of Birth'),
 
                 SizedBox(height: 8.h),
 
@@ -254,16 +221,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
 
                 SizedBox(height: 20.h),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Gender',
-                    style: AppTextStyle.h5.copyWith(
-                      color: AppColors.primarytext,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
+                TextLabel(text: 'Gender'),
 
                 SizedBox(height: 8.h),
 

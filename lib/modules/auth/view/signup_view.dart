@@ -9,7 +9,8 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
-import 'package:zenzi/modules/auth/view/log_in_view.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
+import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/auth/view/otp_verification.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
@@ -54,45 +55,21 @@ class SignupView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 41.h),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Name',
-                        style: AppTextStyle.h5.copyWith(
-                          color: AppColors.primarytext,
-                        ),
-                      ),
-                    ),
+                    TextLabel(text: 'Name'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your name',
                       controller: TextEditingController(),
                     ),
                     SizedBox(height: 12.h),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Email',
-                        style: AppTextStyle.h5.copyWith(
-                          color: AppColors.primarytext,
-                        ),
-                      ),
-                    ),
+                    TextLabel(text: 'Email'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your email',
                       controller: TextEditingController(),
                     ),
                     SizedBox(height: 12.h),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Password',
-                        style: AppTextStyle.h5.copyWith(
-                          color: AppColors.primarytext,
-                        ),
-                      ),
-                    ),
+                    TextLabel(text: 'Password'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your password',
@@ -103,15 +80,7 @@ class SignupView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Confirm Password',
-                        style: AppTextStyle.h5.copyWith(
-                          color: AppColors.primarytext,
-                        ),
-                      ),
-                    ),
+                    TextLabel(text: 'Confirm Password'),
                     SizedBox(height: 9.h),
                     AppTextField(
                       hintText: 'Enter your confirm password',
