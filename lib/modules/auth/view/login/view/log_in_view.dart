@@ -16,8 +16,8 @@ import 'package:zenzi/modules/auth/view/forgot_password/view/forgot_password_vie
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/auth/view/signup/view/signup_view.dart';
 
-import '../../../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
-    show CustomButtomNavigationBar;
+// import '../../../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
+//     show CustomButtomNavigationBar;
 
 class LogInView extends StatefulWidget {
   const LogInView({super.key});
@@ -141,11 +141,19 @@ class _LogInViewState extends State<LogInView> {
                             ),
                           ),
                           SizedBox(height: 30.h),
-                          AppButton(
-                            title: 'Log In',
-                            onTap: () {
-                              Get.to((CustomButtomNavigationBar()));
-                            },
+                          Obx(
+                            () => AppButton(
+                              title: 'Log In',
+                              isLoading: _controller.isLoading.value,
+                              onTap: () {
+                                // Get.to((CustomButtomNavigationBar()));
+                                final email = _emailController.text.trim();
+                                final password = _passwordController.text
+                                    .trim();
+
+                                _controller.login(email, password);
+                              },
+                            ),
                           ),
                           SizedBox(height: 20.h),
                           Row(

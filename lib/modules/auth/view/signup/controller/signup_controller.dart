@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/base_url/base_url.dart';
+import 'package:zenzi/core/error/api_exception.dart';
+import 'package:zenzi/core/error/get_response_message.dart';
+import 'package:zenzi/core/services/api_services.dart';
+import 'package:zenzi/core/token/token_storage.dart';
 
 class SignupController extends GetxController {
   RxBool isPasswordObscured = true.obs;
@@ -29,6 +33,7 @@ class SignupController extends GetxController {
   }
 
   RxBool isLoading = false.obs;
+  ApiServices apiServices = ApiServices();
 
   Future<void> signUp(
     String name,
@@ -51,32 +56,30 @@ class SignupController extends GetxController {
       return;
     }
 
-    try {
-      isLoading.value = true;
-      final response = await dio.post(
-        "${BaseUrl.baseUrl}/api/v1/accounts/register/",
+    if (password.length < 8) {
+      Get.snackbar('Error', 'Password must be at least 8 characters long');
+      return;
+    }
 
+    try {
+      final response = await apiServices.post(
+        '${BaseUrl.baseUrl}/api/v1/accounts/register/',
         data: {
-          "name": name,
-          "email": email,
-          "password": password,
-          "confirm_password": confirmPassword,
+          'name': name,
+          'email': email,
+          'password': password,
+          'confirm_password': confirmPassword,
         },
       );
+      final body = response.data;
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar('Success', 'Account created successfully');
-        // Navigate to OTP verification or login page
-      } else {
-        Get.snackbar('Error', 'Registration failed');
-      }
-    } on DioException catch (e) {
-      Get.snackbar(
-        'Error',
-        'error: ${e.response?.data['error'] ?? 'Unknown error'}',
-      );
-    } catch (_) {
-      Get.snackbar('Error', 'Unexpected error occurred during sign up');
+      final userEmail = body['data']['email'];
+
+      await TokenStorage.saveUserEmail(userEmail.toString());
+      final message = GetResponseMessage().getResponseMessage(body);
+      Get.snackbar('Success', message);
+    } on ApiException catch (e) {
+      Get.snackbar('Error', e.message);
     } finally {
       isLoading.value = false;
     }
