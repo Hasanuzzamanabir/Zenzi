@@ -21,7 +21,7 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
       final response = await apiServices.post(
-        '/accounts/login/',
+        '/api/v1/accounts/login/',
         requireAuth: false,
         data: {'email': email, 'password': password},
       );
