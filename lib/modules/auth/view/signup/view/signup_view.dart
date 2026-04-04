@@ -13,6 +13,7 @@ import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
+import 'package:zenzi/modules/auth/view/otp/view/otp_verification.dart';
 import 'package:zenzi/modules/auth/view/signup/controller/signup_controller.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
@@ -191,7 +192,7 @@ class _SignupViewState extends State<SignupView> {
                             backgroundColor: isChecked
                                 ? AppColors.primarycolor
                                 : AppColors.buttoncolor,
-                            onTap: () {
+                            onTap: () async {
                               if (!isChecked) return;
                               //Get.to(const OtpVerification(isSigning: true));
                               final name = _nameController.text.trim();
@@ -205,12 +206,17 @@ class _SignupViewState extends State<SignupView> {
                                 'Name: $name, Email: $email, Password: $password, Confirm Password: $confirmPassword',
                               );
 
-                              _controller.signUp(
+                              final result = await _controller.signUp(
                                 name,
                                 email,
                                 password,
                                 confirmPassword,
                               );
+                              if (result == true) {
+                                Get.to(
+                                  () => const OtpVerification(isSigning: true),
+                                );
+                              }
                             },
                           ),
                         ),
@@ -259,7 +265,7 @@ class _SignupViewState extends State<SignupView> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Get.to(LogInView());
+                                Get.to(() => const LogInView());
                               },
                           ),
                         ],

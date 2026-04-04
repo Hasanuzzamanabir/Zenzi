@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:zenzi/core/error/api_exception.dart';
+import 'package:zenzi/core/network/error/api_exception.dart';
 
 class ApiErrorHandle {
   static ApiException handleError(dynamic error) {

@@ -130,7 +130,7 @@ class _LogInViewState extends State<LogInView> {
                             alignment: Alignment.centerRight,
                             child: InkWell(
                               onTap: () {
-                                Get.to(ForgotPasswordView());
+                                Get.to(() => const ForgotPasswordView());
                               },
                               child: Text(
                                 'Forgot password?',
@@ -200,7 +200,7 @@ class _LogInViewState extends State<LogInView> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      Get.to(SignupView());
+                                      Get.to(() => const SignupView());
                                     },
                                 ),
                               ],

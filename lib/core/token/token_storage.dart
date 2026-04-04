@@ -58,4 +58,16 @@ class TokenStorage {
       return null;
     }
   }
+
+  static Future<bool> clearTokens() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_accessToken);
+      await prefs.remove(_refreshToken);
+      await prefs.remove(_userEmail);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

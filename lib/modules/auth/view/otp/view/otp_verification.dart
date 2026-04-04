@@ -6,8 +6,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
-import 'package:zenzi/modules/auth/view/acoount_cogratulations_Page.dart';
-import 'package:zenzi/modules/auth/view/new%20password/view/new_password.dart';
+import 'package:zenzi/modules/auth/view/otp/controller/otp_verification_controller.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
 enum Otpsource { signing, forgetpassword }
@@ -29,6 +28,18 @@ class OtpVerification extends StatefulWidget {
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
+  final TextEditingController otpController = TextEditingController();
+
+  final OtpVerificationController controller = Get.put(
+    OtpVerificationController(),
+  );
+
+  @override
+  void dispose() {
+    otpController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +93,7 @@ class _OtpVerificationState extends State<OtpVerification> {
 
                   /// 🔢 OTP Input
                   Pinput(
+                    controller: otpController,
                     length: 5,
                     showCursor: true,
                     defaultPinTheme: PinTheme(
@@ -103,33 +115,56 @@ class _OtpVerificationState extends State<OtpVerification> {
                   SizedBox(height: 16.h),
 
                   /// 🔁 Resend OTP
-                  RichText(
-                    text: TextSpan(
-                      text: "OTP not Received ?",
-                      style: AppTextStyle.h3,
-                      children: [
-                        TextSpan(
-                          text: ' Resend OTP',
-                          style: AppTextStyle.bodyMedium.copyWith(
-                            color: AppColors.primarycolor,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("OTP not Received ?  ", style: AppTextStyle.h3),
+                      Obx(
+                        () => GestureDetector(
+                          onTap: () {
+                            controller.resendOtp();
+                          },
+                          child: controller.isOtpLoading.value
+                              ? SizedBox(
+                                  height: 20.h,
+                                  width: 20.w,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primarycolor,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : Text(
+                                  "Resend OTP",
+                                  style: AppTextStyle.h3.copyWith(
+                                    color: AppColors.primarycolor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
 
                   SizedBox(height: 24.h),
 
                   /// ✅ Verify Button (UP POSITION)
-                  AppButton(
-                    title: 'Verify',
-                    onTap: () {
-                      if (widget.isSigning) {
-                        Get.to(const AcoountCogratulationsPage());
-                      } else {
-                        Get.to(const NewPasswordView());
-                      }
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: otpController,
+                    builder: (context, value, child) {
+                      final isOtpComplete = value.text.trim().length == 5;
+
+                      return AppButton(
+                        title: 'Verify',
+                        // isLoading: controller.isLoading.value,
+                        isEnabled: isOtpComplete,
+                        backgroundColor: isOtpComplete
+                            ? AppColors.primarycolor
+                            : AppColors.buttoncolor,
+                        textColor: isOtpComplete
+                            ? AppColors.primarytext
+                            : AppColors.secondarytext,
+                        onTap: () {},
+                      );
                     },
                   ),
 

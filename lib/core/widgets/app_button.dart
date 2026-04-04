@@ -15,6 +15,7 @@ class AppButton extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final bool isLoading;
+  final bool isEnabled;
 
   const AppButton({
     super.key,
@@ -27,34 +28,41 @@ class AppButton extends StatelessWidget {
     this.leading,
     this.trailing,
     this.isLoading = false,
+    this.isEnabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isButtonEnabled = isEnabled && !isLoading;
+    final buttonColor = backgroundColor ?? AppColors.primarycolor;
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: isButtonEnabled ? onTap : null,
       child: Container(
         width: width ?? double.infinity,
         height: height ?? 46.h, // figma height
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 11.h),
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColors.primarycolor,
+          color: buttonColor,
           borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primarycolor.withOpacity(0.5),
-              offset: const Offset(0, 2),
-              blurRadius: 13.7,
-            ),
-          ],
+          boxShadow: isButtonEnabled
+              ? [
+                  BoxShadow(
+                    color: buttonColor.withOpacity(0.5),
+                    offset: const Offset(0, 2),
+                    blurRadius: 13.7,
+                  ),
+                ]
+              : [],
         ),
         child: isLoading
             ? SizedBox(
-                height: 24.h,
-                width: 24.h,
+                height: 10.h,
+                width: 10.w,
                 child: Center(
                   child: CircularProgressIndicator(
                     color: AppColors.secondarycolor,
+                    strokeWidth: 2.5,
                   ),
                 ),
               )

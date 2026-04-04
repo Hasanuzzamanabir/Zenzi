@@ -2,9 +2,8 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:zenzi/core/base_url/base_url.dart';
-import 'package:zenzi/core/error/get_response_message.dart';
-import 'package:zenzi/core/services/api_services.dart';
+import 'package:zenzi/core/network/error/get_response_message.dart';
+import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/token/token_storage.dart';
 
 class LoginController extends GetxController {
@@ -22,7 +21,8 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
       final response = await apiServices.post(
-        '${BaseUrl.baseUrl}/api/v1/accounts/login/',
+        '/accounts/login/',
+        requireAuth: false,
         data: {'email': email, 'password': password},
       );
 
@@ -40,6 +40,9 @@ class LoginController extends GetxController {
 
       final message = GetResponseMessage().getResponseMessage(body);
       Get.snackbar('Success', message);
+    } on DioException catch (e) {
+      log('Login Error: $e');
+      Get.snackbar('Error', 'Login failed.');
     } catch (e) {
       log('Login Error: $e');
       Get.snackbar('Error', 'Login failed.');
