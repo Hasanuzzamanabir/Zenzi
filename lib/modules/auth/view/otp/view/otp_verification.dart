@@ -6,6 +6,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
+import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/auth/view/otp/controller/otp_verification_controller.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
@@ -122,6 +123,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                       Obx(
                         () => GestureDetector(
                           onTap: () {
+                            otpController.clear();
                             controller.resendOtp();
                           },
                           child: controller.isOtpLoading.value
@@ -153,17 +155,29 @@ class _OtpVerificationState extends State<OtpVerification> {
                     builder: (context, value, child) {
                       final isOtpComplete = value.text.trim().length == 5;
 
-                      return AppButton(
-                        title: 'Verify',
-                        // isLoading: controller.isLoading.value,
-                        isEnabled: isOtpComplete,
-                        backgroundColor: isOtpComplete
-                            ? AppColors.primarycolor
-                            : AppColors.buttoncolor,
-                        textColor: isOtpComplete
-                            ? AppColors.primarytext
-                            : AppColors.secondarytext,
-                        onTap: () {},
+                      return Obx(
+                        () => AppButton(
+                          title: 'Verify',
+                          isLoading: controller.isLoading.value,
+                          isEnabled: isOtpComplete,
+                          backgroundColor: isOtpComplete
+                              ? AppColors.primarycolor
+                              : AppColors.buttoncolor,
+                          textColor: isOtpComplete
+                              ? AppColors.primarytext
+                              : AppColors.secondarytext,
+                          onTap: () async {
+                            if (!isOtpComplete) return;
+
+                            final result = await controller.verifyOtp(
+                              otpController.text.trim(),
+                            );
+
+                            if (result) {
+                              Get.off(() => LogInView());
+                            }
+                          },
+                        ),
                       );
                     },
                   ),

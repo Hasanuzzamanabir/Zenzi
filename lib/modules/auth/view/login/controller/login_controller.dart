@@ -17,7 +17,7 @@ class LoginController extends GetxController {
   RxBool isLoading = false.obs;
   ApiServices apiServices = ApiServices();
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       isLoading.value = true;
       final response = await apiServices.post(
@@ -40,12 +40,15 @@ class LoginController extends GetxController {
 
       final message = GetResponseMessage().getResponseMessage(body);
       Get.snackbar('Success', message);
+      return true;
     } on DioException catch (e) {
       log('Login Error: $e');
       Get.snackbar('Error', 'Login failed.');
+      return false;
     } catch (e) {
       log('Login Error: $e');
       Get.snackbar('Error', 'Login failed.');
+      return false;
     } finally {
       isLoading.value = false;
     }
