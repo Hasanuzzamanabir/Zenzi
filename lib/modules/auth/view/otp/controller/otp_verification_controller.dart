@@ -28,6 +28,12 @@ class OtpVerificationController extends GetxController {
         data: {'email': userEmail, 'otp_code': otp},
       );
       final body = response.data;
+
+      await TokenStorage.savePasswordResetData(
+        response.data['data']['uid'],
+        response.data['data']['token'],
+      );
+
       log(body.toString());
       final message = GetResponseMessage().getResponseMessage(body);
       Get.snackbar('Success', message);

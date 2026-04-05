@@ -25,6 +25,7 @@ class _NewPasswordViewState extends State<NewPasswordView> {
   @override
   void initState() {
     _controller = NewPasswordController();
+    _controller.resetVisibility();
     super.initState();
   }
 
@@ -49,66 +50,82 @@ class _NewPasswordViewState extends State<NewPasswordView> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              //mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 52.h),
-                Text('New Password', style: AppTextStyle.h2),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 52.h),
+                  Text('New Password', style: AppTextStyle.h2),
 
-                SizedBox(height: 10.h),
-                TextLabel(text: 'Create New Password'),
-                SizedBox(height: 9.h),
-                Obx(
-                  () => AppTextField(
-                    hintText: 'Enter your email',
-                    controller: _passwordController,
-                    isPassword: _controller.isPasswordVisible.value,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _controller.togglePasswordVisibility();
-                      },
-                      icon: Icon(
-                        _controller.isPasswordVisible.value
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
+                  SizedBox(height: 10.h),
+                  TextLabel(text: 'Create New Password'),
+                  SizedBox(height: 9.h),
+                  Obx(
+                    () => AppTextField(
+                      hintText: 'Enter your email',
+                      controller: _passwordController,
+                      isPassword: _controller.isPasswordVisible.value,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _controller.togglePasswordVisibility();
+                        },
+                        icon: Icon(
+                          _controller.isPasswordVisible.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                        color: AppColors.textfieldiconcolor,
                       ),
-                      color: AppColors.textfieldiconcolor,
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                TextLabel(text: 'Re-Type Password'),
-                SizedBox(height: 9.h),
-                Obx(
-                  () => AppTextField(
-                    hintText: 'Enter your email',
-                    controller: _confirmPasswordController,
-                    isPassword: _controller.isConfirmPasswordVisible.value,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _controller.toggleConfirmPasswordVisibility();
-                      },
-                      icon: Icon(
-                        _controller.isConfirmPasswordVisible.value
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
+                  SizedBox(height: 20.h),
+                  TextLabel(text: 'Re-Type Password'),
+                  SizedBox(height: 9.h),
+                  Obx(
+                    () => AppTextField(
+                      hintText: 'Enter your email',
+                      controller: _confirmPasswordController,
+                      isPassword: _controller.isConfirmPasswordVisible.value,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _controller.toggleConfirmPasswordVisibility();
+                        },
+                        icon: Icon(
+                          _controller.isConfirmPasswordVisible.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                        color: AppColors.textfieldiconcolor,
                       ),
-                      color: AppColors.textfieldiconcolor,
                     ),
                   ),
-                ),
-                SizedBox(height: 30.h),
-                AppButton(
-                  title: 'Save',
-                  onTap: () {
-                    Get.to(const LogInView());
-                  },
-                ),
-              ],
+                  SizedBox(height: 30.h),
+                  Obx(
+                    () => AppButton(
+                      title: 'Save',
+                      isLoading: _controller.isResetLoading.value,
+                      onTap: () async {
+                        final newPassword = _passwordController.text.trim();
+                        final confirmPassword = _confirmPasswordController.text
+                            .trim();
+
+                        final success = await _controller.resetPassword(
+                          newPassword,
+                          confirmPassword,
+                        );
+
+                        if (success) {
+                          Get.to(() => const LogInView());
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
