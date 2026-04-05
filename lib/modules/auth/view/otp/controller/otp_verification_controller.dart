@@ -29,10 +29,12 @@ class OtpVerificationController extends GetxController {
       );
       final body = response.data;
 
-      await TokenStorage.savePasswordResetData(
-        response.data['data']['uid'],
-        response.data['data']['token'],
-      );
+      if (isForgotPassword) {
+        await TokenStorage.savePasswordResetData(
+          body['data']['uid'],
+          body['data']['token'],
+        );
+      }
 
       log(body.toString());
       final message = GetResponseMessage().getResponseMessage(body);
