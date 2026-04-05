@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/state_manager.dart';
 import 'package:zenzi/core/network/error/get_response_message.dart';
@@ -9,22 +11,29 @@ class OtpVerificationController extends GetxController {
 
   //Otp Verification
   RxBool isLoading = false.obs;
-  Future<bool> verifyOtp(String otp) async {
+  Future<bool> verifyOtp(
+    String otp, {
+    bool isForgotPassword = false,
+    String? email,
+  }) async {
     try {
       isLoading.value = true;
-      final userEmail = await TokenStorage.getUserEmail();
+      final userEmail = email ?? await TokenStorage.getUserEmail();
+      final endpoint = isForgotPassword
+          ? '/api/v1/accounts/verify-password-otp/'
+          : '/api/v1/accounts/verify-registration-otp/';
       final response = await apiServices.post(
-        '/api/v1/accounts/verify-registration-otp/',
+        endpoint,
         requireAuth: false,
         data: {'email': userEmail, 'otp_code': otp},
       );
       final body = response.data;
-      print(body);
+      log(body.toString());
       final message = GetResponseMessage().getResponseMessage(body);
       Get.snackbar('Success', message);
       return true;
     } catch (e) {
-      print('Error verifying OTP: $e');
+      log('Error verifying OTP: $e');
       Get.snackbar('Error', 'Failed to verify OTP. Please try again.');
       return false;
     } finally {
@@ -35,21 +44,25 @@ class OtpVerificationController extends GetxController {
   //Resend OTP
   RxBool isOtpLoading = false.obs;
 
-  Future<void> resendOtp() async {
+  Future<void> resendOtp({bool isForgotPassword = false, String? email}) async {
     try {
-      final userEmail = await TokenStorage.getUserEmail();
       isOtpLoading.value = true;
+      final userEmail = email ?? await TokenStorage.getUserEmail();
+
       final response = await apiServices.post(
         '/api/v1/accounts/resend-otp/',
         requireAuth: false,
-        data: {'email': userEmail, 'purpose': "REGISTRATION"},
+        data: {
+          'email': userEmail,
+          'purpose': isForgotPassword ? 'PASSWORD_RESET' : 'REGISTRATION',
+        },
       );
       final body = response.data;
       final message = GetResponseMessage().getResponseMessage(body);
       Get.snackbar('Success', message);
-      print(body);
+      log(body.toString());
     } catch (e) {
-      print('Error resending OTP: $e');
+      log('Error resending OTP: $e');
     } finally {
       isOtpLoading.value = false;
     }

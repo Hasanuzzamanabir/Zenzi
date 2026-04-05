@@ -214,7 +214,10 @@ class _SignupViewState extends State<SignupView> {
                               );
                               if (result == true) {
                                 Get.to(
-                                  () => const OtpVerification(isSigning: true),
+                                  () => OtpVerification(
+                                    email: email,
+                                    source: Otpsource.signin,
+                                  ),
                                 );
                               }
                             },

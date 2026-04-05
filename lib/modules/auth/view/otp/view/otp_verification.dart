@@ -7,22 +7,17 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
+import 'package:zenzi/modules/auth/view/new%20password/view/new_password.dart';
 import 'package:zenzi/modules/auth/view/otp/controller/otp_verification_controller.dart';
 //import 'package:zenzi/modules/auth/view/view/view/acoount_cogratulations_Page.dart';
 
-enum Otpsource { signing, forgetpassword }
+enum Otpsource { signin, forgetpassword }
 
 class OtpVerification extends StatefulWidget {
-  const OtpVerification({
-    super.key,
-    this.email,
-    this.source,
-    this.isSigning = true,
-  });
+  const OtpVerification({super.key, this.email, this.source});
 
   final String? email;
   final Otpsource? source;
-  final bool isSigning;
 
   @override
   State<OtpVerification> createState() => _OtpVerificationState();
@@ -124,7 +119,11 @@ class _OtpVerificationState extends State<OtpVerification> {
                         () => GestureDetector(
                           onTap: () {
                             otpController.clear();
-                            controller.resendOtp();
+                            controller.resendOtp(
+                              isForgotPassword:
+                                  widget.source == Otpsource.forgetpassword,
+                              email: widget.email?.trim(),
+                            );
                           },
                           child: controller.isOtpLoading.value
                               ? SizedBox(
@@ -171,10 +170,17 @@ class _OtpVerificationState extends State<OtpVerification> {
 
                             final result = await controller.verifyOtp(
                               otpController.text.trim(),
+                              isForgotPassword:
+                                  widget.source == Otpsource.forgetpassword,
+                              email: widget.email?.trim(),
                             );
 
                             if (result) {
-                              Get.off(() => LogInView());
+                              if (widget.source == Otpsource.forgetpassword) {
+                                Get.off(() => const NewPasswordView());
+                              } else {
+                                Get.off(() => LogInView());
+                              }
                             }
                           },
                         ),

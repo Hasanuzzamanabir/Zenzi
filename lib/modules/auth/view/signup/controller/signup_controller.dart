@@ -40,8 +40,6 @@ class SignupController extends GetxController {
     String password,
     String confirmPassword,
   ) async {
-    isLoading.value = true;
-
     if (name.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
@@ -61,6 +59,7 @@ class SignupController extends GetxController {
     }
 
     try {
+      isLoading.value = true;
       final response = await apiServices.post(
         '/api/v1/accounts/register/',
         requireAuth: false,
@@ -73,7 +72,7 @@ class SignupController extends GetxController {
       );
       final body = response.data;
 
-      final userEmail = body['data']['email'];
+      final userEmail = body['data']?['email'] ?? email;
 
       await TokenStorage.saveUserEmail(userEmail.toString());
       final message = GetResponseMessage().getResponseMessage(body);

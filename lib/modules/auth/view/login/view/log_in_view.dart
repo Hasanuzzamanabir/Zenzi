@@ -36,6 +36,8 @@ class _LogInViewState extends State<LogInView> {
   void initState() {
     super.initState();
     _controller = Get.put(LoginController());
+
+    _controller.resetPasswordVisibility();
   }
 
   @override

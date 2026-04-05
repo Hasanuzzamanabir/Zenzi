@@ -11,6 +11,10 @@ class LoginController extends GetxController {
   RxBool isObscure = true.obs;
   late final Dio dio = Dio();
 
+  void resetPasswordVisibility() {
+    isObscure.value = true;
+  }
+
   void togglePasswordVisibility() {
     isObscure.value = !isObscure.value;
   }
@@ -57,6 +61,7 @@ class LoginController extends GetxController {
 
   Future<void> logout() async {
     try {
+      resetPasswordVisibility();
       await TokenStorage.clearTokens();
       Get.off(() => const LogInView());
       Get.snackbar('Success', 'Logged out successfully.');

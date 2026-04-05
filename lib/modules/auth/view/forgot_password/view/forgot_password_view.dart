@@ -7,6 +7,7 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
+import 'package:zenzi/modules/auth/view/forgot_password/controller/forgot_password_controller.dart';
 import 'package:zenzi/modules/auth/view/otp/view/otp_verification.dart';
 
 class ForgotPasswordView extends StatefulWidget {
@@ -18,6 +19,8 @@ class ForgotPasswordView extends StatefulWidget {
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final TextEditingController _emailController = TextEditingController();
+
+  final ForgotPasswordController controller = ForgotPasswordController();
 
   @override
   void dispose() {
@@ -61,11 +64,26 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       controller: _emailController,
                     ),
                     SizedBox(height: 30.h),
-                    AppButton(
-                      title: 'Send',
-                      onTap: () {
-                        Get.to(const OtpVerification(isSigning: false));
-                      },
+                    Obx(
+                      () => AppButton(
+                        title: 'Send',
+                        isLoading: controller.isLoading.value,
+                        onTap: () async {
+                          final result = await controller
+                              .sendResetPasswordEmail(
+                                _emailController.text.trim(),
+                              );
+
+                          if (result) {
+                            Get.to(
+                              () => OtpVerification(
+                                email: _emailController.text.trim(),
+                                source: Otpsource.forgetpassword,
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
                     SizedBox(height: 30.h),
                     GestureDetector(
