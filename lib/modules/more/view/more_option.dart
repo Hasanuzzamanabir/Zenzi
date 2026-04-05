@@ -3,19 +3,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
 import 'package:zenzi/modules/more/widget/seeting_item.dart';
 import 'package:zenzi/modules/subscription/view/premium_subscription.dart';
 import 'package:zenzi/routes/app_routes.dart';
 
-class MoreOption extends StatelessWidget {
+class MoreOption extends StatefulWidget {
   const MoreOption({super.key});
+
+  @override
+  State<MoreOption> createState() => _MoreOptionState();
+}
+
+class _MoreOptionState extends State<MoreOption> {
+  final LoginController loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -642,7 +651,42 @@ class MoreOption extends StatelessWidget {
                         title: 'Log Out',
                         isLogout: true,
                         onTap: () {
-                          Get.offAllNamed(AppRoute.loginView);
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor: AppColors.coreprimarydark,
+                                title: Text(
+                                  'Confirm Logout',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to log out?',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Get.back(),
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: AppColors.boxbreathingcolor2,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      loginController.logout();
+                                    },
+                                    child: Text(
+                                      'Log Out',
+                                      style: TextStyle(color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                         isLast: true,
                       ),

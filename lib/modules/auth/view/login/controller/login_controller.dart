@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/network/error/get_response_message.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/token/token_storage.dart';
+import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 
 class LoginController extends GetxController {
-  RxBool isObscure = false.obs;
+  RxBool isObscure = true.obs;
   late final Dio dio = Dio();
 
   void togglePasswordVisibility() {
@@ -51,6 +52,17 @@ class LoginController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await TokenStorage.clearTokens();
+      Get.off(() => const LogInView());
+      Get.snackbar('Success', 'Logged out successfully.');
+    } catch (e) {
+      log('Logout Error: $e');
+      Get.snackbar('Error', 'Logout failed.');
     }
   }
 }
