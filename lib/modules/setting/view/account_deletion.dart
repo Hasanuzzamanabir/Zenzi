@@ -7,7 +7,9 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/setting/controller/account_deleted_controller.dart';
 
 class AccountDeletion extends StatelessWidget {
   const AccountDeletion({super.key});
@@ -15,6 +17,7 @@ class AccountDeletion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final passwordController = TextEditingController();
+    final accountDeletedController = Get.put(AccountDeletedController());
 
     return ThemedScaffold(
       body: SafeArea(
@@ -52,22 +55,27 @@ class AccountDeletion extends StatelessWidget {
               SizedBox(height: 32.h),
 
               // Enter Password Label
-              Text(
-                'Enter Password',
-                style: AppTextStyle.h5.copyWith(
-                  color: AppColors.primarytext,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
+              TextLabel(text: "Enter Password"),
               SizedBox(height: 12.h),
 
               // Password Field
-              AppTextField(
-                hintText: '**********',
-                controller: passwordController,
-                isPassword: true,
+              Obx(
+                () => AppTextField(
+                  hintText: 'Enter your password',
+                  controller: passwordController,
+                  isPassword: accountDeletedController.isPassword.value,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      accountDeletedController.isPassword.value
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: AppColors.primarydarker,
+                    ),
+                    onPressed: () {
+                      accountDeletedController.passwordVisibility();
+                    },
+                  ),
+                ),
               ),
 
               SizedBox(height: 12.h),
@@ -100,12 +108,18 @@ class AccountDeletion extends StatelessWidget {
               SizedBox(height: 40.h),
 
               // Delete Button (Red)
-              AppButton(
-                title: 'Delete',
-                backgroundColor: Color(0xFFFF4757),
-                onTap: () {
-                  _showDeleteConfirmationDialog(context);
-                },
+              Obx(
+                () => AppButton(
+                  title: 'Delete',
+                  isLoading: accountDeletedController.isLoading.value,
+                  backgroundColor: Color(0xFFFF4757),
+                  onTap: () {
+                    // _showDeleteConfirmationDialog(context);
+                    accountDeletedController.deleteAccount(
+                      passwordController.text.trim(),
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -168,7 +182,7 @@ class AccountDeletion extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         // Handle actual deletion
-                        Get.back();
+                        // accountDeletedController.deleteAccount(password)
                         // Add deletion logic here
                       },
                       child: Container(
