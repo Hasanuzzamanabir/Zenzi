@@ -15,120 +15,114 @@ class JustBreathePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final JustBreatheController controller = Get.put(JustBreatheController());
 
-    // Dynamic color based on time (6 PM to 6 AM)
-    // final now = DateTime.now();
-    // final bool isNight = now.hour >= 18 || now.hour < 6;
-    // final Color brownColor = isNight
-    //     ? const Color(0xFF1D1249)
-    //     : AppColors.coreprimarydark;
+    // Computed once at build time (controller not registered yet on this screen)
+    final Color bgColor = brownColor;
 
-    return Obx(
-      () => Scaffold(
-        backgroundColor: brownColor,
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              ScreenUtil.init(
-                context,
-                designSize: Size(375, 812),
-                minTextAdapt: true,
-              );
-              final double screenW = constraints.maxWidth;
-              // final double screenH = constraints.maxHeight;
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            ScreenUtil.init(
+              context,
+              designSize: Size(375, 812),
+              minTextAdapt: true,
+            );
+            final double screenW = constraints.maxWidth;
+            // final double screenH = constraints.maxHeight;
 
-              // Animation area
-              final double animSize = screenW * 0.74;
-              final double animTop = 128.h;
-              final double animRectRadius = 36.r;
-              //final Color rectColor = AppColors.coreprimarydark.withOpacity(0.92);
+            // Animation area
+            final double animSize = screenW * 0.74;
+            final double animTop = 128.h;
+            final double animRectRadius = 36.r;
+            //final Color rectColor = AppColors.coreprimarydark.withOpacity(0.92);
 
-              // Text
-              final double textLeft = 28.w;
-              final double textTop = 32.h;
-              final double textSpacing = 10.h;
+            // Text
+            final double textLeft = 28.w;
+            final double textTop = 32.h;
+            final double textSpacing = 10.h;
 
-              // Slider
-              final double sliderBottom = 32.h;
-              final double sliderHorizontal = 18.w;
+            // Slider
+            final double sliderBottom = 32.h;
+            final double sliderHorizontal = 18.w;
 
-              return Center(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    // Centered rounded rectangle with animation
-                    Positioned(
-                      top: animTop,
-                      left: (screenW - animSize) / 2,
-                      child: Container(
-                        width: animSize,
-                        height: animSize,
-                        decoration: BoxDecoration(
-                          //color: rectColor,
-                          borderRadius: BorderRadius.circular(animRectRadius),
-                        ),
-                        child: AnimatedBuilder(
-                          animation: controller.animationController,
-                          builder: (context, child) {
-                            return CustomPaint(
-                              painter: JustBreathePainter(
-                                animationValue:
-                                    controller.animationController.value,
-                                dotColor: Colors.white,
-                                dotRadius: (animSize * 0.010).clamp(7.0, 13.0),
-                                strokeWidth: 2.2.w,
-                              ),
-                            );
-                          },
-                        ),
+            return Center(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  // Centered rounded rectangle with animation
+                  Positioned(
+                    top: animTop,
+                    left: (screenW - animSize) / 2,
+                    child: Container(
+                      width: animSize,
+                      height: animSize,
+                      decoration: BoxDecoration(
+                        //color: rectColor,
+                        borderRadius: BorderRadius.circular(animRectRadius),
                       ),
-                    ),
-                    // Text section
-                    Positioned(
-                      left: textLeft,
-                      top: animTop + animSize + textTop + 80.h,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Zenzi wellness",
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.92),
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.8,
+                      child: AnimatedBuilder(
+                        animation: controller.animationController,
+                        builder: (context, child) {
+                          return CustomPaint(
+                            painter: JustBreathePainter(
+                              animationValue:
+                                  controller.animationController.value,
+                              dotColor: Colors.white,
+                              dotRadius: (animSize * 0.010).clamp(7.0, 13.0),
+                              strokeWidth: 2.2.w,
                             ),
-                          ),
-                          SizedBox(height: textSpacing),
-                          Text(
-                            "Just breathe",
-                            style: TextStyle(
-                              color: AppColors.primarytext,
-                              fontSize: 48.sp,
-                              fontWeight: FontWeight.w400,
-                              height: 1.13,
-                              //letterSpacing: -0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Slider at bottom right (50% width)
-                    Positioned(
-                      right: sliderHorizontal,
-                      bottom: sliderBottom,
-                      width: screenW * 0.59,
-                      child: SlideActionBtn(
-                        onSubmit: () {
-                          // Get.to(const LogInView());
-                          Get.offAll(() => const LogInView());
+                          );
                         },
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                  // Text section
+                  Positioned(
+                    left: textLeft,
+                    top: animTop + animSize + textTop + 80.h,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Zenzi wellness",
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.92),
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                        SizedBox(height: textSpacing),
+                        Text(
+                          "Just breathe",
+                          style: TextStyle(
+                            color: AppColors.primarytext,
+                            fontSize: 48.sp,
+                            fontWeight: FontWeight.w400,
+                            height: 1.13,
+                            //letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Slider at bottom right (50% width)
+                  Positioned(
+                    right: sliderHorizontal,
+                    bottom: sliderBottom,
+                    width: screenW * 0.59,
+                    child: SlideActionBtn(
+                      onSubmit: () {
+                        // Get.to(const LogInView());
+                        Get.offAll(() => const LogInView());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

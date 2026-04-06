@@ -8,26 +8,26 @@ import 'package:zenzi/core/network/error/get_response_message.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 
 class ThirdPageController extends GetxController {
-   var isLoading = false.obs;
-   final ApiServices apiServices = ApiServices();
+  var isLoading = false.obs;
+  final ApiServices apiServices = ApiServices();
 
-Future<bool> completeOnboarding() async{
-  try {
-    isLoading.value = true;
-    final response = await apiServices.post('/api/v1/profiles/onboarding/complete/',
-    requireAuth: true,
-    );
-    final body = response.data;
-    log('Onboarding complete response: $body');
-    final message = GetResponseMessage().getResponseMessage(body);
-    Get.snackbar('Success', message);
-    return true;
-  } catch (e) {
-    log('Error: $e');
-    return false;
-  } finally {
-    isLoading.value = false;
+  Future<bool> completeOnboarding() async {
+    try {
+      isLoading.value = true;
+      final response = await apiServices.post(
+        '/api/v1/profiles/onboarding/complete/',
+        requireAuth: true,
+      );
+      final body = response.data;
+      log('Onboarding complete response: $body');
+      final message = GetResponseMessage().getResponseMessage(body);
+      Get.snackbar('Success', message);
+      return true;
+    } catch (e) {
+      log('Error: $e');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
   }
-
-}
 }

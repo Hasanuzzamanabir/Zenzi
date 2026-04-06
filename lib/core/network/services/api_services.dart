@@ -20,4 +20,18 @@ class ApiServices {
       throw Exception(e.toString());
     }
   }
+
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    bool requireAuth = true,
+  }) async {
+    try {
+      return await dio(requireAuth).get(path, queryParameters: queryParameters);
+    } on DioException catch (e) {
+      throw ApiErrorHandle.handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
