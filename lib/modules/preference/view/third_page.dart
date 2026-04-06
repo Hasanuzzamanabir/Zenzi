@@ -4,9 +4,11 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/modules/bottom_navigation_bar/view/custom_buttom_navigation_bar.dart';
 import 'package:zenzi/modules/preference/controller/continue_button_controller.dart';
 import 'package:zenzi/modules/preference/controller/progress_indicator_controller.dart';
+import 'package:zenzi/modules/preference/controller/third_page_controller.dart';
 import 'package:zenzi/modules/preference/controller/time_slot_controller.dart';
 import 'package:zenzi/modules/preference/controller/topic_selection_controller.dart';
 
@@ -15,6 +17,7 @@ class ThirdPage extends StatelessWidget {
   final progressController = Get.find<ProgressIndicatorController>();
   final timeSlotController = Get.put(TimeSlotController());
   final buttonController = Get.find<ContinueButtonController>();
+  final thirdPageController = Get.put(ThirdPageController());
 
   ThirdPage({super.key});
   static const List<String> images = [
@@ -214,43 +217,55 @@ class ThirdPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 18.h),
-                  Obx(
-                    () => GestureDetector(
-                      onTap: buttonController.isEnabled
-                          ? () {
-                              progressController.nextStep();
-                              Get.to(() => CustomButtomNavigationBar());
-                            }
-                          : null,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color: buttonController.isEnabled
-                              ? AppColors.primarycolor
-                              : Colors.grey,
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Start My Journey",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Icon(Icons.arrow_forward, color: Colors.white),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Obx(
+                  //   () => GestureDetector(
+                  //     onTap: buttonController.isEnabled
+                  //         ? () {
+                  //             progressController.nextStep();
+                  //             Get.to(() => CustomButtomNavigationBar());
+                  //           }
+                  //         : null,
+                  //     child: Container(
+                  //       width: double.infinity,
+                  //       padding: EdgeInsets.symmetric(vertical: 14.h),
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(8.r),
+                  //         color: buttonController.isEnabled
+                  //             ? AppColors.primarycolor
+                  //             : Colors.grey,
+                  //       ),
+                  //       child: Center(
+                  //         child: Row(
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           children: [
+                  //             Text(
+                  //               "Start My Journey",
+                  //               style: TextStyle(
+                  //                 color: Colors.white,
+                  //                 fontSize: 18.sp,
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
+                  //             ),
+                  //             SizedBox(width: 8.w),
+                  //             Icon(Icons.arrow_forward, color: Colors.white),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+
+                  Obx(()=> AppButton(
+                    isLoading: thirdPageController.isLoading.value,
+                    title: 'Start My journey', 
+                    onTap: () async{
+                     final result = await thirdPageController.completeOnboarding();
+                    if(result){
+                      progressController.nextStep();
+                      Get.to(() => CustomButtomNavigationBar());
+                    }
+                  })),
+
                   SizedBox(height: 24.h),
                 ],
               ),
