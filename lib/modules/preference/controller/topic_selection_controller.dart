@@ -46,24 +46,14 @@ class TopicSelectionController extends GetxController {
 
       log('Step-1 response: ${response.data}');
 
-      final message =
-          GetResponseMessage().getResponseMessage(response.data) ??
-          'Preferences saved!';
+      final message = GetResponseMessage().getResponseMessage(response.data);
 
-      Get.snackbar(
-        'Success',
-        message,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Success', message);
 
       return true;
     } on ApiException catch (e) {
       log('ApiException saving preferences: ${e.message} (${e.statusCode})');
-      Get.snackbar(
-        'Error',
-        e.message,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', e.message);
       return false;
     } catch (e) {
       log('Unexpected error saving preferences: $e');
