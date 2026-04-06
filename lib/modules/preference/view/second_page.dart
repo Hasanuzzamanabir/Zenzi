@@ -73,8 +73,7 @@ class SecondPage extends StatelessWidget {
           children: [
             Text(
               'Stay on Track',
-              style: TextStyle(
-                color: AppColors.primarytext,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w700,
               ),
