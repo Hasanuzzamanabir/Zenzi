@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -8,6 +10,7 @@ import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/preference/controller/continue_button_controller.dart';
 import 'package:zenzi/modules/preference/controller/progress_indicator_controller.dart';
 import 'package:zenzi/modules/preference/controller/topic_selection_controller.dart';
+import 'package:zenzi/modules/preference/model/preference_step_one_model.dart';
 import 'package:zenzi/modules/preference/view/second_page.dart';
 
 class PreferencePage extends StatelessWidget {
@@ -17,24 +20,42 @@ class PreferencePage extends StatelessWidget {
 
   PreferencePage({super.key});
 
-  static const List<String> images = [
-    AppAssets.rStress,
-    AppAssets.iFocus,
-    AppAssets.rAnxiety,
-    AppAssets.happiness,
-    AppAssets.pGrowth,
-    AppAssets.bSleep,
-    AppAssets.eHealing,
-  ];
-
-  static List<double> heights = [
-    220.h,
-    180.h,
-    220.h,
-    180.h,
-    180.h,
-    220.h,
-    220.h,
+  static List<PreferenceStepOneModel> images = [
+    PreferenceStepOneModel(
+      id: 1,
+      image: AppAssets.rStress,
+      topicCode: 'Reduce Stress',
+    ),
+    PreferenceStepOneModel(
+      id: 2,
+      image: AppAssets.iFocus,
+      topicCode: 'Improve Focus',
+    ),
+    PreferenceStepOneModel(
+      id: 3,
+      image: AppAssets.rAnxiety,
+      topicCode: 'Increase Happiness',
+    ),
+    PreferenceStepOneModel(
+      id: 4,
+      image: AppAssets.happiness,
+      topicCode: 'Reduce Anxiety',
+    ),
+    PreferenceStepOneModel(
+      id: 5,
+      image: AppAssets.pGrowth,
+      topicCode: 'Better Sleep',
+    ),
+    PreferenceStepOneModel(
+      id: 6,
+      image: AppAssets.bSleep,
+      topicCode: 'Personal Growth',
+    ),
+    PreferenceStepOneModel(
+      id: 7,
+      image: AppAssets.eHealing,
+      topicCode: 'Emotional Healing',
+    ),
   ];
 
   @override
@@ -147,13 +168,18 @@ class PreferencePage extends StatelessWidget {
                               .contains(index);
 
                           return GestureDetector(
-                            onTap: () => controller.toggleSelection(index),
+                            onTap: () {
+                              log(
+                                'Tapped on index: ${images[index].topicCode}, $index',
+                              );
+                              controller.toggleSelection(index);
+                            },
                             child: Stack(
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
                                   child: Image.asset(
-                                    images[index],
+                                    images[index].image,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -190,10 +216,17 @@ class PreferencePage extends StatelessWidget {
 
                     Obx(
                       () => GestureDetector(
-                        onTap: buttonController.isEnabled
-                            ? () {
-                                progressController.nextStep();
-                                Get.to(() => SecondPage());
+                        onTap:
+                            buttonController.isEnabled &&
+                                !controller.isSubmitting.value
+                            ? () async {
+                                final saved = await controller.selectedTopics(
+                                  images,
+                                );
+                                if (saved) {
+                                  progressController.nextStep();
+                                  Get.to(() => SecondPage());
+                                }
                               }
                             : null,
                         child: Container(
@@ -201,26 +234,40 @@ class PreferencePage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: 14.h),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.r),
-                            color: buttonController.isEnabled
+                            color:
+                                buttonController.isEnabled &&
+                                    !controller.isSubmitting.value
                                 ? AppColors.primarycolor
                                 : Colors.grey,
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Continue",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
+                            child: controller.isSubmitting.value
+                                ? SizedBox(
+                                    width: 24.w,
+                                    height: 24.h,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Continue',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      const Icon(
+                                        Icons.arrow_forward,
+                                        color: Colors.white,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Icon(Icons.arrow_forward, color: Colors.white),
-                              ],
-                            ),
                           ),
                         ),
                       ),

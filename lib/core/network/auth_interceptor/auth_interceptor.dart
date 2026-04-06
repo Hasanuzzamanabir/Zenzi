@@ -1,27 +1,40 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/token/token_storage.dart';
 
-class AuthInterceptor extends Interceptor {
+class AuthInterceptor extends QueuedInterceptor {
   final Dio dio;
 
   AuthInterceptor(this.dio);
 
   @override
-  void onRequest(
+  Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     final accessToken = await TokenStorage.getAccessToken();
+    log(
+      'onRequest: Retrieved access token from storage: ${accessToken ?? "NULL"} for path: ${options.path}',
+    );
 
     if (accessToken != null && accessToken.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $accessToken';
+      log('onRequest: Bearer token attached');
+    } else {
+      log(
+        'WARNING: Access token is null or empty for request to ${options.path}',
+      );
     }
     return handler.next(options);
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401) {
       final refreshed = await refreshToken();
       if (refreshed) {

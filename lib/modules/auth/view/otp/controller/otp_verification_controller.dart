@@ -34,6 +34,35 @@ class OtpVerificationController extends GetxController {
           body['data']['uid'],
           body['data']['token'],
         );
+      } else {
+        // Save auth tokens from registration verification
+        try {
+          log('OTP response body: $body');
+          final responseData = body['data'];
+          log('OTP response data: $responseData');
+
+          final accessToken = responseData?['access'];
+          final refreshToken = responseData?['refresh'];
+
+          log('Access token from response: $accessToken');
+          log('Refresh token from response: $refreshToken');
+
+          if (accessToken != null) {
+            final saved = await TokenStorage.saveAccessToken(
+              accessToken.toString(),
+            );
+            log('Access token saved: $saved');
+          }
+          if (refreshToken != null) {
+            final saved = await TokenStorage.saveRefreshToken(
+              refreshToken.toString(),
+            );
+            log('Refresh token saved: $saved');
+          }
+          log('Tokens processing complete');
+        } catch (e) {
+          log('Warning: Could not save tokens from OTP response: $e');
+        }
       }
 
       log(body.toString());
