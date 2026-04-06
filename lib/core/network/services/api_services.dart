@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:zenzi/core/network/dio_client/dio_client.dart';
 import 'package:zenzi/core/network/error/api_error_handle.dart';
@@ -33,5 +35,13 @@ class ApiServices {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  //Multipart File
+  Future<MultipartFile> multipartFile(File file) async {
+    return await MultipartFile.fromFile(
+      file.path,
+      filename: file.path.split('/').last,
+    );
   }
 }
