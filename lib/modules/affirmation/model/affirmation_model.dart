@@ -1,0 +1,68 @@
+// class AffirmationModel {
+//   final int? id;
+//   final String? text;
+//   final String? authorOrSource;
+//   final int? category; 
+//   final String? audioFile;
+//   final bool? isFavorited;
+//   final String? shareText; 
+
+//   AffirmationModel({
+//     this.id,
+//     this.text,
+//     this.authorOrSource,
+//     this.category,
+//     this.audioFile,
+//     this.isFavorited,
+//     this.shareText,
+//   });
+
+//   factory AffirmationModel.fromJson(Map<String, dynamic> json) {
+//     return AffirmationModel(
+//       id: json['id'],
+//       text: json['text'],
+//       authorOrSource: json['author_or_source'],
+//       category: json['category'], 
+//       audioFile: json['audio_file'],
+//       isFavorited: json['is_favorited'],
+//       shareText: json['share_text'], 
+//     );
+//   }
+// }
+
+class AffirmationModel {
+  final int? id;
+  final String? text;
+  final String? authorOrSource;
+  final int? category; 
+  final String? audioFile;
+  bool? isFavorited;
+  final String? shareText; 
+
+  AffirmationModel({
+    this.id,
+    this.text,
+    this.authorOrSource,
+    this.category,
+    this.audioFile,
+    this.isFavorited,
+    this.shareText,
+  });
+
+  String get categoryName => "Strength"; 
+
+  factory AffirmationModel.fromJson(Map<String, dynamic> json) {
+    final dynamic rawId = json['id'];
+    // ডাটা কী নামে আসছে তা নিশ্চিত করার জন্য:
+    return AffirmationModel(
+      id: rawId is int ? rawId : int.tryParse(rawId?.toString() ?? ''),
+      // যদি 'text' নামে না থাকে, তবে json['affirmation'] বা json['content'] ট্রাই করবে
+      text: json['text'] ?? json['affirmation'] ?? json['content'] ?? "No Text Found",
+      authorOrSource: json['author_or_source'],
+      category: json['category'], 
+      audioFile: json['audio_file'],
+      isFavorited: json['is_favorited'] ?? false,
+      shareText: json['share_text'], 
+    );
+  }
+}

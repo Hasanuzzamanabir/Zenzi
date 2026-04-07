@@ -31,7 +31,7 @@ import 'package:zenzi/modules/preference/view/option_page.dart';
 import 'package:zenzi/modules/preference/view/preference_page.dart';
 import 'package:zenzi/modules/setting/view/account_deletion.dart';
 import 'package:zenzi/modules/setting/view/account_setting.dart';
-import 'package:zenzi/modules/setting/view/edit_profile.dart';
+import 'package:zenzi/modules/profile/view/edit_profile.dart';
 import 'package:zenzi/modules/setting/view/notification.dart';
 import 'package:zenzi/modules/setting/view/set_time.dart';
 import 'package:zenzi/modules/setting/view/update_password.dart';

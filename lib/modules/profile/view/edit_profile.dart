@@ -12,9 +12,12 @@ import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/profile/controller/edit_profile_controller.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  final EditProfileController controller = Get.put(EditProfileController());
+   EditProfile({super.key});
+
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -181,7 +184,6 @@ class _EditProfileState extends State<EditProfile> {
 
                 SizedBox(height: 8.h),
 
-                SizedBox(height: 8.h),
 
                 // Email Field
                 AppTextField(
@@ -293,11 +295,26 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(height: 40.h),
 
                 // Save Button
-                AppButton(
-                  title: 'Edit',
-                  onTap: () {
-                    // Handle save profile
-                  },
+                Obx(()=>widget.controller.isLoading.value ? Center(child: CircularProgressIndicator()) :
+                   AppButton(
+                    title: 'Edit',
+                    onTap: () {
+                      if(pickedImage == null){
+                        Get.snackbar("Error", "Please select an image");
+                        return;
+                      }
+                      widget.controller.fetchProfile(
+                        fullNameController.text,
+                        emailController.text,
+                        phoneController.text,
+                        dateController.text,
+                        selectedGender,
+                        // pickedImage != null ? File(pickedImage!.path) : File(''),
+                      File(pickedImage!.path),
+                      );
+                      // Handle save profile
+                    },
+                  ),
                 ),
 
                 SizedBox(height: 24.h),

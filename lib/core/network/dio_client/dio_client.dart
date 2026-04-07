@@ -19,6 +19,15 @@ class DioClient {
       );
 
       _dio!.interceptors.add(AuthInterceptor(_dio!));
+      _dio!.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          error: true,
+          requestHeader: true,
+          responseHeader: false,
+        ),
+      );
     }
     return _dio!;
   }
