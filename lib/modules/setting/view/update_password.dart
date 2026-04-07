@@ -5,17 +5,42 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
+import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/setting/controller/update_password_controller.dart';
 
-class UpdatePassword extends StatelessWidget {
+class UpdatePassword extends StatefulWidget {
   const UpdatePassword({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final currentPasswordController = TextEditingController();
-    final newPasswordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
+  State<UpdatePassword> createState() => _UpdatePasswordState();
+}
 
+class _UpdatePasswordState extends State<UpdatePassword> {
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  final UpdatePasswordController updatePasswordController = Get.put(
+    UpdatePasswordController(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    updatePasswordController.resetVisibility();
+  }
+
+  @override
+  void dispose() {
+    currentPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -66,71 +91,106 @@ class UpdatePassword extends StatelessWidget {
                 SizedBox(height: 32.h),
 
                 // Current Password Label
-                Text(
-                  'Current Password',
-                  style: AppTextStyle.h5.copyWith(
-                    color: AppColors.primarytext,
-                    fontSize: 14.sp,
-                  ),
-                ),
-
+                TextLabel(text: 'Current Password'),
                 SizedBox(height: 8.h),
 
                 // Current Password Field
-                AppTextField(
-                  hintText: '************',
-                  controller: currentPasswordController,
-                  isPassword: true,
+                Obx(
+                  () => AppTextField(
+                    hintText: '************',
+                    controller: currentPasswordController,
+                    isPassword: updatePasswordController.currentPassword.value,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        updatePasswordController.currentPassword.value
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.primarycolor,
+                      ),
+                      onPressed: () {
+                        updatePasswordController.toggleCurrentPassword();
+                      },
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: 20.h),
 
                 // New Password Label
-                Text(
-                  'New password',
-                  style: AppTextStyle.h5.copyWith(
-                    color: AppColors.primarytext,
-                    fontSize: 14.sp,
-                  ),
-                ),
+                TextLabel(text: 'New Password'),
 
                 SizedBox(height: 8.h),
 
                 // New Password Field
-                AppTextField(
-                  hintText: '',
-                  controller: newPasswordController,
-                  isPassword: true,
+                Obx(
+                  () => AppTextField(
+                    hintText: '************',
+                    controller: newPasswordController,
+                    isPassword: updatePasswordController.newPassword.value,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        updatePasswordController.newPassword.value
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.primarycolor,
+                      ),
+                      onPressed: () {
+                        updatePasswordController.toggleNewPassword();
+                      },
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: 20.h),
 
                 // Confirm New Password Label
-                Text(
-                  'Confirm New Password',
-                  style: AppTextStyle.h5.copyWith(
-                    color: AppColors.primarytext,
-                    fontSize: 14.sp,
-                  ),
-                ),
+                TextLabel(text: 'Confirm New Password'),
 
                 SizedBox(height: 8.h),
 
                 // Confirm New Password Field
-                AppTextField(
-                  hintText: '',
-                  controller: confirmPasswordController,
-                  isPassword: true,
+                Obx(
+                  () => AppTextField(
+                    hintText: '************',
+                    controller: confirmPasswordController,
+                    isPassword: updatePasswordController.confirmPassword.value,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        updatePasswordController.confirmPassword.value
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.primarycolor,
+                      ),
+                      onPressed: () {
+                        updatePasswordController.toggleConfirmPassword();
+                      },
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: 40.h),
 
                 // Save Button
-                AppButton(
-                  title: 'Save',
-                  onTap: () {
-                    // Handle password update
-                  },
+                Obx(
+                  () => AppButton(
+                    title: 'Save',
+                    isLoading: updatePasswordController.isLoading.value,
+                    onTap: () async {
+                      final result = await updatePasswordController
+                          .updatePassword(
+                            currentPasswordController.text,
+                            newPasswordController.text,
+                            confirmPasswordController.text,
+                          );
+                      if (result) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                        currentPasswordController.clear();
+                        newPasswordController.clear();
+                        confirmPasswordController.clear();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
