@@ -37,6 +37,20 @@ class ApiServices {
     }
   }
 
+  Future<Response> patch(
+    String path, {
+    dynamic data,
+    bool requireAuth = true,
+  }) async {
+    try {
+      return await dio(requireAuth).patch(path, data: data);
+    } on DioException catch (e) {
+      throw ApiErrorHandle.handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //Multipart File
   Future<MultipartFile> multipartFile(File file) async {
     return await MultipartFile.fromFile(

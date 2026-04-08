@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/reaction_widget.dart';
 import 'package:zenzi/modules/home/controller/mood_controller.dart';
+import 'package:zenzi/modules/setting/controller/edit_profile_controller.dart';
 import 'package:zenzi/modules/setting/view/edit_profile.dart';
 import 'package:zenzi/routes/app_routes.dart';
 import 'package:zenzi/modules/notification/view/notification_view.dart';
@@ -22,6 +24,26 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   DateTime? lastPressedTime;
+  final EditProfileController _editProfileController = Get.put(
+    EditProfileController(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _editProfileController.fetchProfile();
+  }
+
+  String? _resolveAvatarUrl(String? rawUrl) {
+    if (rawUrl == null || rawUrl.trim().isEmpty) return null;
+
+    final trimmed = rawUrl.trim();
+    final uri = Uri.tryParse(trimmed);
+    if (uri != null && uri.hasScheme) return trimmed;
+
+    final normalizedPath = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+    return '${BaseUrl.baseUrl}$normalizedPath';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,16 +115,34 @@ class _HomeViewState extends State<HomeView> {
                           },
                           child: _iconBox('assets/icons/home/notification.png'),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const EditProfile(),
-                              ),
-                            );
-                          },
-                          child: _iconBox('assets/image/home/profile.png'),
-                        ),
+                        Obx(() {
+                          final profile = _editProfileController.profile.value;
+                          final avatarUrl = _resolveAvatarUrl(
+                            profile?.avatarUrl,
+                          );
+
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const EditProfile(),
+                                ),
+                              );
+                              if (!mounted) return;
+                              await _editProfileController.fetchProfile();
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor: AppColors.backgroundcolor,
+                              backgroundImage: avatarUrl != null
+                                  ? NetworkImage(avatarUrl)
+                                  : const AssetImage(
+                                          'assets/image/home/profile.png',
+                                        )
+                                        as ImageProvider,
+                            ),
+                          );
+                        }),
                       ],
                     ),
 

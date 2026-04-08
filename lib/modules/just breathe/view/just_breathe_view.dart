@@ -8,13 +8,24 @@ import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/just%20breathe/controller/just_breathe_controller.dart';
 import '../painters/just_breathe_painter.dart';
 
-class JustBreathePageView extends StatelessWidget {
+class JustBreathePageView extends StatefulWidget {
   const JustBreathePageView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final JustBreatheController controller = Get.put(JustBreatheController());
+  State<JustBreathePageView> createState() => _JustBreathePageViewState();
+}
 
+class _JustBreathePageViewState extends State<JustBreathePageView> {
+  final JustBreatheController controller = Get.put(JustBreatheController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.checkLoginStatus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Computed once at build time (controller not registered yet on this screen)
     final Color bgColor = brownColor;
 

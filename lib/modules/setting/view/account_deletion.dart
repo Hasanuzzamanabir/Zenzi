@@ -128,87 +128,87 @@ class AccountDeletion extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    Get.dialog(
-      Dialog(
-        backgroundColor: AppColors.skysunrise,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          side: BorderSide(color: AppColors.secondarycolor, width: 2),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Are You Sure?',
-                style: AppTextStyle.h2.copyWith(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                'Account will be Deleted Permanently',
-                style: AppTextStyle.h5.copyWith(fontSize: 14.sp, height: 1.5),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 24.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD2E8FA),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyle.bodyMedium.copyWith(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        // Handle actual deletion
-                        // accountDeletedController.deleteAccount(password)
-                        // Add deletion logic here
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFB3748),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Text(
-                          'Delete',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyle.bodyMedium.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierColor: Colors.black.withOpacity(0.5),
-    );
-  }
+  //   void _showDeleteConfirmationDialog(BuildContext context) {
+  //     Get.dialog(
+  //       Dialog(
+  //         backgroundColor: AppColors.skysunrise,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16.r),
+  //           side: BorderSide(color: AppColors.secondarycolor, width: 2),
+  //         ),
+  //         child: Padding(
+  //           padding: EdgeInsets.all(24.w),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 'Are You Sure?',
+  //                 style: AppTextStyle.h2.copyWith(
+  //                   fontSize: 20.sp,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //               SizedBox(height: 16.h),
+  //               Text(
+  //                 'Account will be Deleted Permanently',
+  //                 style: AppTextStyle.h5.copyWith(fontSize: 14.sp, height: 1.5),
+  //                 textAlign: TextAlign.center,
+  //               ),
+  //               SizedBox(height: 24.h),
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: GestureDetector(
+  //                       onTap: () => Get.back(),
+  //                       child: Container(
+  //                         padding: EdgeInsets.symmetric(vertical: 12.h),
+  //                         decoration: BoxDecoration(
+  //                           color: Color(0xFFD2E8FA),
+  //                           borderRadius: BorderRadius.circular(8.r),
+  //                         ),
+  //                         child: Text(
+  //                           'Cancel',
+  //                           textAlign: TextAlign.center,
+  //                           style: AppTextStyle.bodyMedium.copyWith(
+  //                             color: Colors.black87,
+  //                             fontWeight: FontWeight.w600,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   SizedBox(width: 12.w),
+  //                   Expanded(
+  //                     child: GestureDetector(
+  //                       onTap: () {
+  //                         // Handle actual deletion
+  //                         // accountDeletedController.deleteAccount(password)
+  //                         // Add deletion logic here
+  //                       },
+  //                       child: Container(
+  //                         padding: EdgeInsets.symmetric(vertical: 12.h),
+  //                         decoration: BoxDecoration(
+  //                           color: Color(0xFFFB3748),
+  //                           borderRadius: BorderRadius.circular(8.r),
+  //                         ),
+  //                         child: Text(
+  //                           'Delete',
+  //                           textAlign: TextAlign.center,
+  //                           style: AppTextStyle.bodyMedium.copyWith(
+  //                             color: Colors.white,
+  //                             fontWeight: FontWeight.w600,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       barrierColor: Colors.black.withOpacity(0.5),
+  //     );
+  //   }
 }

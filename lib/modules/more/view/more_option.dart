@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
@@ -13,6 +15,7 @@ import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
 import 'package:zenzi/modules/more/widget/seeting_item.dart';
+import 'package:zenzi/modules/setting/controller/edit_profile_controller.dart';
 import 'package:zenzi/modules/subscription/view/premium_subscription.dart';
 import 'package:zenzi/routes/app_routes.dart';
 
@@ -25,6 +28,25 @@ class MoreOption extends StatefulWidget {
 
 class _MoreOptionState extends State<MoreOption> {
   final LoginController loginController = Get.put(LoginController());
+
+  final EditProfileController editProfileController = Get.put(
+    EditProfileController(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    editProfileController.fetchProfile();
+  }
+
+  String? resolveAvatarUrl(String? url) {
+    if (url == null || url.trim().isEmpty) return null;
+
+    final uri = Uri.tryParse(url);
+    return (uri != null && uri.hasScheme)
+        ? url
+        : '${BaseUrl.baseUrl}/${url.replaceFirst(RegExp(r'^/+'), '')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,58 +75,64 @@ class _MoreOptionState extends State<MoreOption> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 30.r,
-                            backgroundColor: Colors.white,
-                            child: Image.asset(
-                              AppAssets.profile,
-                              width: 50.w,
-                              height: 50.h,
+                      Obx(() {
+                        final profile = editProfileController.profile.value;
+                        final avatarUrl = resolveAvatarUrl(profile?.avatarUrl);
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 30.r,
+                              backgroundColor: Colors.white,
+                              backgroundImage: avatarUrl != null
+                                  ? NetworkImage(avatarUrl)
+                                  : AssetImage(AppAssets.profile)
+                                        as ImageProvider,
                             ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Good Morning',
-                                  style: TextStyle(
-                                    color: AppColors.primarytext,
-                                    fontSize: 20.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w300,
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Good Morning',
+                                    style: TextStyle(
+                                      color: AppColors.primarytext,
+                                      fontSize: 20.sp,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w300,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 3.h),
-                                Text(
-                                  'Steven Smith',
-                                  style: TextStyle(
-                                    color: AppColors.primarytext,
-                                    fontSize: 24.sp,
-                                    fontWeight: FontWeight.w700,
+                                  SizedBox(height: 3.h),
+                                  Text(
+                                    (profile?.name.trim().isNotEmpty ?? false)
+                                        ? profile!.name
+                                        : 'Zenzi User',
+                                    style: TextStyle(
+                                      color: AppColors.primarytext,
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                              color: AppColors.backgroundcolor,
-                              borderRadius: BorderRadius.circular(8.r),
+                            Container(
+                              padding: EdgeInsets.all(10.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.backgroundcolor,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                Icons.notifications_none,
+                                color: Colors.white,
+                                size: 20.sp,
+                              ),
                             ),
-                            child: Icon(
-                              Icons.notifications_none,
-                              color: Colors.white,
-                              size: 20.sp,
-                            ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        );
+                      }),
                       SizedBox(height: 12.h),
                       Text(
                         'No matter how long the night, the\ndawn will break',

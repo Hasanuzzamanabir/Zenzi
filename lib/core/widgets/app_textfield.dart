@@ -13,6 +13,8 @@ class AppTextField extends StatelessWidget {
   final dynamic prefixIcon;
   final bool readOnly;
   final VoidCallback? onTap;
+  final Color? textColor;
+  final Color? fillColor;
 
   const AppTextField({
     super.key,
@@ -24,6 +26,8 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.readOnly = false,
     this.onTap,
+    this.textColor,
+    this.fillColor,
   });
 
   @override
@@ -37,7 +41,10 @@ class AppTextField extends StatelessWidget {
         keyboardType: keyboardType,
         readOnly: readOnly,
         onTap: onTap,
-        style: TextStyle(color: AppColors.darktext, fontSize: 14.sp),
+        style: TextStyle(
+          color: textColor ?? AppColors.darktext,
+          fontSize: 14.sp,
+        ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
@@ -45,7 +52,7 @@ class AppTextField extends StatelessWidget {
             fontSize: 14.sp,
           ),
           filled: true,
-          fillColor: AppColors.secondarycolor,
+          fillColor: fillColor ?? AppColors.secondarycolor,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 14.h,
