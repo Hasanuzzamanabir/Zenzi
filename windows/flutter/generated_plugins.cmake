@@ -7,7 +7,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_auth
   firebase_core
+  flutter_tts
   permission_handler_windows
+  share_plus
   url_launcher_windows
   video_player_win
 )

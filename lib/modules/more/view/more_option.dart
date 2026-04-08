@@ -56,7 +56,6 @@ class _MoreOptionState extends State<MoreOption> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              
                 // Settings Section
                 Container(
                   width: double.maxFinite,
