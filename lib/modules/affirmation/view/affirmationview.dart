@@ -23,6 +23,12 @@ class AffirmationView extends StatelessWidget {
     );
 
     return ThemedScaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text("Affirmations", style: AppTextStyle.h2),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.primarytext),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -65,20 +71,6 @@ class AffirmationView extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: AppColors.whitelite,
-                      ),
-                      onPressed: () => Get.back(),
-                    ),
-                    Text('Affirmation', style: AppTextStyle.h9),
-                  ],
-                ),
 
                 SizedBox(height: 16.h),
 
@@ -252,7 +244,14 @@ class AffirmationView extends StatelessWidget {
                     SizedBox(width: 16.w),
                     Expanded(
                       child: _buildBtn(
-                        onTap: () {},
+                        onTap: isSkeleton
+                            ? () {}
+                            : () {
+                                controller.shareAffirmation(
+                                  currentItem.text ?? '',
+                                  currentItem.authorOrSource,
+                                );
+                              },
                         icon: Icons.share_outlined,
                         label: 'Share',
                       ),

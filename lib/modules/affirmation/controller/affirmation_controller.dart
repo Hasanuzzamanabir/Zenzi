@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/modules/affirmation/model/affirmation_model.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -25,6 +26,162 @@ class AffirmationController extends GetxController {
   final FlutterTts flutterTts = FlutterTts();
   final RxBool isSpeaking = false.obs;
   final RxBool isTtsAvailable = true.obs;
+
+  Future<void> _fallbackCopyForShare(
+    String shareText, {
+    String? message,
+  }) async {
+    await Clipboard.setData(ClipboardData(text: shareText));
+    Get.snackbar(
+      'Share',
+      message ?? 'Text copied to clipboard.',
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+  Future<void> _launchOrCopy({
+    required Uri uri,
+    required String shareText,
+    required String failureMessage,
+  }) async {
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        await _fallbackCopyForShare(shareText, message: failureMessage);
+      }
+    } catch (e) {
+      log('Share launch error: $e');
+      await _fallbackCopyForShare(shareText, message: failureMessage);
+    }
+  }
+
+  Future<void> _openMessenger(String shareText) async {
+    final messengerAppUri = Uri.parse(
+      'fb-messenger://share?text=${Uri.encodeComponent(shareText)}',
+    );
+
+    try {
+      final launched = await launchUrl(
+        messengerAppUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (launched) return;
+    } catch (_) {
+      // Fall through to web fallback below.
+    }
+
+    final messengerWebUri = Uri.https('www.messenger.com', '/');
+    await _launchOrCopy(
+      uri: messengerWebUri,
+      shareText: shareText,
+      failureMessage: 'Messenger unavailable. Text copied to clipboard.',
+    );
+  }
+
+  Future<void> _showShareOptions(String shareText) async {
+    await Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 42,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: const Icon(Icons.chat),
+                title: const Text('WhatsApp'),
+                onTap: () async {
+                  Get.back();
+                  final uri = Uri.https('wa.me', '/', {'text': shareText});
+                  await _launchOrCopy(
+                    uri: uri,
+                    shareText: shareText,
+                    failureMessage:
+                        'WhatsApp unavailable. Text copied to clipboard.',
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.message),
+                title: const Text('Messenger'),
+                onTap: () async {
+                  Get.back();
+                  await _openMessenger(shareText);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.facebook),
+                title: const Text('Facebook'),
+                onTap: () async {
+                  Get.back();
+                  final uri = Uri.https(
+                    'www.facebook.com',
+                    '/sharer/sharer.php',
+                    {'quote': shareText, 'u': 'https://zenzi.app'},
+                  );
+                  await _launchOrCopy(
+                    uri: uri,
+                    shareText: shareText,
+                    failureMessage:
+                        'Facebook unavailable. Text copied to clipboard.',
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.email_outlined),
+                title: const Text('Email'),
+                onTap: () async {
+                  Get.back();
+                  final uri = Uri(
+                    scheme: 'mailto',
+                    queryParameters: {
+                      'subject': 'Daily Affirmation',
+                      'body': shareText,
+                    },
+                  );
+                  await _launchOrCopy(
+                    uri: uri,
+                    shareText: shareText,
+                    failureMessage:
+                        'Email app unavailable. Text copied to clipboard.',
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: const Text('Copy'),
+                onTap: () async {
+                  Get.back();
+                  await _fallbackCopyForShare(
+                    shareText,
+                    message: 'Text copied to clipboard.',
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: false,
+    );
+  }
 
   Future<bool> _runTtsCall(
     String methodName,
@@ -243,5 +400,20 @@ class AffirmationController extends GetxController {
     if (currentIndex.value > 0) {
       currentIndex.value--;
     }
+  }
+
+  //share Option
+  Future<void> shareAffirmation(String text, String? author) async {
+    if (text.trim().isEmpty) return;
+
+    final shareText =
+        ''' 
+    "$text"
+
+    ${author ?? "Unknown Author"}
+
+    ''';
+
+    await _showShareOptions(shareText.trim());
   }
 }

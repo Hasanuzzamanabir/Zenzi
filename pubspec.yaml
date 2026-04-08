@@ -67,6 +67,7 @@ dependencies:
   video_player_win: ^2.3.0
   dio: ^5.9.2
   flutter_tts: ^4.2.5
+  share_plus: ^12.0.2
 
 
 dev_dependencies:
