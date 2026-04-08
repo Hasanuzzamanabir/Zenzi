@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/widgets/theme_change.dart';
-import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
 import 'package:zenzi/modules/just%20breathe/controller/just_breathe_controller.dart';
 import '../painters/just_breathe_painter.dart';
 
@@ -17,12 +16,6 @@ class JustBreathePageView extends StatefulWidget {
 
 class _JustBreathePageViewState extends State<JustBreathePageView> {
   final JustBreatheController controller = Get.put(JustBreatheController());
-
-  @override
-  void initState() {
-    super.initState();
-    controller.checkLoginStatus();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +118,7 @@ class _JustBreathePageViewState extends State<JustBreathePageView> {
                     width: screenW * 0.59,
                     child: SlideActionBtn(
                       onSubmit: () {
-                        // Get.to(const LogInView());
-                        Get.offAll(() => const LogInView());
+                        controller.checkLoginStatus();
                       },
                     ),
                   ),
@@ -286,7 +278,7 @@ class _SlideActionBtnState extends State<SlideActionBtn> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
+                            color: Colors.black.withValues(alpha: 0.15),
                             blurRadius: 4,
                             offset: Offset(0, 2),
                           ),

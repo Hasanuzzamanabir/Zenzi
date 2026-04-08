@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -146,12 +147,26 @@ class _EditProfileState extends State<EditProfile> {
 
   XFile? pickedImage;
   final ImagePicker _picker = ImagePicker();
+  bool _isPickingImage = false;
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
+    if (_isPickingImage) return;
+
+    _isPickingImage = true;
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (!mounted || image == null) return;
+
       setState(() {
         pickedImage = image;
       });
+    } on PlatformException catch (e) {
+      if (e.code != 'already_active' && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to pick image. Please try again.')),
+        );
+      }
+    } finally {
+      _isPickingImage = false;
     }
   }
 
@@ -309,7 +324,9 @@ class _EditProfileState extends State<EditProfile> {
                                     color: Colors.white,
                                     size: 18.sp,
                                   ),
-                                  onPressed: _pickImage,
+                                  onPressed: _isPickingImage
+                                      ? null
+                                      : _pickImage,
                                 ),
                               ),
                             ),
