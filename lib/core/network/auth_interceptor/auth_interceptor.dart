@@ -6,6 +6,7 @@ import 'package:zenzi/core/token/token_storage.dart';
 
 class AuthInterceptor extends QueuedInterceptor {
   final Dio dio;
+  static const String _retryFlag = '_hasRetriedAfterRefresh';
 
   AuthInterceptor(this.dio);
 
@@ -35,13 +36,20 @@ class AuthInterceptor extends QueuedInterceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode == 401) {
+    final request = err.requestOptions;
+    final isUnauthorized = err.response?.statusCode == 401;
+    final isRefreshRequest = request.path.contains(
+      '/api/v1/accounts/token/refresh/',
+    );
+    final hasRetried = request.extra[_retryFlag] == true;
+
+    if (isUnauthorized && !isRefreshRequest && !hasRetried) {
       final refreshed = await refreshToken();
       if (refreshed) {
         try {
-          final request = err.requestOptions;
           final accessToken = await TokenStorage.getAccessToken();
 
+          request.extra[_retryFlag] = true;
           request.headers['Authorization'] = 'Bearer $accessToken';
 
           final response = await dio.fetch(request);
@@ -50,7 +58,7 @@ class AuthInterceptor extends QueuedInterceptor {
           return handler.next(err);
         }
       } else {
-        await TokenStorage.clearTokens();
+        // Keep stored tokens for now; caller can decide logout flow explicitly.
         return handler.next(err);
       }
     }
@@ -71,12 +79,22 @@ class AuthInterceptor extends QueuedInterceptor {
       );
 
       final body = response.data;
-      final newRefreshToken = body['refresh'];
-      final newAccessToken = body['access'];
+      final data = body is Map<String, dynamic>
+          ? (body['data'] is Map<String, dynamic>
+                ? body['data'] as Map<String, dynamic>
+                : body)
+          : <String, dynamic>{};
+
+      final newAccessToken = data['access']?.toString();
+      final newRefreshToken = data['refresh']?.toString();
+
+      if (newAccessToken == null || newAccessToken.isEmpty) {
+        return false;
+      }
 
       await TokenStorage.saveAccessToken(newAccessToken);
 
-      if (newAccessToken != null) {
+      if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
         await TokenStorage.saveRefreshToken(newRefreshToken);
       }
 

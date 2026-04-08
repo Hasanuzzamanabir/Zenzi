@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
+import 'package:zenzi/modules/setting/controller/edit_profile_controller.dart';
 
 class ProfileCard extends StatelessWidget {
   final Color color;
@@ -9,6 +14,19 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(EditProfileController());
+
+    String? resolveAvatarUrl(String? rawUrl) {
+      if (rawUrl == null || rawUrl.trim().isEmpty) return null;
+
+      final trimmed = rawUrl.trim();
+      final uri = Uri.tryParse(trimmed);
+      if (uri != null && uri.hasScheme) return trimmed;
+
+      final normalizedPath = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+      return '${BaseUrl.baseUrl}$normalizedPath';
+    }
+
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -17,19 +35,24 @@ class ProfileCard extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.backgroundbasecolor.withOpacity(0.5),
+          color: AppColors.backgroundbasecolor.withValues(alpha: 0.5),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// Profile Image
-          CircleAvatar(
-            radius: 32.r,
-            backgroundImage: const AssetImage(
-              'assets/images/profile_picture.png',
-            ),
-          ),
+          Obx(() {
+            final profile = controller.profile.value;
+            final avatarUrl = resolveAvatarUrl(profile?.avatarUrl);
+            return CircleAvatar(
+              radius: 32.r,
+              backgroundImage: avatarUrl != null
+                  ? NetworkImage(avatarUrl)
+                  : const AssetImage('assets/image/home/profile.png')
+                        as ImageProvider,
+            );
+          }),
 
           SizedBox(width: 14.w),
 

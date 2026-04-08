@@ -56,7 +56,6 @@ class _MoreOptionState extends State<MoreOption> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              
                 // Settings Section
                 Container(
                   width: double.maxFinite,
@@ -237,27 +236,6 @@ class _MoreOptionState extends State<MoreOption> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildMoodDot(Color color, String day) {
-    return Column(
-      children: [
-        Container(
-          width: 32.w,
-          height: 32.w,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          day,
-          style: TextStyle(
-            color: AppColors.secondarycolor,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
     );
   }
 }

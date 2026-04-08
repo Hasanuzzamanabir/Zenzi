@@ -47,9 +47,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   @override
   Widget build(BuildContext context) {
-      final int currentHour = DateTime.now().hour;
+    final int currentHour = DateTime.now().hour;
     final bool isDay = currentHour >= 6 && currentHour < 18;
     return ThemedScaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -191,7 +196,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       Text(
                         'Get unlimited access to all\nmeditations, sleep stories, and\nexclusive content',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 12.sp,
                           height: 1.4,
                         ),
