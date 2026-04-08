@@ -7,6 +7,7 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/reaction_widget.dart';
 import 'package:zenzi/modules/home/controller/mood_controller.dart';
 import 'package:zenzi/modules/profile/view/edit_profile.dart';
+import 'package:zenzi/modules/profile_details/view/profile_details.dart';
 import 'package:zenzi/routes/app_routes.dart';
 import 'package:zenzi/modules/notification/view/notification_view.dart';
 import 'package:zenzi/core/theme/app_theme.dart';
@@ -97,7 +98,7 @@ class _HomeViewState extends State<HomeView> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>  EditProfile(),
+                                builder: (context) =>  ProfileDetails(),
                               ),
                             );
                           },

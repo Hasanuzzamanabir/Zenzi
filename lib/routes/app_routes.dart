@@ -29,6 +29,7 @@ import 'package:zenzi/modules/notification/view/notification_view.dart';
 import 'package:zenzi/modules/preference/binding/preference_page_bindings.dart';
 import 'package:zenzi/modules/preference/view/option_page.dart';
 import 'package:zenzi/modules/preference/view/preference_page.dart';
+import 'package:zenzi/modules/profile_details/view/profile_details.dart';
 import 'package:zenzi/modules/setting/view/account_deletion.dart';
 import 'package:zenzi/modules/setting/view/account_setting.dart';
 import 'package:zenzi/modules/profile/view/edit_profile.dart';
@@ -103,6 +104,8 @@ class AppRoute {
   static const String preferencePage = '/preferencePage';
   //just breathe page
   static const String justBreathePageView = '/justBreathePageView';
+  //profile details page
+  static const String profileDetails = '/profileDetails';
 
   static String getOtpverificationPage() => otpverificationPage;
   static String getSignupView() => signupView;
@@ -142,7 +145,7 @@ class AppRoute {
   static String getPreferencePage() => preferencePage;
   static String getJustBreathePageView() => justBreathePageView;
   static String getSleepTab() => sleepTab;
-
+  static String getProfileDetails() => profileDetails;
   static List<GetPage> routes = [
     GetPage(name: splashView, page: () => SplashScreen()),
     GetPage(name: otpverificationPage, page: () => OtpVerification()),
@@ -161,6 +164,7 @@ class AppRoute {
       binding: MeditationPageBinding(),
     ),
     GetPage(name: meditationDetails, page: () => MeditationDetails()),
+    GetPage(name: profileDetails, page: () => ProfileDetails()),
     //settings
     GetPage(name: accountSetting, page: () => AccountSetting()),
     GetPage(name: edit, page: () => EditProfile()),
