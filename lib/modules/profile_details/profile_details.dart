@@ -47,6 +47,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   @override
   Widget build(BuildContext context) {
+      final int currentHour = DateTime.now().hour;
+    final bool isDay = currentHour >= 6 && currentHour < 18;
     return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -93,7 +95,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Good Morning',
+                                  isDay ? 'Good Morning' : 'Good Evening',
                                   style: TextStyle(
                                     color: AppColors.primarytext,
                                     fontSize: 20.sp,
