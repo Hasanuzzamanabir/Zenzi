@@ -13,7 +13,7 @@ class MeditationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MeditationController controller = Get.put(MeditationController());
+    final MeditationController controller = Get.find<MeditationController>();
 
     return ThemedScaffold(
       appBar: PreferredSize(
@@ -88,9 +88,7 @@ class MeditationPage extends StatelessWidget {
             SizedBox(height: 20.h),
             CustomTabBarWidget(),
             SizedBox(height: 20.h),
-            Expanded(
-              child: SingleChildScrollView(child: CustomTabBarWidgetView()),
-            ),
+            const Expanded(child: CustomTabBarWidgetView()),
           ],
         ),
       ),

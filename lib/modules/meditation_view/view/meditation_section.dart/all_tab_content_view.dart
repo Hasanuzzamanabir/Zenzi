@@ -15,54 +15,38 @@ class AllTabContentView extends StatelessWidget {
 
     return Obx(() {
       if (controller.isLoading.value && controller.meditationList.isEmpty) {
-        return Padding(
-          padding: EdgeInsets.only(top: 40.h),
-          child: const Center(child: CircularProgressIndicator()),
-        );
+        return const Center(child: CircularProgressIndicator());
       }
 
       final meditations = controller.filteredMeditations;
 
       if (controller.hasError.value && meditations.isEmpty) {
-        return Padding(
-          padding: EdgeInsets.only(top: 40.h),
-          child: const Center(child: Text('Unable to load meditations')),
-        );
+        return const Center(child: Text('Unable to load meditations'));
       }
 
       if (meditations.isEmpty) {
-        return Padding(
-          padding: EdgeInsets.only(top: 40.h),
-          child: const Center(child: Text('No meditations found')),
-        );
+        return const Center(child: Text('No meditations found'));
       }
 
-      return Column(
-        children: [
-          SizedBox(height: 20.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              children: [
-                for (int index = 0; index < meditations.length; index++) ...[
-                  MaditationVideoCardWidget(
-                    title: meditations[index].title,
-                    subtitle: meditations[index].description.isNotEmpty
-                        ? meditations[index].description
-                        : 'Guided meditation',
-                    duration: meditations[index].durationLabel,
-                    imageContent: _fallbackAssetForIndex(index),
-                    onTap: () {
-                      Get.toNamed(AppRoute.getMeditationDetails());
-                    },
-                  ),
-                  if (index != meditations.length - 1) SizedBox(height: 16.h),
-                ],
-                SizedBox(height: 30.h),
-              ],
-            ),
-          ),
-        ],
+      return ListView.separated(
+        padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 30.h),
+        itemCount: meditations.length,
+        separatorBuilder: (_, __) => SizedBox(height: 16.h),
+        itemBuilder: (context, index) {
+          final meditation = meditations[index];
+
+          return MaditationVideoCardWidget(
+            title: meditation.title,
+            subtitle: meditation.description.isNotEmpty
+                ? meditation.description
+                : 'Guided meditation',
+            duration: meditation.durationLabel,
+            imageContent: _fallbackAssetForIndex(index),
+            onTap: () {
+              Get.toNamed(AppRoute.getMeditationDetails());
+            },
+          );
+        },
       );
     });
   }

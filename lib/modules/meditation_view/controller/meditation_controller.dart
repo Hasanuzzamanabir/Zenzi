@@ -11,6 +11,7 @@ class MeditationController extends GetxController {
   final isLoading = false.obs;
   final hasError = false.obs;
   final searchQuery = ''.obs;
+  final selectedCategorySlug = ''.obs;
 
   @override
   void onInit() {
@@ -26,8 +27,16 @@ class MeditationController extends GetxController {
 
       hasError.value = false;
 
+      final Map<String, dynamic> queryParams = {};
+      final String trimmedCategory = selectedCategorySlug.value.trim();
+
+      if (trimmedCategory.isNotEmpty) {
+        queryParams['category__slug'] = trimmedCategory;
+      }
+
       final response = await apiServices.get(
         '/api/v1/content/meditations/',
+        queryParameters: queryParams.isEmpty ? null : queryParams,
         requireAuth: true,
       );
 
@@ -60,6 +69,11 @@ class MeditationController extends GetxController {
 
   void onSearchChanged(String value) {
     searchQuery.value = value;
+  }
+
+  Future<void> applyTabFilter({required String categorySlug}) async {
+    selectedCategorySlug.value = categorySlug;
+    await fetchMeditations(showLoader: true);
   }
 
   List<MeditationsModel> get filteredMeditations {
