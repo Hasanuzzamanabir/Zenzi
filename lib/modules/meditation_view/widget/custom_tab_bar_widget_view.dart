@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/modules/meditation_view/controller/custom_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/meditation_view/view/meditation_section.dart/all_tab_content_view.dart';
+import 'package:zenzi/modules/meditation_view/view/meditation_section.dart/healing_content_view.dart';
+import 'package:zenzi/modules/meditation_view/view/meditation_section.dart/my_favourite_content_view.dart';
 import 'package:zenzi/modules/meditation_view/view/meditation_section.dart/stress_relief_content_view.dart';
 
 class CustomTabBarWidgetView extends StatelessWidget {
@@ -13,10 +15,10 @@ class CustomTabBarWidgetView extends StatelessWidget {
 
     final List<Widget> tabViews = [
       AllTabContentView(),
-      Center(child: Text('Stress Tab Content')),
+      MyFavouriteContentView(),
       StressReliefContentView(),
-      Center(child: Text('Healing Tab Content')),
-      Center(child: Text('Head Tab Content')),
+      HealingContentView(),
+     
     ];
 
     return Obx(() {
