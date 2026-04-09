@@ -20,14 +20,18 @@ class MusicCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final audioController = Get.find<AudioPlayerController>();
+    final audioController = Get.put(AudioPlayerController());
 
     return Column(
       children: [
         GestureDetector(
-          onTap: () {
-            audioController.playMusic(music);
-            Get.to(() => PlayMusic());
+          onTap: () async {
+            FocusManager.instance.primaryFocus?.unfocus();
+
+            final started = await audioController.playMusic(music);
+            if (started) {
+              Get.to(() => PlayMusic());
+            }
           },
           child: ListTile(
             leading: GestureDetector(

@@ -31,15 +31,13 @@ class MyFavTab extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: controller.musicList.length > 2
-                ? 2
-                : controller.musicList.length,
+            itemCount: controller.musicList.length,
             itemBuilder: (context, index) {
               final music = controller.musicList[index];
               return MusicCardWidget(
                 music: music,
                 isFav: true,
-                isDivided: true,
+                isDivided: index != controller.musicList.length - 1,
               );
             },
           ),

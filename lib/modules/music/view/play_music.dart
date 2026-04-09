@@ -32,110 +32,149 @@ class PlayMusic extends StatelessWidget {
                   return const Center(child: Text("No music selected"));
                 }
 
-                return Column(
-                  children: [
-                    /// 🔝 Top bar
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () => Get.back(),
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
                         ),
-                        Row(
-                          children: [
-                            TopActionIcon(icon: Icons.favorite_border),
-                            SizedBox(width: 10.w),
-                            TopActionIcon(icon: Icons.file_download_outlined),
-                          ],
+                        child: IntrinsicHeight(
+                          child: Column(
+                            children: [
+                              /// 🔝 Top bar
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.arrow_back),
+                                    onPressed: () {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                      Get.back();
+                                    },
+                                  ),
+                                  Row(
+                                    children: [
+                                      TopActionIcon(
+                                        icon: Icons.favorite_border,
+                                      ),
+                                      SizedBox(width: 10.w),
+                                      TopActionIcon(
+                                        icon: Icons.file_download_outlined,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+                              const Spacer(),
+
+                              /// 🧠 Title
+                              Text(
+                                music.title,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 34.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                music.subtitle,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 1.5,
+                                  color: const Color(0xFFA0A3B1),
+                                ),
+                              ),
+
+                              SizedBox(height: 90.h),
+
+                              /// 🎛 Controls
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ControlIcon.action(
+                                    onTap: () => audioController.skipBy(-10),
+                                  ),
+                                  SizedBox(width: 24.w),
+                                  PlayPauseButton(),
+                                  SizedBox(width: 24.w),
+                                  ControlIcon.action(
+                                    isForward: true,
+                                    onTap: () => audioController.skipBy(10),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 30.h),
+
+                              /// 🎚 Slider
+                              Slider(
+                                value: audioController.position.value.inSeconds
+                                    .toDouble(),
+                                min: 0,
+                                max:
+                                    audioController.duration.value.inSeconds
+                                            .toDouble() >
+                                        0
+                                    ? audioController.duration.value.inSeconds
+                                          .toDouble()
+                                    : 1.0,
+                                onChanged: (value) {
+                                  audioController.seek(
+                                    Duration(seconds: value.toInt()),
+                                  );
+                                },
+                                activeColor: const Color(0xFFD9A15F),
+                                inactiveColor: const Color(
+                                  0xFFD9A15F,
+                                ).withValues(alpha: 0.3),
+                              ),
+
+                              /// ⏰ Time
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _formatDuration(
+                                        audioController.position.value,
+                                      ),
+                                      style: const TextStyle(
+                                        color: AppColors.navbackground,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      _formatDuration(
+                                        audioController.duration.value,
+                                      ),
+                                      style: const TextStyle(
+                                        color: AppColors.navbackground,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              SizedBox(height: 100.h),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-
-                    Spacer(),
-
-                    /// 🧠 Title
-                    Text(
-                      music.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 34.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
                       ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      music.subtitle,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 1.5,
-                        color: const Color(0xFFA0A3B1),
-                      ),
-                    ),
-
-                    SizedBox(height: 90.h),
-
-                    /// 🎛 Controls
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ControlIcon(),
-                        SizedBox(width: 24.w),
-                        PlayPauseButton(),
-                        SizedBox(width: 24.w),
-                        ControlIcon(isForward: true),
-                      ],
-                    ),
-
-                    SizedBox(height: 30.h),
-
-                    /// 🎚 Slider
-                    Slider(
-                      value: audioController.position.value.inSeconds
-                          .toDouble(),
-                      min: 0,
-                      max:
-                          audioController.duration.value.inSeconds.toDouble() >
-                              0
-                          ? audioController.duration.value.inSeconds.toDouble()
-                          : 1.0,
-                      onChanged: (value) {
-                        audioController.seek(Duration(seconds: value.toInt()));
-                      },
-                      activeColor: const Color(0xFFD9A15F),
-                      inactiveColor: const Color(0xFFD9A15F).withOpacity(0.3),
-                    ),
-
-                    /// ⏰ Time
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _formatDuration(audioController.position.value),
-                            style: const TextStyle(
-                              color: AppColors.navbackground,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            _formatDuration(audioController.duration.value),
-                            style: const TextStyle(
-                              color: AppColors.navbackground,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 100.h),
-                  ],
+                    );
+                  },
                 );
               }),
             ),

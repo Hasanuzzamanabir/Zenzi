@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/data/models/music_model.dart';
 
 class AudioPlayerController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  String? _loadedTrackId;
 
   var currentMusic = Rxn<MusicModel>();
   var isPlaying = false.obs;
@@ -32,34 +36,144 @@ class AudioPlayerController extends GetxController {
     });
   }
 
-  void playMusic(MusicModel music) async {
+  Future<bool> playMusic(MusicModel music) async {
     if (currentMusic.value?.id == music.id && isPlaying.value) {
-      await _audioPlayer.pause();
-      return;
+      await _pauseCurrent();
+      return true;
     }
 
     if (currentMusic.value?.id == music.id && !isPlaying.value) {
-      await _audioPlayer.resume();
-      return;
+      if (_loadedTrackId == music.id) {
+        final bool resumed = await _resumeCurrent();
+        if (resumed) {
+          return true;
+        }
+      }
+
+      // If resume failed or no source was loaded yet, fall back to fresh play.
     }
 
-    currentMusic.value = music;
-    await _audioPlayer.stop();
-    await _audioPlayer.play(UrlSource(music.audioUrl));
+    final String url = music.audioUrl.trim();
+    final Uri? parsed = Uri.tryParse(url);
+    if (url.isEmpty || parsed == null || !parsed.hasScheme) {
+      Get.snackbar(
+        'Playback unavailable',
+        'This track has an invalid audio URL.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return false;
+    }
+
+    try {
+      currentMusic.value = music;
+      _loadedTrackId = null;
+      await _audioPlayer.stop();
+      await _audioPlayer.play(UrlSource(parsed.toString()));
+      _loadedTrackId = music.id;
+      return true;
+    } on PlatformException {
+      isPlaying.value = false;
+      _loadedTrackId = null;
+      Get.snackbar(
+        'Playback failed',
+        'Could not open this audio source.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } on TimeoutException {
+      isPlaying.value = false;
+      _loadedTrackId = null;
+      Get.snackbar(
+        'Playback timeout',
+        'Audio source took too long to respond.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (_) {
+      isPlaying.value = false;
+      _loadedTrackId = null;
+      Get.snackbar(
+        'Playback failed',
+        'Something went wrong while playing this track.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+
+    return false;
   }
 
-  void togglePlayPause() async {
+  Future<void> togglePlayPause() async {
     if (isPlaying.value) {
-      await _audioPlayer.pause();
+      await _pauseCurrent();
     } else {
       if (currentMusic.value != null) {
-        await _audioPlayer.resume();
+        await _resumeCurrent();
       }
     }
   }
 
-  void seek(Duration pos) async {
-    await _audioPlayer.seek(pos);
+  Future<void> seek(Duration pos) async {
+    try {
+      await _audioPlayer.seek(pos);
+    } on TimeoutException {
+      Get.snackbar(
+        'Seek timeout',
+        'Could not seek audio position right now.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (_) {
+      Get.snackbar(
+        'Seek failed',
+        'Could not update audio position.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> skipBy(int seconds) async {
+    final Duration current = position.value;
+    final Duration total = duration.value;
+    final Duration target = Duration(seconds: current.inSeconds + seconds);
+
+    final Duration clampedTarget = total.inSeconds > 0
+        ? Duration(seconds: target.inSeconds.clamp(0, total.inSeconds))
+        : Duration(seconds: target.inSeconds.clamp(0, target.inSeconds));
+
+    await seek(clampedTarget);
+  }
+
+  Future<bool> _pauseCurrent() async {
+    try {
+      await _audioPlayer.pause();
+      return true;
+    } on TimeoutException {
+      isPlaying.value = false;
+      Get.snackbar(
+        'Pause timeout',
+        'Player did not respond in time.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (_) {
+      isPlaying.value = false;
+    }
+
+    return false;
+  }
+
+  Future<bool> _resumeCurrent() async {
+    try {
+      await _audioPlayer.resume();
+      return true;
+    } on TimeoutException {
+      isPlaying.value = false;
+      Get.snackbar(
+        'Resume timeout',
+        'Player did not respond in time.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (_) {
+      isPlaying.value = false;
+    }
+
+    return false;
   }
 
   @override

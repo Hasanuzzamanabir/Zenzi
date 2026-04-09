@@ -1,78 +1,138 @@
 import 'package:get/get.dart';
+import 'package:zenzi/core/base_url/base_url.dart';
+import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/data/models/music_model.dart';
+import 'package:zenzi/modules/music/model/audio_track_model.dart';
 
 class MusicController extends GetxController {
+  final ApiServices apiServices = ApiServices();
+
   var musicList = <MusicModel>[].obs;
   var isLoading = true.obs;
+  final searchQuery = ''.obs;
+  final selectedCategorySlug = ''.obs;
+  final favoritesOnly = false.obs;
+
+  late final Worker _searchDebounceWorker;
 
   @override
   void onInit() {
     super.onInit();
+    _searchDebounceWorker = debounce<String>(
+      searchQuery,
+      (_) => fetchMusic(showLoader: false),
+      time: const Duration(milliseconds: 400),
+    );
     fetchMusic();
   }
 
-  void fetchMusic() async {
+  @override
+  void onClose() {
+    _searchDebounceWorker.dispose();
+    super.onClose();
+  }
+
+  Future<void> fetchMusic({bool showLoader = true}) async {
     try {
-      isLoading(true);
-      // Mocking a web fetch with a delay
-      await Future.delayed(const Duration(seconds: 1));
+      if (showLoader) {
+        isLoading(true);
+      }
 
-      var mockData = [
-        MusicModel(
-          id: '1',
-          title: 'Deep Meditation',
-          subtitle: 'Calm Your Mind',
-          duration: '10:00',
-          audioUrl:
-              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          imageUrl:
-              'https://images.unsplash.com/photo-1518241353349-9b5718ef33c7?q=80&w=200&auto=format&fit=crop',
-        ),
-        MusicModel(
-          id: '2',
-          title: 'Ocean Waves',
-          subtitle: 'Soft Background',
-          duration: '05:30',
-          audioUrl:
-              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-          imageUrl:
-              'https://images.unsplash.com/photo-1505118380757-91f5f45d8de8?q=80&w=200&auto=format&fit=crop',
-        ),
-        MusicModel(
-          id: '3',
-          title: 'Forest Ambient',
-          subtitle: 'Nature Sounds',
-          duration: '08:15',
-          audioUrl:
-              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-          imageUrl:
-              'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=200&auto=format&fit=crop',
-        ),
-        MusicModel(
-          id: '4',
-          title: 'Inner Peace',
-          subtitle: 'Relaxing Zen',
-          duration: '12:45',
-          audioUrl:
-              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-          imageUrl:
-              'https://images.unsplash.com/photo-1499209974431-9dac3e74a1fc?q=80&w=200&auto=format&fit=crop',
-        ),
-        MusicModel(
-          id: '5',
-          title: 'Starlight Piano',
-          subtitle: 'Soft Melodies',
-          duration: '06:20',
-          audioUrl:
-              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
-          imageUrl:
-              'https://images.unsplash.com/photo-1520529682324-21014a60db2c?q=80&w=200&auto=format&fit=crop',
-        ),
-      ];
+      final Map<String, dynamic> queryParams = {};
+      final String trimmedSearch = searchQuery.value.trim();
+      final String trimmedCategory = selectedCategorySlug.value.trim();
 
-      musicList.assignAll(mockData);
+      if (trimmedSearch.isNotEmpty) {
+        queryParams['search'] = trimmedSearch;
+      }
+      if (trimmedCategory.isNotEmpty) {
+        queryParams['category__slug'] = trimmedCategory;
+      }
+      if (favoritesOnly.value) {
+        queryParams['favorites_only'] = true;
+      }
+
+      final response = await apiServices.get(
+        '/api/v1/content/audio-tracks/',
+        queryParameters: queryParams.isEmpty ? null : queryParams,
+        requireAuth: true,
+      );
+
+      final body = response.data;
+      final List<dynamic> dataList =
+          (body['data']?['results'] as List<dynamic>? ?? <dynamic>[]);
+
+      final tracks = dataList
+          .map((item) {
+            final map = item as Map<String, dynamic>;
+            final audioTrack = AudioTrackModel.fromJson(map);
+            final String resolvedAudioUrl = _resolveMediaUrl(
+              audioTrack.mediaFile,
+            );
+            final String subtitle = audioTrack.subtitle.trim().isNotEmpty
+                ? audioTrack.subtitle.trim()
+                : audioTrack.category.name.trim();
+
+            return MusicModel(
+              id: audioTrack.id.toString(),
+              title: audioTrack.title,
+              subtitle: subtitle,
+              duration: _formatDuration(audioTrack.durationMinutes),
+              audioUrl: resolvedAudioUrl,
+              imageUrl: (map['thumbnail'] ?? map['image'] ?? '').toString(),
+            );
+          })
+          .where((track) => track.audioUrl.isNotEmpty)
+          .toList();
+
+      musicList.assignAll(tracks);
+    } catch (_) {
+      musicList.clear();
     } finally {
       isLoading(false);
     }
+  }
+
+  Future<void> applyTabFilter({
+    required String categorySlug,
+    required bool onlyFavorites,
+  }) async {
+    selectedCategorySlug.value = categorySlug;
+    favoritesOnly.value = onlyFavorites;
+    await fetchMusic(showLoader: true);
+  }
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
+  }
+
+  String _formatDuration(int durationMinutes) {
+    final int safeMinutes = durationMinutes < 0 ? 0 : durationMinutes;
+    final int hours = safeMinutes ~/ 60;
+    final int minutes = safeMinutes % 60;
+
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:00';
+    }
+
+    return '${minutes.toString().padLeft(2, '0')}:00';
+  }
+
+  String _resolveMediaUrl(String rawUrl) {
+    final String trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) {
+      return '';
+    }
+
+    final Uri? parsed = Uri.tryParse(trimmed);
+    if (parsed != null && parsed.hasScheme) {
+      return parsed.toString();
+    }
+
+    final String normalizedPath = trimmed.startsWith('/')
+        ? trimmed
+        : '/$trimmed';
+    final String absoluteUrl = '${BaseUrl.baseUrl}$normalizedPath';
+    return Uri.tryParse(absoluteUrl)?.toString() ?? '';
   }
 }

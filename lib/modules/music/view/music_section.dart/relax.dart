@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:zenzi/core/theme/app_colors.dart';
-import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/modules/music/controller/music_controller.dart';
 import 'package:zenzi/modules/music/widget/music_card_widget.dart';
 
@@ -16,35 +15,33 @@ class RelaxTab extends StatelessWidget {
       if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
-      // Filter for relax music (example: by title or other property)
-      final relaxMusic = controller.musicList
-          .where(
-            (music) =>
-                music.title.toLowerCase().contains('relax') ||
-                music.title.toLowerCase().contains('ambient'),
-          )
-          .toList();
-      if (relaxMusic.isEmpty) {
-        return Column(
-          children: [
-            Text(
-              'No relax music found',
-              style: AppTextStyle.button.copyWith(
-                color: AppColors.componentnormal,
-              ),
-            ),
-          ],
+
+      if (controller.musicList.isEmpty) {
+        return const Center(
+          child: Text(
+            'No relax music found',
+            style: TextStyle(color: Colors.white),
+          ),
         );
       }
-      return ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: relaxMusic.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final music = relaxMusic[index];
-          return MusicCardWidget(music: music);
-        },
+
+      return Column(
+        children: [
+          SizedBox(height: 20.h),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: controller.musicList.length,
+            itemBuilder: (context, index) {
+              final music = controller.musicList[index];
+              return MusicCardWidget(
+                music: music,
+                isDivided: index != controller.musicList.length - 1,
+              );
+            },
+          ),
+          SizedBox(height: 30.h),
+        ],
       );
     });
   }
