@@ -5,6 +5,7 @@ class MusicModel {
   final String duration;
   final String audioUrl;
   final String imageUrl;
+  final bool isFavorited;
 
   MusicModel({
     required this.id,
@@ -13,7 +14,28 @@ class MusicModel {
     required this.duration,
     required this.audioUrl,
     required this.imageUrl,
+    this.isFavorited = false,
   });
+
+  MusicModel copyWith({
+    String? id,
+    String? title,
+    String? subtitle,
+    String? duration,
+    String? audioUrl,
+    String? imageUrl,
+    bool? isFavorited,
+  }) {
+    return MusicModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      duration: duration ?? this.duration,
+      audioUrl: audioUrl ?? this.audioUrl,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isFavorited: isFavorited ?? this.isFavorited,
+    );
+  }
 
   factory MusicModel.fromJson(Map<String, dynamic> json) {
     return MusicModel(
@@ -23,6 +45,7 @@ class MusicModel {
       duration: json['duration'] ?? '',
       audioUrl: json['audioUrl'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
+      isFavorited: json['isFavorited'] ?? false,
     );
   }
 
@@ -34,6 +57,7 @@ class MusicModel {
       'duration': duration,
       'audioUrl': audioUrl,
       'imageUrl': imageUrl,
+      'isFavorited': isFavorited,
     };
   }
 }

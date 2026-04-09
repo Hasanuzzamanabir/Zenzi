@@ -80,6 +80,7 @@ class MusicController extends GetxController {
               duration: _formatDuration(audioTrack.durationMinutes),
               audioUrl: resolvedAudioUrl,
               imageUrl: (map['thumbnail'] ?? map['image'] ?? '').toString(),
+              isFavorited: audioTrack.isFavorited,
             );
           })
           .where((track) => track.audioUrl.isNotEmpty)
@@ -104,6 +105,58 @@ class MusicController extends GetxController {
 
   void onSearchChanged(String value) {
     searchQuery.value = value;
+  }
+
+  bool isTrackFavorited(String trackId) {
+    final int index = musicList.indexWhere((track) => track.id == trackId);
+    if (index == -1) {
+      return false;
+    }
+    return musicList[index].isFavorited;
+  }
+
+  Future<bool> addTrackToFavorite(String trackId) async {
+    final int index = musicList.indexWhere((track) => track.id == trackId);
+    if (index == -1) {
+      return false;
+    }
+
+    final MusicModel original = musicList[index];
+    if (original.isFavorited) {
+      return true;
+    }
+
+    _updateFavoriteLocally(trackId, true);
+
+    try {
+      final response = await apiServices.post(
+        '/api/v1/content/audio-tracks/$trackId/favorite/',
+        data: {},
+        requireAuth: true,
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final bool serverState = response.data['data']?['is_favorited'] == true;
+        _updateFavoriteLocally(trackId, serverState);
+        return serverState;
+      }
+
+      _updateFavoriteLocally(trackId, original.isFavorited);
+      return false;
+    } catch (_) {
+      _updateFavoriteLocally(trackId, original.isFavorited);
+      return false;
+    }
+  }
+
+  void _updateFavoriteLocally(String trackId, bool isFavorited) {
+    final int index = musicList.indexWhere((track) => track.id == trackId);
+    if (index == -1) {
+      return;
+    }
+
+    musicList[index] = musicList[index].copyWith(isFavorited: isFavorited);
+    musicList.refresh();
   }
 
   String _formatDuration(int durationMinutes) {

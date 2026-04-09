@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/modules/music/controller/audio_player_controller.dart';
+import 'package:zenzi/modules/music/controller/music_controller.dart';
 import 'package:zenzi/modules/music/widget/control_icon.dart';
 import 'package:zenzi/modules/music/widget/play_pause_button_widget.dart';
 import 'package:zenzi/modules/music/widget/top_action_icon.dart';
@@ -14,6 +15,9 @@ class PlayMusic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audioController = Get.find<AudioPlayerController>();
+    final musicController = Get.isRegistered<MusicController>()
+        ? Get.find<MusicController>()
+        : Get.put(MusicController());
 
     return Scaffold(
       body: Stack(
@@ -31,6 +35,7 @@ class PlayMusic extends StatelessWidget {
                 if (music == null) {
                   return const Center(child: Text("No music selected"));
                 }
+                final isFavorited = musicController.isTrackFavorited(music.id);
 
                 return Column(
                   children: [
@@ -42,7 +47,30 @@ class PlayMusic extends StatelessWidget {
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () => Get.back(),
                         ),
-                        TopActionIcon(icon: Icons.favorite_border),
+                        TopActionIcon(
+                          icon: isFavorited
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          onTap: () async {
+                            final added = await musicController
+                                .addTrackToFavorite(music.id);
+                            if (added) {
+                              audioController.currentMusic.value = music
+                                  .copyWith(isFavorited: true);
+                              Get.snackbar(
+                                'Success',
+                                'Added to favorites',
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            } else {
+                              Get.snackbar(
+                                'Failed',
+                                'Could not add to favorites',
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
 
@@ -118,7 +146,9 @@ class PlayMusic extends StatelessWidget {
                         audioController.seek(Duration(seconds: value.toInt()));
                       },
                       activeColor: const Color(0xFFD9A15F),
-                      inactiveColor: const Color(0xFFD9A15F).withOpacity(0.3),
+                      inactiveColor: const Color(
+                        0xFFD9A15F,
+                      ).withValues(alpha: 0.3),
                     ),
 
                     /// ⏰ Time
