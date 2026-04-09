@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/bottom_navigation_bar/controller/custom_bottom_navigation_bar_controller.dart';
 import 'package:zenzi/modules/music/controller/music_controller.dart';
 import 'package:zenzi/modules/music/controller/music_tab_bar_widget_controller.dart';
 import 'package:zenzi/modules/music/widget/music_tab_bar_widget.dart';
@@ -22,23 +23,62 @@ class _MusicPageState extends State<MusicPage> {
 
   final FocusNode searchFocusNode = FocusNode();
   final TextEditingController searchTextController = TextEditingController();
+  Worker? _tabsWorker;
+  String? _pendingInitialTabTitle;
+
+  void _applyInitialTabSelection() {
+    final arguments = Get.arguments;
+
+    if (arguments is Map) {
+      final dynamic initialTabTitle = arguments['initialTabTitle'];
+      if (initialTabTitle is String && initialTabTitle.trim().isNotEmpty) {
+        _pendingInitialTabTitle = initialTabTitle.trim();
+      }
+
+      final dynamic initialIndexValue = arguments['initialIndex'];
+      if (initialIndexValue is int &&
+          initialIndexValue >= 0 &&
+          initialIndexValue < tabController.selectedTabs.length) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          tabController.selectTab(initialIndexValue);
+        });
+      }
+    }
+
+    if (Get.isRegistered<CustomBottomNavigationBarController>()) {
+      final navController = Get.find<CustomBottomNavigationBarController>();
+      final requestedTabTitle = navController
+          .consumeRequestedMusicTabSelection();
+      if (requestedTabTitle != null && requestedTabTitle.trim().isNotEmpty) {
+        _pendingInitialTabTitle = requestedTabTitle.trim();
+      }
+    }
+
+    _trySelectPendingTabByTitle();
+    _tabsWorker ??= ever<List<String>>(tabController.selectedTabs, (_) {
+      _trySelectPendingTabByTitle();
+    });
+  }
+
+  void _trySelectPendingTabByTitle() {
+    final tabTitle = _pendingInitialTabTitle;
+    if (tabTitle == null || tabTitle.isEmpty) {
+      return;
+    }
+
+    final bool selected = tabController.selectTabByTitle(tabTitle);
+    if (selected) {
+      _pendingInitialTabTitle = null;
+      _tabsWorker?.dispose();
+      _tabsWorker = null;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
-    final arguments = Get.arguments;
-    if (arguments != null &&
-        arguments is Map &&
-        arguments.containsKey('initialIndex')) {
-      final int initialIndex = arguments['initialIndex'];
-      if (initialIndex >= 0 &&
-          initialIndex < tabController.selectedTabs.length) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          tabController.selectTab(initialIndex);
-        });
-      }
-    }
+    _applyInitialTabSelection();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).unfocus();
@@ -47,6 +87,7 @@ class _MusicPageState extends State<MusicPage> {
 
   @override
   void dispose() {
+    _tabsWorker?.dispose();
     searchFocusNode.unfocus();
     searchFocusNode.dispose();
     searchTextController.dispose();

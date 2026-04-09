@@ -4,14 +4,53 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/modules/music/controller/music_tab_bar_widget_controller.dart';
 
-class MusicTabBarWidget extends StatelessWidget {
+class MusicTabBarWidget extends StatefulWidget {
   const MusicTabBarWidget({super.key});
+
+  @override
+  State<MusicTabBarWidget> createState() => _MusicTabBarWidgetState();
+}
+
+class _MusicTabBarWidgetState extends State<MusicTabBarWidget> {
+  final List<GlobalKey> _tabKeys = <GlobalKey>[];
+
+  void _syncTabKeys(int tabCount) {
+    while (_tabKeys.length < tabCount) {
+      _tabKeys.add(GlobalKey());
+    }
+    if (_tabKeys.length > tabCount) {
+      _tabKeys.removeRange(tabCount, _tabKeys.length);
+    }
+  }
+
+  void _scrollSelectedTabIntoView(int selectedIndex) {
+    if (selectedIndex < 0 || selectedIndex >= _tabKeys.length) {
+      return;
+    }
+
+    final BuildContext? tabContext = _tabKeys[selectedIndex].currentContext;
+    if (tabContext == null) {
+      return;
+    }
+
+    Scrollable.ensureVisible(
+      tabContext,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      alignment: 0.5,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<MusicTabBarWidgetController>();
 
     return Obx(() {
+      _syncTabKeys(controller.selectedTabs.length);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollSelectedTabIntoView(controller.selectedTabIndex.value);
+      });
+
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -27,6 +66,7 @@ class MusicTabBarWidget extends StatelessWidget {
                 Column(
                   children: [
                     GestureDetector(
+                      key: _tabKeys[selectedTabIndex],
                       onTap: () => controller.selectTab(selectedTabIndex),
                       child: Container(
                         decoration: BoxDecoration(

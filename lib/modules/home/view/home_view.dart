@@ -196,9 +196,14 @@ class _HomeViewState extends State<HomeView> {
 
                             GestureDetector(
                               onTap: () {
+                                const targetTabTitle = 'Sleep';
+
                                 Get.toNamed(
                                   AppRoute.musicPage,
-                                  arguments: {'initialIndex': 2},
+                                  arguments: {
+                                    'initialIndex': 2,
+                                    'initialTabTitle': targetTabTitle,
+                                  },
                                 );
                               },
                               child: Stack(

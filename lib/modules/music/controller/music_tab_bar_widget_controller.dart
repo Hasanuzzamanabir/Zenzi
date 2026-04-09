@@ -115,6 +115,24 @@ class MusicTabBarWidgetController extends GetxController {
       onlyFavorites: selectedFilter.onlyFavorites,
     );
   }
+
+  bool selectTabByTitle(String title) {
+    final normalizedTitle = title.trim().toLowerCase();
+    if (normalizedTitle.isEmpty) {
+      return false;
+    }
+
+    final int tabIndex = selectedTabs.indexWhere(
+      (tab) => tab.trim().toLowerCase() == normalizedTitle,
+    );
+
+    if (tabIndex < 0) {
+      return false;
+    }
+
+    selectTab(tabIndex);
+    return true;
+  }
 }
 
 class _MusicTabFilter {
