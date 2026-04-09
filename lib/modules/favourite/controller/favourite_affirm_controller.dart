@@ -64,9 +64,8 @@ Future<void> getAffirmations() async {
        requireAuth: true
     );
 
-    // লক্ষ্য করুন: response.data-এর ভেতরে আবার একটি 'data' ম্যাপ আছে
     if (response.statusCode == 200 && response.data != null) {
-      // আপনার API স্ট্রাকচার অনুযায়ী: response.data['data']['results']
+
       final List? dataList = response.data['data']['results'];
       
       if (dataList != null) {
