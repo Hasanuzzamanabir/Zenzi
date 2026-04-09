@@ -11,7 +11,7 @@ class MusicCardWidget extends StatelessWidget {
   final bool isFav;
   final bool isDivided;
 
-  MusicCardWidget({
+  const MusicCardWidget({
     super.key,
     required this.music,
     this.isFav = false,

@@ -9,6 +9,7 @@ class FavouriteAffirmController extends GetxController {
 
   var isLoading = true.obs;
   var affirmationList = <AffirmationModel>[].obs;
+  var favouriteCount = [].obs;
 
   @override
   void onInit() {
@@ -28,11 +29,12 @@ class FavouriteAffirmController extends GetxController {
       log("Affirmation API Response: $body");
       final List dataList = body['data']['results'];
 
-      affirmationList.clear();
-
       affirmationList.addAll(
         dataList.map((e) => AffirmationModel.fromJson(e)).toList(),
       );
+
+      favouriteCount.addAll(affirmationList);
+
       log("Data loaded successfully: ${affirmationList.length}");
     } catch (e) {
       log("Affirmation API Error: $e");
