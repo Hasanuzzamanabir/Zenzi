@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/modules/meditation_view/controller/meditation_controller.dart';
 import 'package:zenzi/modules/meditation_view/widget/maditation_video_card_widget.dart';
 import 'package:zenzi/routes/app_routes.dart';
 
@@ -11,51 +11,70 @@ class AllTabContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 20.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            children: [
-              MaditationVideoCardWidget(
-                title: 'Meditation 101',
-                subtitle: 'Techniques, Benefits, and a Beginner’s How-To',
-                duration: '10 min',
-                imageContent: AppAssets.medi,
-                onTap: () {
-                  Get.toNamed(AppRoute.getMeditationDetails());
-                },
-              ),
-              SizedBox(height: 16.h),
-              MaditationVideoCardWidget(
-                title: 'Cardio Meditation',
-                subtitle: 'Techniques for Beginners',
-                duration: '10 min',
-                imageContent: AppAssets.cardio,
-                onTap: () {},
-              ),
-              SizedBox(height: 16.h),
-              MaditationVideoCardWidget(
-                title: 'Meditation 101',
-                subtitle: 'Techniques for Beginners',
-                duration: '10 min',
-                imageContent: AppAssets.deep,
-                onTap: () {},
-              ),
-              SizedBox(height: 16.h),
-              MaditationVideoCardWidget(
-                title: 'Meditation 101',
-                subtitle: 'Techniques for Beginners',
-                duration: '10 min',
-                imageContent: AppAssets.meditationbg,
-                onTap: () {},
-              ),
-              SizedBox(height: 30.h),
-            ],
+    final MeditationController controller = Get.find<MeditationController>();
+
+    return Obx(() {
+      if (controller.isLoading.value && controller.meditationList.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: 40.h),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      final meditations = controller.filteredMeditations;
+
+      if (controller.hasError.value && meditations.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: 40.h),
+          child: const Center(child: Text('Unable to load meditations')),
+        );
+      }
+
+      if (meditations.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: 40.h),
+          child: const Center(child: Text('No meditations found')),
+        );
+      }
+
+      return Column(
+        children: [
+          SizedBox(height: 20.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Column(
+              children: [
+                for (int index = 0; index < meditations.length; index++) ...[
+                  MaditationVideoCardWidget(
+                    title: meditations[index].title,
+                    subtitle: meditations[index].description.isNotEmpty
+                        ? meditations[index].description
+                        : 'Guided meditation',
+                    duration: meditations[index].durationLabel,
+                    imageContent: _fallbackAssetForIndex(index),
+                    onTap: () {
+                      Get.toNamed(AppRoute.getMeditationDetails());
+                    },
+                  ),
+                  if (index != meditations.length - 1) SizedBox(height: 16.h),
+                ],
+                SizedBox(height: 30.h),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
+  }
+
+  String _fallbackAssetForIndex(int index) {
+    const fallbackAssets = [
+      AppAssets.medi,
+      AppAssets.cardio,
+      AppAssets.deep,
+      AppAssets.meditationbg,
+    ];
+
+    return fallbackAssets[index % fallbackAssets.length];
   }
 }
