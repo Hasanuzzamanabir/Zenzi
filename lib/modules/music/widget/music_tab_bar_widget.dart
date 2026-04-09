@@ -60,16 +60,6 @@ class MusicTabBarWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Container(
-                    //   height: 2.h,
-                    //   width: 40.w,
-                    //   decoration: BoxDecoration(
-                    //     color: isSelected
-                    //         ? const Color(0xFF0076F5)
-                    //         : Colors.transparent,
-                    //     borderRadius: BorderRadius.circular(1.r),
-                    //   ),
-                    // ),
                   ],
                 ),
 

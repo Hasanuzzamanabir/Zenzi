@@ -31,9 +31,7 @@ class FavouriteMusic extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: controller.musicList.length > 3
-                ? 3
-                : controller.musicList.length,
+            itemCount: controller.musicList.length,
             itemBuilder: (context, index) {
               final music = controller.musicList[index];
               return MusicCardWidget(
