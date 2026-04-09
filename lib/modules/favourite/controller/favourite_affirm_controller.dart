@@ -1,44 +1,5 @@
-// import 'package:get/get.dart';
-// import 'package:zenzi/core/network/services/api_services.dart';
-// import 'package:zenzi/modules/favourite/model/favourite_affirmation_model.dart';
+import 'dart:developer';
 
-// class AffirmationController extends GetxController {
-//   final ApiServices apiServices = ApiServices();
-
-//   var isLoading = true.obs;
-//   var affirmationList = <AffirmationModel>[].obs;
-
-//   @override
-//   void onInit() {
-//     getAffirmations();
-//     super.onInit();
-//   }
-
-//   Future<void> getAffirmations() async {
-//     try {
-//       isLoading(true);
-
-//       final response = await apiServices.get(
-//         '/api/v1/content/favorites/affirmations/',
-//       );
-
-//       if (response.statusCode == 200) {
-//         final List data = response.data['results'];
-//         affirmationList.assignAll(
-//           data.map((e) => AffirmationModel.fromJson(e)).toList(),
-//         );
-//       }
-//     } catch (e) {
-//       Get.snackbar(
-//         "Error",
-//         e.toString(),
-//         snackPosition: SnackPosition.BOTTOM,
-//       );
-//     } finally {
-//       isLoading(false);
-//     }
-//   }
-// }
 import 'package:get/get.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/modules/favourite/model/favourite_affirmation_model.dart';
@@ -48,6 +9,7 @@ class FavouriteAffirmController extends GetxController {
 
   var isLoading = true.obs;
   var affirmationList = <AffirmationModel>[].obs;
+  var favouriteCount = [].obs;
 
   @override
   void onInit() {
@@ -55,32 +17,29 @@ class FavouriteAffirmController extends GetxController {
     super.onInit();
   }
 
-Future<void> getAffirmations() async {
-  try {
-    isLoading(true);
+  Future<void> getAffirmations() async {
+    try {
+      isLoading.value = true;
 
-    final response = await apiServices.get(
-      '/api/v1/content/favorites/affirmations/',
-       requireAuth: true
-    );
+      final response = await apiServices.get(
+        '/api/v1/content/favorites/affirmations/',
+        requireAuth: true,
+      );
+      final body = response.data;
+      log("Affirmation API Response: $body");
+      final List dataList = body['data']['results'];
 
-    if (response.statusCode == 200 && response.data != null) {
+      affirmationList.addAll(
+        dataList.map((e) => AffirmationModel.fromJson(e)).toList(),
+      );
 
-      final List? dataList = response.data['data']['results'];
-      
-      if (dataList != null) {
-        affirmationList.assignAll(
-          dataList.map((e) => AffirmationModel.fromJson(e)).toList(),
-        );
-        print("Data loaded successfully: ${affirmationList.length}");
-      } else {
-        affirmationList.clear();
-      }
+      favouriteCount.addAll(affirmationList);
+
+      log("Data loaded successfully: ${affirmationList.length}");
+    } catch (e) {
+      log("Affirmation API Error: $e");
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    print("Affirmation API Error: $e");
-  } finally {
-    isLoading(false);
   }
-}
 }

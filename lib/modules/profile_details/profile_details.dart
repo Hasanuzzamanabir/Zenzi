@@ -10,6 +10,7 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
+import 'package:zenzi/modules/favourite/controller/favourite_affirm_controller.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
 import 'package:zenzi/modules/setting/controller/edit_profile_controller.dart';
@@ -29,6 +30,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   final EditProfileController editProfileController = Get.put(
     EditProfileController(),
   );
+
+  final favouriteCountController = Get.put(FavouriteAffirmController());
 
   @override
   void initState() {
@@ -463,18 +466,23 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text('Saved Favorites', style: AppTextStyle.h7),
-                          Spacer(),
-                          Text(
-                            '12 items',
-                            style: AppTextStyle.bodySmall.copyWith(
-                              color: AppColors.secondarycolor,
+                      Obx(() {
+                        final count =
+                            favouriteCountController.favouriteCount.length;
+
+                        return Row(
+                          children: [
+                            Text('Saved Favorites', style: AppTextStyle.h7),
+                            Spacer(),
+                            Text(
+                              '$count items',
+                              style: AppTextStyle.bodySmall.copyWith(
+                                color: AppColors.secondarycolor,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        );
+                      }),
 
                       SizedBox(height: 12.h),
                       Row(

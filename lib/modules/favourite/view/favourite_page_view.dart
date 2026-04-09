@@ -17,48 +17,30 @@ class FavouritePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(MusicController());
     Get.put(AudioPlayerController());
-    //final controller = Get.put(FavouriteTabBarWidgetController());
 
     return ThemedScaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16.h),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(height: 60.h),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.secondarycolor,
-                    size: 24.sp,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          "Favourites",
+          style: AppTextStyle.h4.copyWith(color: AppColors.primarytext),
+        ),
+        iconTheme: IconThemeData(color: AppColors.secondarycolor),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.h),
+          child: Column(
+            children: [
+              FavouriteTabBarWidget(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: FavouriteTabBarWidgetView(),
                 ),
-
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Favourites",
-                      style: AppTextStyle.h4.copyWith(
-                        color: AppColors.primarytext,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            FavouriteTabBarWidget(),
-            SizedBox(height: 16.h),
-            Expanded(
-              child: SingleChildScrollView(child: FavouriteTabBarWidgetView()),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

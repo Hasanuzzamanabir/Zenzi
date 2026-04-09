@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/modules/music/controller/music_controller.dart';
-import 'package:zenzi/modules/music/widget/musicCardWidget.dart';
+import 'package:zenzi/modules/music/widget/music_card_widget.dart';
 
 class MyFavTab extends StatelessWidget {
   const MyFavTab({super.key});
