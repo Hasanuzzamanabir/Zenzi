@@ -128,18 +128,6 @@ class AudioPlayerController extends GetxController {
     }
   }
 
-  Future<void> skipBy(int seconds) async {
-    final Duration current = position.value;
-    final Duration total = duration.value;
-    final Duration target = Duration(seconds: current.inSeconds + seconds);
-
-    final Duration clampedTarget = total.inSeconds > 0
-        ? Duration(seconds: target.inSeconds.clamp(0, total.inSeconds))
-        : Duration(seconds: target.inSeconds.clamp(0, target.inSeconds));
-
-    await seek(clampedTarget);
-  }
-
   Future<bool> _pauseCurrent() async {
     try {
       await _audioPlayer.pause();

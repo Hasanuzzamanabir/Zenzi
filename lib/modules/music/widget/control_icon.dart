@@ -18,8 +18,13 @@ class ControlIcon extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        children: [Icon(iconData, color: const Color(0xFFD59A52), size: 30)],
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.3),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(iconData, color: const Color(0xFFD59A52), size: 30),
       ),
     );
   }
