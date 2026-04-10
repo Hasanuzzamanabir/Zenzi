@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,13 +22,16 @@ class MeditationDetails extends StatefulWidget {
   State<MeditationDetails> createState() => _MeditationDetailsState();
 }
 
-class _MeditationDetailsState extends State<MeditationDetails> {
+class _MeditationDetailsState extends State<MeditationDetails>
+    with WidgetsBindingObserver {
   final ApiServices _apiServices = ApiServices();
 
   VideoPlayerController? _controller;
+  Timer? _likeRefreshTimer;
   MeditationDetailsModel? _details;
   int? _meditationId;
   int _likesCount = 0;
+  bool _isRefreshingLikeDetails = false;
   bool _isDetailsLoading = true;
   bool _isVideoLoading = false;
   bool _hasVideoError = false;
@@ -38,8 +43,20 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _meditationId = _resolveMeditationId(Get.arguments);
     _loadMeditationDetails();
+    _likeRefreshTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) => _refreshLikeDetails(),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshLikeDetails();
+    }
   }
 
   int? _resolveMeditationId(dynamic arguments) {
@@ -115,11 +132,12 @@ class _MeditationDetailsState extends State<MeditationDetails> {
 
   Future<void> _refreshLikeDetails() async {
     final int? meditationId = _meditationId;
-    if (meditationId == null) {
+    if (meditationId == null || _isRefreshingLikeDetails) {
       return;
     }
 
     try {
+      _isRefreshingLikeDetails = true;
       final response = await _apiServices.get(
         '/api/v1/content/meditations/$meditationId/',
         requireAuth: true,
@@ -139,6 +157,8 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       }
     } catch (error) {
       debugPrint('Error refreshing like details: $error');
+    } finally {
+      _isRefreshingLikeDetails = false;
     }
   }
 
@@ -204,8 +224,9 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       return;
     }
 
-    final bool hasFinished =
-        value.position >= value.duration && !value.isPlaying;
+    final Duration completionThreshold =
+        value.duration - const Duration(milliseconds: 300);
+    final bool hasFinished = value.position >= completionThreshold;
     if (!hasFinished) {
       return;
     }
@@ -213,30 +234,79 @@ class _MeditationDetailsState extends State<MeditationDetails> {
     _hasShownCompletionSheet = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        showModalBottomSheet<void>(
-          context: context,
-          backgroundColor: Colors.transparent,
-          isScrollControlled: true,
-          builder: (BuildContext sheetContext) {
-            return CompletionBottomSheetContent(
-              title: 'Congratulations',
-              description: 'You have finished the lesson',
-              primaryLabel: 'Replay',
-              secondaryLabel: 'Next video',
-              sheetContext: sheetContext,
-              onPrimaryPressed: () {
-                final VideoPlayerController? videoController = _controller;
-                if (videoController != null) {
-                  videoController.seekTo(Duration.zero);
-                  videoController.play();
-                  _hasShownCompletionSheet = false;
-                }
-              },
-            );
-          },
-        );
+        _showVideoCompletedBottomSheet();
       }
     });
+  }
+
+  Future<void> _restartVideo() async {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null) {
+      return;
+    }
+
+    _hasShownCompletionSheet = false;
+    await controller.seekTo(Duration.zero);
+    await controller.play();
+  }
+
+  void _showVideoCompletedBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 28.h),
+          decoration: BoxDecoration(
+            color: AppColors.navbackground,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 48.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(999.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Video completed',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'You have finished this meditation video.',
+                style: TextStyle(
+                  color: AppColors.secondarycolor,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
  
 
@@ -263,6 +333,8 @@ class _MeditationDetailsState extends State<MeditationDetails> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _likeRefreshTimer?.cancel();
     _controller?.removeListener(_videoListener);
     _controller?.dispose();
     super.dispose();
@@ -553,7 +625,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                               }
                               controller.value.isPlaying
                                   ? controller.pause()
-                                  : controller.play();
+                                  : _restartVideo();
                             },
                             child: Container(
                               padding: EdgeInsets.all(16.w),
