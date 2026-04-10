@@ -9,6 +9,7 @@ class MaditationVideoCardWidget extends StatelessWidget {
   final String subtitle;
   final String duration;
   final String imageContent;
+  final String? imageUrl;
   final VoidCallback? onTap;
 
   const MaditationVideoCardWidget({
@@ -17,6 +18,7 @@ class MaditationVideoCardWidget extends StatelessWidget {
     required this.subtitle,
     required this.duration,
     required this.imageContent,
+    this.imageUrl,
     this.onTap,
   });
 
@@ -110,12 +112,24 @@ class MaditationVideoCardWidget extends StatelessWidget {
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
-              child: Image.asset(
-                imageContent,
-
-                height: 100.h,
-                fit: BoxFit.contain,
-              ),
+              child: imageUrl != null && imageUrl!.trim().isNotEmpty
+                  ? Image.network(
+                      imageUrl!,
+                      height: 100.h,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) {
+                        return Image.asset(
+                          imageContent,
+                          height: 100.h,
+                          fit: BoxFit.contain,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      imageContent,
+                      height: 100.h,
+                      fit: BoxFit.contain,
+                    ),
             ),
           ),
         ],
