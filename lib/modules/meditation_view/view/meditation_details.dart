@@ -31,6 +31,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   bool _hasVideoError = false;
   bool _isLikeLoading = false;
   bool _showVideoControls = false;
+  bool _hasShownCompletionSheet = false;
   String? detailsError;
 
   @override
@@ -160,10 +161,11 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       Uri.parse(safeVideoUrl),
     );
     _controller = controller;
+    _hasShownCompletionSheet = false;
 
     try {
       await controller.initialize();
-      await controller.setLooping(true);
+      await controller.setLooping(false);
 
       if (mounted) {
         controller.addListener(_videoListener);
@@ -186,7 +188,111 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   void _videoListener() {
     if (mounted) {
       setState(() {});
+      _handleVideoCompletion();
     }
+  }
+
+  void _handleVideoCompletion() {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null || _hasShownCompletionSheet) {
+      return;
+    }
+
+    final VideoPlayerValue value = controller.value;
+    if (!value.isInitialized || value.duration == Duration.zero) {
+      return;
+    }
+
+    final bool hasFinished =
+        value.position >= value.duration && !value.isPlaying;
+    if (!hasFinished) {
+      return;
+    }
+
+    _hasShownCompletionSheet = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showVideoCompletedBottomSheet();
+      }
+    });
+  }
+
+  void _showVideoCompletedBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 28.h),
+          decoration: BoxDecoration(
+            color: AppColors.navbackground,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 48.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(999.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Video completed',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'You have finished this meditation video.',
+                style: TextStyle(
+                  color: AppColors.secondarycolor,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        final VideoPlayerController? videoController =
+                            _controller;
+                        if (videoController != null) {
+                          videoController.seekTo(Duration.zero);
+                          videoController.play();
+                          _hasShownCompletionSheet = false;
+                        }
+                      },
+                      child: const Text('Replay'),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _toggleVideoControls() {
