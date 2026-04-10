@@ -6,12 +6,34 @@ import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/controllers/
 import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/painters/breathing_painter.dart';
 
 class FourSevenEightBreathingView extends StatelessWidget {
-  const FourSevenEightBreathingView({super.key});
+  final int exerciseId;
+  final int inhaleSeconds;
+  final int holdSeconds;
+  final int exhaleSeconds;
+  final int recommendedCycles;
+  final int totalSession;
+
+  const FourSevenEightBreathingView({
+    super.key,
+    required this.exerciseId,
+    required this.inhaleSeconds,
+    required this.holdSeconds,
+    required this.exhaleSeconds,
+    required this.recommendedCycles,
+    required this.totalSession,
+  });
 
   @override
   Widget build(BuildContext context) {
     final FourSevenEightBreathingController controller = Get.put(
-      FourSevenEightBreathingController(),
+      FourSevenEightBreathingController(
+        exerciseId: exerciseId,
+        inhaleSeconds: inhaleSeconds,
+        holdSeconds: holdSeconds,
+        exhaleSeconds: exhaleSeconds,
+        totalCycles: recommendedCycles,
+        totalSession: totalSession,
+      ),
     );
 
     return Scaffold(

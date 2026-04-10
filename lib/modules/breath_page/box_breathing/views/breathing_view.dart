@@ -5,11 +5,35 @@ import '../controllers/breathing_controller.dart';
 import '../painters/breathing_painter.dart';
 
 class BoxBreathingView extends StatelessWidget {
-  const BoxBreathingView({super.key});
+  final int exerciseId;
+  final int inhaleSeconds;
+  final int holdSeconds;
+  final int exhaleSeconds;
+  final int recommendedCycles;
+  final int totalSession;
+
+  const BoxBreathingView({
+    super.key,
+    required this.exerciseId,
+    required this.inhaleSeconds,
+    required this.holdSeconds,
+    required this.exhaleSeconds,
+    required this.recommendedCycles,
+    required this.totalSession,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final BoxBreathingController controller = Get.put(BoxBreathingController());
+    final BoxBreathingController controller = Get.put(
+      BoxBreathingController(
+        exerciseId: exerciseId,
+        inhaleSeconds: inhaleSeconds,
+        holdSeconds: holdSeconds,
+        exhaleSeconds: exhaleSeconds,
+        totalCycles: recommendedCycles,
+        totalSession: totalSession,
+      ),
+    );
 
     return Scaffold(
       body: Stack(

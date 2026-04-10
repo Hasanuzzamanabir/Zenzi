@@ -1,22 +1,43 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_controller.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_sessions_controller.dart';
 
-enum BreathPhase { inPhase, hold, reset }
+enum BreathPhase { inPhase, hold, outPhase, reset }
 
 class CalmBreathingController extends GetxController
     with GetTickerProviderStateMixin {
+  CalmBreathingController({
+    required int exerciseId,
+    required int inhaleSeconds,
+    required int holdSeconds,
+    required int exhaleSeconds,
+    required int totalCycles,
+    required int totalSession,
+  }) : _exerciseId = exerciseId,
+       _inhaleSeconds = inhaleSeconds > 0 ? inhaleSeconds : 5,
+       _holdSeconds = holdSeconds > 0 ? holdSeconds : 5,
+       _exhaleSeconds = exhaleSeconds >= 0 ? exhaleSeconds : 0,
+       _totalCycles = totalCycles > 0 ? totalCycles : 4,
+       _totalSession = totalSession;
+
   late AnimationController _mainController;
+
+  final int _exerciseId;
+  final int _inhaleSeconds;
+  final int _holdSeconds;
+  final int _exhaleSeconds;
+  final int _totalSession;
 
   final Rx<BreathPhase> _phase = BreathPhase.inPhase.obs;
   final RxInt _cycle = 0.obs;
-  final int _totalCycles = 4;
+  final int _totalCycles;
 
-  // Expose values for UI
   BreathPhase get phase => _phase.value;
   int get cycle => _cycle.value;
   int get totalCycles => _totalCycles;
-
   AnimationController get mainController => _mainController;
 
   final RxInt _countdown = 1.obs;
@@ -26,19 +47,20 @@ class CalmBreathingController extends GetxController
   void onInit() {
     super.onInit();
 
-    // Main controller used for In phase scaling
     _mainController = AnimationController(vsync: this);
-
     _mainController.addListener(() {
-      // Countdown logic:
-      // In InPhase (5s): value 0->1. Seconds: (value * 5).toInt() + 1
-      if (_phase.value == BreathPhase.inPhase) {
-        final int val = (_mainController.value * 5).toInt() + 1;
-        if (val != _countdown.value && val <= 5) _countdown.value = val;
+      if (_phase.value == BreathPhase.inPhase ||
+          _phase.value == BreathPhase.outPhase) {
+        final int phaseSeconds = _phase.value == BreathPhase.inPhase
+            ? _inhaleSeconds
+            : (_exhaleSeconds > 0 ? _exhaleSeconds : _inhaleSeconds);
+        final int val = (_mainController.value * phaseSeconds).toInt() + 1;
+        if (val != _countdown.value && val <= phaseSeconds) {
+          _countdown.value = val;
+        }
       }
     });
 
-    // Start
     _startSequence();
   }
 
@@ -52,47 +74,85 @@ class CalmBreathingController extends GetxController
 
     _phase.value = BreathPhase.inPhase;
     _mainController.reset();
-    _mainController.duration = const Duration(seconds: 5);
+    _mainController.duration = Duration(seconds: _inhaleSeconds);
+    _countdown.value = 1;
 
-    _mainController.forward().then((_) {
-      // When inhale finishes
-      _startHold();
-    });
+    _mainController.forward().then((_) => _startHold());
   }
 
   void _startHold() {
     _phase.value = BreathPhase.hold;
-    // Stop controller at max (it should already be at 1.0 from forward, but ensuring)
     _mainController.value = 1.0;
 
-    // Manual timer for Hold (5s) since we are not animating values
-    int holdSeconds = 1;
+    int holdCounter = 1;
     _countdown.value = 1;
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      holdSeconds++;
-      if (holdSeconds <= 5) {
-        _countdown.value = holdSeconds;
+      holdCounter++;
+      if (holdCounter <= _holdSeconds) {
+        _countdown.value = holdCounter;
       } else {
         timer.cancel();
-        _finishCycle();
+        _startExhale();
       }
     });
   }
 
+  void _startExhale() {
+    if (_exhaleSeconds <= 0) {
+      _finishCycle();
+      return;
+    }
+
+    _phase.value = BreathPhase.outPhase;
+    _mainController.reset();
+    _mainController.duration = Duration(seconds: _exhaleSeconds);
+    _countdown.value = 1;
+
+    _mainController.forward().then((_) => _finishCycle());
+  }
+
   void _finishCycle() {
-    // Increment cycle
     _cycle.value++;
 
     if (_cycle.value < _totalCycles) {
-      // Instant Reset for next cycle
-      _mainController.reset(); // 0s duration effectively
+      _mainController.reset();
       _startInhale();
     } else {
-      // Finished all cycles
       _mainController.reset();
-      _phase.value = BreathPhase.reset; // Just a neutral state
+      _phase.value = BreathPhase.reset;
+      _sendBreathingSession();
     }
+  }
+
+  Future<void> _sendBreathingSession() async {
+    final sessionsController = Get.isRegistered<BreathingSessionsController>()
+        ? Get.find<BreathingSessionsController>()
+        : Get.put(BreathingSessionsController());
+
+    await sessionsController.breathingCompletedToSend(
+      _exerciseId,
+      _cycle.value,
+      _resolveTotalSeconds(),
+    );
+
+    if (Get.isRegistered<BreathingController>()) {
+      Get.find<BreathingController>().fetchBreathingData();
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+    if (!isClosed) {
+      Get.back(closeOverlays: true);
+    }
+  }
+
+  int _resolveTotalSeconds() {
+    if (_totalSession > 0) {
+      return _totalSession;
+    }
+
+    final int exhaleSeconds = _exhaleSeconds > 0 ? _exhaleSeconds : 0;
+    return (_inhaleSeconds + _holdSeconds + exhaleSeconds) * _totalCycles;
   }
 
   String get titleText {
@@ -101,6 +161,8 @@ class CalmBreathingController extends GetxController
         return "Breathe In";
       case BreathPhase.hold:
         return "Hold";
+      case BreathPhase.outPhase:
+        return "Breathe Out";
       default:
         return "";
     }
@@ -112,6 +174,8 @@ class CalmBreathingController extends GetxController
         return "Fill your lungs slowly and deeply";
       case BreathPhase.hold:
         return "Hold your breath gently";
+      case BreathPhase.outPhase:
+        return "Release your breath slowly";
       default:
         return "Cycle Completed";
     }

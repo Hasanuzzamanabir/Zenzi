@@ -1,22 +1,43 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_controller.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_sessions_controller.dart';
 
 enum BreathPhase { inPhase, hold, outPhase, reset }
 
 class EnergizingBreathingController extends GetxController
     with GetTickerProviderStateMixin {
+  EnergizingBreathingController({
+    required int exerciseId,
+    required int inhaleSeconds,
+    required int holdSeconds,
+    required int exhaleSeconds,
+    required int totalCycles,
+    required int totalSession,
+  }) : _exerciseId = exerciseId,
+       _inhaleSeconds = inhaleSeconds > 0 ? inhaleSeconds : 3,
+       _holdSeconds = holdSeconds > 0 ? holdSeconds : 3,
+       _exhaleSeconds = exhaleSeconds > 0 ? exhaleSeconds : 3,
+       _totalCycles = totalCycles > 0 ? totalCycles : 8,
+       _totalSession = totalSession;
+
   late AnimationController _mainController;
+
+  final int _exerciseId;
+  final int _inhaleSeconds;
+  final int _holdSeconds;
+  final int _exhaleSeconds;
+  final int _totalSession;
 
   final Rx<BreathPhase> _phase = BreathPhase.inPhase.obs;
   final RxInt _cycle = 0.obs;
-  final int _totalCycles = 8;
+  final int _totalCycles;
 
-  // Expose values for UI
   BreathPhase get phase => _phase.value;
   int get cycle => _cycle.value;
   int get totalCycles => _totalCycles;
-
   AnimationController get mainController => _mainController;
 
   final RxInt _countdown = 1.obs;
@@ -26,20 +47,20 @@ class EnergizingBreathingController extends GetxController
   void onInit() {
     super.onInit();
 
-    // Main controller used for In/Out phase scaling
     _mainController = AnimationController(vsync: this);
-
     _mainController.addListener(() {
-      // Countdown logic (3s for In/Out)
       if (_phase.value == BreathPhase.inPhase ||
           _phase.value == BreathPhase.outPhase) {
-        // Value goes 0->1 in 3 seconds
-        final int val = (_mainController.value * 3).toInt() + 1;
-        if (val != _countdown.value && val <= 3) _countdown.value = val;
+        final int phaseSeconds = _phase.value == BreathPhase.inPhase
+            ? _inhaleSeconds
+            : _exhaleSeconds;
+        final int val = (_mainController.value * phaseSeconds).toInt() + 1;
+        if (val != _countdown.value && val <= phaseSeconds) {
+          _countdown.value = val;
+        }
       }
     });
 
-    // Start
     _startSequence();
   }
 
@@ -53,58 +74,78 @@ class EnergizingBreathingController extends GetxController
 
     _phase.value = BreathPhase.inPhase;
     _mainController.reset();
-    _mainController.duration = const Duration(seconds: 3);
+    _mainController.duration = Duration(seconds: _inhaleSeconds);
+    _countdown.value = 1;
 
-    _mainController.forward().then((_) {
-      _startHold();
-    });
+    _mainController.forward().then((_) => _startHold());
   }
 
   void _startHold() {
     _phase.value = BreathPhase.hold;
-    _mainController.value = 1.0; // Ensure max size
+    _mainController.value = 1.0;
 
-    // Manual timer for Hold (3s)
-    int holdSeconds = 1;
+    int holdCounter = 1;
     _countdown.value = 1;
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      holdSeconds++;
-      if (holdSeconds <= 3) {
-        _countdown.value = holdSeconds;
+      holdCounter++;
+      if (holdCounter <= _holdSeconds) {
+        _countdown.value = holdCounter;
       } else {
         timer.cancel();
-        _startExhale(); // Go to Exhale instead of finish
+        _startExhale();
       }
     });
   }
 
   void _startExhale() {
     _phase.value = BreathPhase.outPhase;
-    _mainController.duration = const Duration(seconds: 3);
+    _mainController.reset();
+    _mainController.duration = Duration(seconds: _exhaleSeconds);
+    _countdown.value = 1;
 
-    // We want to animate from 1.0 down to 0.0?
-    // Usually animateTo(0.0) works, but let's simply reverse?
-    // Or just animate 0->1 and map it in view?
-    // Let's simple animate 1.0 -> 0.0
-
-    _mainController.reverse(from: 1.0).then((_) {
-      _finishCycle();
-    });
+    _mainController.reverse(from: 1.0).then((_) => _finishCycle());
   }
 
   void _finishCycle() {
-    // Increment cycle
     _cycle.value++;
 
     if (_cycle.value < _totalCycles) {
-      // Loop back
       _startInhale();
     } else {
-      // Finished all cycles
       _mainController.reset();
       _phase.value = BreathPhase.reset;
+      _sendBreathingSession();
     }
+  }
+
+  Future<void> _sendBreathingSession() async {
+    final sessionsController = Get.isRegistered<BreathingSessionsController>()
+        ? Get.find<BreathingSessionsController>()
+        : Get.put(BreathingSessionsController());
+
+    await sessionsController.breathingCompletedToSend(
+      _exerciseId,
+      _cycle.value,
+      _resolveTotalSeconds(),
+    );
+
+    if (Get.isRegistered<BreathingController>()) {
+      Get.find<BreathingController>().fetchBreathingData();
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+    if (!isClosed) {
+      Get.back(closeOverlays: true);
+    }
+  }
+
+  int _resolveTotalSeconds() {
+    if (_totalSession > 0) {
+      return _totalSession;
+    }
+
+    return (_inhaleSeconds + _holdSeconds + _exhaleSeconds) * _totalCycles;
   }
 
   String get titleText {

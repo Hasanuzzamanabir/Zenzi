@@ -6,12 +6,34 @@ import '../controllers/energizing_breathing_controller.dart';
 import '../painters/Energizing_breathing_painter.dart';
 
 class EnergizingBreathingView extends StatelessWidget {
-  const EnergizingBreathingView({super.key});
+  final int exerciseId;
+  final int inhaleSeconds;
+  final int holdSeconds;
+  final int exhaleSeconds;
+  final int recommendedCycles;
+  final int totalSession;
+
+  const EnergizingBreathingView({
+    super.key,
+    required this.exerciseId,
+    required this.inhaleSeconds,
+    required this.holdSeconds,
+    required this.exhaleSeconds,
+    required this.recommendedCycles,
+    required this.totalSession,
+  });
 
   @override
   Widget build(BuildContext context) {
     final EnergizingBreathingController controller = Get.put(
-      EnergizingBreathingController(),
+      EnergizingBreathingController(
+        exerciseId: exerciseId,
+        inhaleSeconds: inhaleSeconds,
+        holdSeconds: holdSeconds,
+        exhaleSeconds: exhaleSeconds,
+        totalCycles: recommendedCycles,
+        totalSession: totalSession,
+      ),
     );
 
     return Scaffold(

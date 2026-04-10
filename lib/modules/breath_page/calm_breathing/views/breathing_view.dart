@@ -6,12 +6,34 @@ import '../controllers/breathing_controller.dart';
 import '../painters/breathing_painter.dart';
 
 class CalmBreathingView extends StatelessWidget {
-  const CalmBreathingView({super.key});
+  final int exerciseId;
+  final int inhaleSeconds;
+  final int holdSeconds;
+  final int exhaleSeconds;
+  final int recommendedCycles;
+  final int totalSession;
+
+  const CalmBreathingView({
+    super.key,
+    required this.exerciseId,
+    required this.inhaleSeconds,
+    required this.holdSeconds,
+    required this.exhaleSeconds,
+    required this.recommendedCycles,
+    required this.totalSession,
+  });
 
   @override
   Widget build(BuildContext context) {
     final CalmBreathingController controller = Get.put(
-      CalmBreathingController(),
+      CalmBreathingController(
+        exerciseId: exerciseId,
+        inhaleSeconds: inhaleSeconds,
+        holdSeconds: holdSeconds,
+        exhaleSeconds: exhaleSeconds,
+        totalCycles: recommendedCycles,
+        totalSession: totalSession,
+      ),
     );
 
     return Scaffold(
@@ -71,6 +93,8 @@ class CalmBreathingView extends StatelessWidget {
                   visualValue = controller.mainController.value;
                 } else if (controller.phase == BreathPhase.hold) {
                   visualValue = 1.0;
+                } else if (controller.phase == BreathPhase.outPhase) {
+                  visualValue = 1.0 - controller.mainController.value;
                 } else {
                   visualValue = 0.0;
                 }

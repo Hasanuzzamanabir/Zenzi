@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/breath_page/box_breathing/views/breathing_view.dart';
+
 import 'package:zenzi/modules/breath_page/calm_breathing/views/breathing_view.dart';
 import 'package:zenzi/modules/breath_page/energizing_breathing/views/energizing_breathing_view.dart';
-//import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/painters/breathing_painter.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_controller.dart';
 import 'package:zenzi/modules/breath_page/four_seven_eight_brathing/views/breathing_view.dart';
+import 'package:zenzi/modules/breath_page/model/breathing_model.dart';
 
 class BreathPageView extends StatelessWidget {
   const BreathPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final BreathingController controller =
+        Get.isRegistered<BreathingController>()
+        ? Get.find<BreathingController>()
+        : Get.put(BreathingController());
     return ThemedScaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(180.h),
@@ -50,7 +58,7 @@ class BreathPageView extends StatelessWidget {
                 Text(
                   "Calm your mind and body with\nintentional breath",
                   style: AppTextStyle.h3.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -66,46 +74,48 @@ class BreathPageView extends StatelessWidget {
             _infoCard(),
             SizedBox(height: 16.h),
 
-            _exerciseCard(
-              title: "Box Breathing",
-              subtitle: "Equal counts for calm and \n balance",
-              duration: "4-4-4-4",
-              icon: AppAssets.box,
-              onTap: () {
-                Get.to(() => const BoxBreathingView());
-              },
+            // Display breathing exercises from API
+            Obx(
+              () => controller.isLoading.value
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32.h),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    )
+                  : controller.breathingExercises.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32.h),
+                        child: Text(
+                          'No breathing exercises available',
+                          style: AppTextStyle.h6,
+                        ),
+                      ),
+                    )
+                  : Column(
+                      children: List.generate(
+                        controller.breathingExercises.length,
+                        (index) {
+                          final exercise = controller.breathingExercises[index];
+                          return exerciseCard(
+                            title: exercise.title,
+                            summary: exercise.summary,
+                            inhaleSeconds: exercise.inhaleSeconds.toString(),
+                            holdSeconds: exercise.holdSeconds.toString(),
+                            exhaleSeconds: exercise.exhaleSeconds.toString(),
+                            recommendedCycles: exercise.recommendedCycles
+                                .toString(),
+                            totalSession: exercise.totalSession.toString(),
+                            icon: _resolveIconPath(exercise.iconCode),
+                            onTap: () {
+                              _navigateToBreathingView(exercise);
+                            },
+                          );
+                        },
+                      ),
+                    ),
             ),
-
-            _exerciseCard(
-              title: "4-7-8 Breathing",
-              subtitle: "Deep relaxation and sleep\npreparation",
-              duration: "4-7-8",
-              icon: AppAssets.fourb,
-              onTap: () {
-                Get.to(() => const FourSevenEightBreathingView());
-              },
-            ),
-
-            _exerciseCard(
-              title: "Calm Breathing",
-              subtitle: "Simple and gentle to stress relief",
-              duration: "5-5",
-              icon: AppAssets.calm,
-              onTap: () {
-                Get.to(() => const CalmBreathingView());
-              },
-            ),
-
-            _exerciseCard(
-              title: "Energizing Breath",
-              subtitle: "Quick rhythm for focus and energy",
-              duration: "1-1",
-              icon: AppAssets.energy,
-              onTap: () {
-                Get.to(() => const EnergizingBreathingView());
-              },
-            ),
-
             SizedBox(height: 20.h),
             _breathingTipsCard(),
             SizedBox(height: 20.h),
@@ -115,6 +125,87 @@ class BreathPageView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Navigate to appropriate breathing view based on iconCode
+  static void _navigateToBreathingView(BreathingModel exercise) {
+    switch (exercise.iconCode.toUpperCase()) {
+      case 'BOX':
+        Get.to(
+          () => BoxBreathingView(
+            exerciseId: exercise.id,
+            inhaleSeconds: exercise.inhaleSeconds,
+            holdSeconds: exercise.holdSeconds,
+            exhaleSeconds: exercise.exhaleSeconds,
+            recommendedCycles: exercise.recommendedCycles,
+            totalSession: exercise.totalSession,
+          ),
+        );
+        break;
+
+      case 'SLEEP':
+        Get.to(
+          () => FourSevenEightBreathingView(
+            exerciseId: exercise.id,
+            inhaleSeconds: exercise.inhaleSeconds,
+            holdSeconds: exercise.holdSeconds,
+            exhaleSeconds: exercise.exhaleSeconds,
+            recommendedCycles: exercise.recommendedCycles,
+            totalSession: exercise.totalSession,
+          ),
+        );
+        break;
+      case 'LIGHTNING':
+        Get.to(
+          () => CalmBreathingView(
+            exerciseId: exercise.id,
+            inhaleSeconds: exercise.inhaleSeconds,
+            holdSeconds: exercise.holdSeconds,
+            exhaleSeconds: exercise.exhaleSeconds,
+            recommendedCycles: exercise.recommendedCycles,
+            totalSession: exercise.totalSession,
+          ),
+        );
+        break;
+      case 'WIND':
+        Get.to(
+          () => EnergizingBreathingView(
+            exerciseId: exercise.id,
+            inhaleSeconds: exercise.inhaleSeconds,
+            holdSeconds: exercise.holdSeconds,
+            exhaleSeconds: exercise.exhaleSeconds,
+            recommendedCycles: exercise.recommendedCycles,
+            totalSession: exercise.totalSession,
+          ),
+        );
+        break;
+      default:
+        Get.to(
+          () => BoxBreathingView(
+            exerciseId: exercise.id,
+            inhaleSeconds: exercise.inhaleSeconds,
+            holdSeconds: exercise.holdSeconds,
+            exhaleSeconds: exercise.exhaleSeconds,
+            recommendedCycles: exercise.recommendedCycles,
+            totalSession: exercise.totalSession,
+          ),
+        );
+    }
+  }
+
+  static String _resolveIconPath(String iconCode) {
+    switch (iconCode.toUpperCase()) {
+      case 'BOX':
+        return AppAssets.box;
+      case 'SLEEP':
+        return AppAssets.fourb;
+      case 'LIGHTNING':
+        return AppAssets.calm;
+      case 'WIND':
+        return AppAssets.energy;
+      default:
+        return AppAssets.box;
+    }
   }
 
   // ---------------- CARDS ----------------
@@ -159,11 +250,16 @@ class BreathPageView extends StatelessWidget {
     );
   }
 
-  static Widget _exerciseCard({
+  static Widget exerciseCard({
     required String title,
-    required String subtitle,
-    required String duration,
-    required dynamic icon,
+    required String summary,
+    String? iconCode,
+    required String inhaleSeconds,
+    required String holdSeconds,
+    required String exhaleSeconds,
+    required String recommendedCycles,
+    required String totalSession,
+    required String icon,
     required VoidCallback onTap,
   }) {
     return Container(
@@ -179,23 +275,7 @@ class BreathPageView extends StatelessWidget {
         children: [
           Row(
             children: [
-              icon is IconData
-                  ? Container(
-                      height: 40.h,
-                      width: 40.w,
-                      padding: EdgeInsets.all(8.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.coreprimarydark,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: Icon(icon, color: Colors.white, size: 24.sp),
-                    )
-                  : Image.asset(
-                      icon,
-                      width: 40.w,
-                      height: 40.h,
-                      fit: BoxFit.contain,
-                    ),
+              Image.asset(icon, width: 40.w, height: 40.h, fit: BoxFit.contain),
               SizedBox(width: 12.w),
               Expanded(
                 child: Column(
@@ -211,7 +291,7 @@ class BreathPageView extends StatelessWidget {
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      subtitle,
+                      summary,
                       style: AppTextStyle.bodyLarge.copyWith(
                         color: AppColors.cardtext,
                         fontSize: 11.sp,
@@ -228,7 +308,7 @@ class BreathPageView extends StatelessWidget {
               Icon(Icons.arrow_upward, size: 14.sp, color: Color(0xFF4A5366)),
               SizedBox(width: 2.w),
               Text(
-                "${duration.split('-')[0]}s",
+                "$inhaleSeconds s",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Color(0xFF4A5366),
@@ -239,7 +319,7 @@ class BreathPageView extends StatelessWidget {
               Icon(Icons.pause, size: 14.sp, color: Color(0xFF4A5366)),
               SizedBox(width: 2.w),
               Text(
-                "${duration.split('-').length > 1 ? duration.split('-')[1] : '0'}s",
+                "$holdSeconds s",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Color(0xFF4A5366),
@@ -250,7 +330,7 @@ class BreathPageView extends StatelessWidget {
               Icon(Icons.arrow_downward, size: 14.sp, color: Color(0xFF4A5366)),
               SizedBox(width: 2.w),
               Text(
-                "${duration.split('-').length > 2 ? duration.split('-')[2] : '0'}s",
+                "$exhaleSeconds s",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Color(0xFF4A5366),
@@ -260,7 +340,7 @@ class BreathPageView extends StatelessWidget {
               ),
               SizedBox(width: 12.w),
               Text(
-                "4 cycles",
+                "$recommendedCycles cycles",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Color(0xFF4A5366),

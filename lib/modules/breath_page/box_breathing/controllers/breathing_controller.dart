@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_controller.dart';
+import 'package:zenzi/modules/breath_page/controller/breathing_sessions_controller.dart';
 
 class BoxBreathingController extends GetxController
     with GetTickerProviderStateMixin {
+  BoxBreathingController({
+    required int exerciseId,
+    required int inhaleSeconds,
+    required int holdSeconds,
+    required int exhaleSeconds,
+    required int totalCycles,
+    required int totalSession,
+  }) : _exerciseId = exerciseId,
+       _inhaleSeconds = inhaleSeconds > 0 ? inhaleSeconds : 4,
+       _holdSeconds = holdSeconds > 0 ? holdSeconds : 4,
+       _exhaleSeconds = exhaleSeconds > 0 ? exhaleSeconds : 4,
+       _totalCycles = totalCycles > 0 ? totalCycles : 5,
+       _totalSession = totalSession;
+
   late AnimationController _mainController;
   late AnimationController _rotationController;
+
+  final int _exerciseId;
+  final int _inhaleSeconds;
+  final int _holdSeconds;
+  final int _exhaleSeconds;
+  final int _totalSession;
 
   // Phase 1: Breathe In (4s)
   // Phase 2: Hold (4s)
@@ -12,7 +34,7 @@ class BoxBreathingController extends GetxController
   // 0: Completed
   final RxInt _phase = 1.obs;
   final RxInt _cycle = 0.obs;
-  final int _totalCycles = 5;
+  final int _totalCycles;
 
   // Expose values for UI
   int get phase => _phase.value;
@@ -37,18 +59,16 @@ class BoxBreathingController extends GetxController
   void onInit() {
     super.onInit();
 
-    // Main cycle controller - duration 4s always
+    // Main cycle controller duration changes by phase.
     _mainController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: Duration(seconds: _inhaleSeconds),
     );
 
     _mainController.addListener(() {
-      // Calculate 1-4 seconds
-      // value goes 0.0 -> 1.0 in 4 seconds
-      // So: (value * 4).toInt() + 1
-      final int val = (_mainController.value * 4).toInt() + 1;
-      if (val != _countdown.value && val <= 4) {
+      final int phaseSeconds = _getPhaseDurationSeconds(_phase.value);
+      final int val = (_mainController.value * phaseSeconds).toInt() + 1;
+      if (val != _countdown.value && val <= phaseSeconds) {
         _countdown.value = val;
       }
     });
@@ -78,6 +98,10 @@ class BoxBreathingController extends GetxController
     _phase.value = pha;
     _mainController.reset();
 
+    final int phaseSeconds = _getPhaseDurationSeconds(pha);
+    _mainController.duration = Duration(seconds: phaseSeconds);
+    _countdown.value = 1;
+
     // We animate 0->1 for ALL phases to drive the timer consistently
     // The VISUAL scale will be derived in the View/Painter based on the phase
     // In: Scale = value
@@ -102,8 +126,45 @@ class BoxBreathingController extends GetxController
         _playPhase(1); // Loop back
       } else {
         _phase.value = 0; // Done
+        _sendBreathingSession();
       }
     }
+  }
+
+  Future<void> _sendBreathingSession() async {
+    final sessionsController = Get.isRegistered<BreathingSessionsController>()
+        ? Get.find<BreathingSessionsController>()
+        : Get.put(BreathingSessionsController());
+
+    await sessionsController.breathingCompletedToSend(
+      _exerciseId,
+      _cycle.value,
+      _resolveTotalSeconds(),
+    );
+
+    if (Get.isRegistered<BreathingController>()) {
+      Get.find<BreathingController>().fetchBreathingData();
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+    if (!isClosed) {
+      Get.back(closeOverlays: true);
+    }
+  }
+
+  int _resolveTotalSeconds() {
+    if (_totalSession > 0) {
+      return _totalSession;
+    }
+
+    return (_inhaleSeconds + _holdSeconds + _exhaleSeconds) * _totalCycles;
+  }
+
+  int _getPhaseDurationSeconds(int phase) {
+    if (phase == 1) return _inhaleSeconds;
+    if (phase == 2) return _holdSeconds;
+    if (phase == 3) return _exhaleSeconds;
+    return _inhaleSeconds;
   }
 
   String get titleText {
