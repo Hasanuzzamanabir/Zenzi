@@ -203,8 +203,9 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       return;
     }
 
-    final bool hasFinished =
-        value.position >= value.duration && !value.isPlaying;
+    final Duration completionThreshold =
+        value.duration - const Duration(milliseconds: 300);
+    final bool hasFinished = value.position >= completionThreshold;
     if (!hasFinished) {
       return;
     }
@@ -215,6 +216,17 @@ class _MeditationDetailsState extends State<MeditationDetails> {
         _showVideoCompletedBottomSheet();
       }
     });
+  }
+
+  Future<void> _restartVideo() async {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null) {
+      return;
+    }
+
+    _hasShownCompletionSheet = false;
+    await controller.seekTo(Duration.zero);
+    await controller.play();
   }
 
   void _showVideoCompletedBottomSheet() {
@@ -262,31 +274,12 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                 ),
               ),
               SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        final VideoPlayerController? videoController =
-                            _controller;
-                        if (videoController != null) {
-                          videoController.seekTo(Duration.zero);
-                          videoController.play();
-                          _hasShownCompletionSheet = false;
-                        }
-                      },
-                      child: const Text('Replay'),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Close'),
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
               ),
             ],
           ),
@@ -608,7 +601,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                               }
                               controller.value.isPlaying
                                   ? controller.pause()
-                                  : controller.play();
+                                  : _restartVideo();
                             },
                             child: Container(
                               padding: EdgeInsets.all(16.w),
