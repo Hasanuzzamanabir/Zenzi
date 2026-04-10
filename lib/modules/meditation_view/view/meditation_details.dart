@@ -8,6 +8,7 @@ import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/meditation_view/controller/meditations_like_controller.dart';
 import 'package:zenzi/modules/meditation_view/model/meditations_details_model.dart';
 
 class MeditationDetails extends StatefulWidget {
@@ -23,9 +24,11 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   VideoPlayerController? _controller;
   MeditationDetailsModel? _details;
   int? _meditationId;
+  int _likesCount = 0;
   bool _isDetailsLoading = true;
   bool _isVideoLoading = false;
   bool _hasVideoError = false;
+  bool _isLikeLoading = false;
   bool _showVideoControls = false;
   String? detailsError;
 
@@ -82,6 +85,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               response.data['data'] as Map<String, dynamic>? ??
               <String, dynamic>{};
           _details = MeditationDetailsModel.fromJson(data);
+          _likesCount = _details?.likesCount ?? 0;
         } else {
           throw Exception('Unexpected meditation detail response');
         }
@@ -103,6 +107,35 @@ class _MeditationDetailsState extends State<MeditationDetails> {
           _isDetailsLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _refreshLikeDetails() async {
+    final int? meditationId = _meditationId;
+    if (meditationId == null) {
+      return;
+    }
+
+    try {
+      final response = await _apiServices.get(
+        '/api/v1/content/meditations/$meditationId/',
+        requireAuth: true,
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final Map<String, dynamic> data =
+            response.data['data'] as Map<String, dynamic>? ??
+            <String, dynamic>{};
+
+        if (mounted) {
+          setState(() {
+            _details = MeditationDetailsModel.fromJson(data);
+            _likesCount = _details?.likesCount ?? 0;
+          });
+        }
+      }
+    } catch (error) {
+      debugPrint('Error refreshing like details: $error');
     }
   }
 
@@ -306,13 +339,18 @@ class _MeditationDetailsState extends State<MeditationDetails> {
             ),
           ),
           Spacer(),
-          Container(
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: AppColors.congratsscrennbuttonclr,
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: () {
+              // Handle love action
+            },
+            child: Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: AppColors.congratsscrennbuttonclr,
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(AppAssets.lovbe, width: 20.w, height: 20.w),
             ),
-            child: Image.asset(AppAssets.lovbe, width: 20.w, height: 20.w),
           ),
           SizedBox(width: 16.w),
           Container(
@@ -605,16 +643,43 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   }
 
   Widget _buildIconsRow(MeditationDetailsModel details) {
+    final controller = Get.put(MeditationsLikeController());
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         children: [
           Row(
             children: [
-              Icon(Icons.favorite, color: Color(0xFFFF6B6B), size: 24.sp),
+              IconButton(
+                onPressed: _isLikeLoading || _meditationId == null
+                    ? null
+                    : () async {
+                        setState(() {
+                          _isLikeLoading = true;
+                        });
+
+                        await controller.handleLikeTap(
+                          meditationId: _meditationId.toString(),
+                          reloadDetails: _refreshLikeDetails,
+                        );
+
+                        if (mounted) {
+                          setState(() {
+                            _isLikeLoading = false;
+                          });
+                        }
+                      },
+                icon: Icon(
+                  details.isLikedByUser
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: Color(0xFFFF6B6B),
+                  size: 24.sp,
+                ),
+              ),
               SizedBox(width: 8.w),
               Text(
-                details.likesCount.toString(),
+                _likesCount.toString(),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16.sp,
