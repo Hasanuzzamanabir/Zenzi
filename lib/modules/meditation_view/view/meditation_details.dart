@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,13 +21,16 @@ class MeditationDetails extends StatefulWidget {
   State<MeditationDetails> createState() => _MeditationDetailsState();
 }
 
-class _MeditationDetailsState extends State<MeditationDetails> {
+class _MeditationDetailsState extends State<MeditationDetails>
+    with WidgetsBindingObserver {
   final ApiServices _apiServices = ApiServices();
 
   VideoPlayerController? _controller;
+  Timer? _likeRefreshTimer;
   MeditationDetailsModel? _details;
   int? _meditationId;
   int _likesCount = 0;
+  bool _isRefreshingLikeDetails = false;
   bool _isDetailsLoading = true;
   bool _isVideoLoading = false;
   bool _hasVideoError = false;
@@ -37,8 +42,20 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _meditationId = _resolveMeditationId(Get.arguments);
     _loadMeditationDetails();
+    _likeRefreshTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) => _refreshLikeDetails(),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshLikeDetails();
+    }
   }
 
   int? _resolveMeditationId(dynamic arguments) {
@@ -114,11 +131,12 @@ class _MeditationDetailsState extends State<MeditationDetails> {
 
   Future<void> _refreshLikeDetails() async {
     final int? meditationId = _meditationId;
-    if (meditationId == null) {
+    if (meditationId == null || _isRefreshingLikeDetails) {
       return;
     }
 
     try {
+      _isRefreshingLikeDetails = true;
       final response = await _apiServices.get(
         '/api/v1/content/meditations/$meditationId/',
         requireAuth: true,
@@ -138,6 +156,8 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       }
     } catch (error) {
       debugPrint('Error refreshing like details: $error');
+    } finally {
+      _isRefreshingLikeDetails = false;
     }
   }
 
@@ -311,6 +331,8 @@ class _MeditationDetailsState extends State<MeditationDetails> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _likeRefreshTimer?.cancel();
     _controller?.removeListener(_videoListener);
     _controller?.dispose();
     super.dispose();
