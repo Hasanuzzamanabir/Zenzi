@@ -22,7 +22,7 @@ class LessonsView extends StatelessWidget {
               duration: '10 min',
               imageContent: AppAssets.medi,
               onTap: () {
-                Get.toNamed(AppRoute.getMeditationDetails());
+                Get.toNamed(AppRoute.getMeditationDetails(), arguments: 10);
               },
             ),
             SizedBox(height: 16.h),

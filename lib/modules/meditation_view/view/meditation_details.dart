@@ -2,10 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
+import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/meditation_view/model/meditations_details_model.dart';
 
 class MeditationDetails extends StatefulWidget {
   const MeditationDetails({super.key});
@@ -15,54 +18,168 @@ class MeditationDetails extends StatefulWidget {
 }
 
 class _MeditationDetailsState extends State<MeditationDetails> {
-  late VideoPlayerController _controller;
-  bool _isInitialized = false;
-  bool _hasError = false;
+  final ApiServices _apiServices = ApiServices();
+
+  VideoPlayerController? _controller;
+  MeditationDetailsModel? _details;
+  int? _meditationId;
+  bool _isDetailsLoading = true;
+  bool _isVideoLoading = false;
+  bool _hasVideoError = false;
+  bool _showVideoControls = false;
+  String? detailsError;
 
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
+    _meditationId = _resolveMeditationId(Get.arguments);
+    _loadMeditationDetails();
   }
 
-  void _initializeVideo() {
-    setState(() {
-      _isInitialized = false;
-      _hasError = false;
-    });
+  int? _resolveMeditationId(dynamic arguments) {
+    if (arguments is int) {
+      return arguments;
+    }
 
-    // Using a more reliable and smaller sample URL
-    _controller =
-        VideoPlayerController.networkUrl(
-            Uri.parse('https://vjs.zencdn.net/v/oceans.mp4'),
-          )
-          ..initialize()
-              .then((_) {
-                if (mounted) {
-                  setState(() {
-                    _isInitialized = true;
-                  });
-                  _controller.setLooping(true);
-                  _controller.play();
-                }
-              })
-              .catchError((error) {
-                debugPrint("Video initialization failed: $error");
-                if (mounted) {
-                  setState(() {
-                    _hasError = true;
-                  });
-                }
-              });
+    if (arguments is String) {
+      return int.tryParse(arguments);
+    }
 
-    _controller.addListener(() {
-      if (mounted) setState(() {});
+    if (arguments is Map<String, dynamic>) {
+      final dynamic value = arguments['id'];
+      if (value is int) {
+        return value;
+      }
+      if (value is String) {
+        return int.tryParse(value);
+      }
+    }
+
+    return null;
+  }
+
+  Future<void> _loadMeditationDetails() async {
+    if (mounted) {
+      setState(() {
+        _isDetailsLoading = true;
+        detailsError = null;
+      });
+    }
+
+    try {
+      final int? meditationId = _meditationId;
+
+      if (meditationId == null) {
+        _details = MeditationDetailsModel.fallback();
+      } else {
+        final response = await _apiServices.get(
+          '/api/v1/content/meditations/$meditationId/',
+          requireAuth: true,
+        );
+
+        if (response.statusCode == 200 && response.data['success'] == true) {
+          final Map<String, dynamic> data =
+              response.data['data'] as Map<String, dynamic>? ??
+              <String, dynamic>{};
+          _details = MeditationDetailsModel.fromJson(data);
+        } else {
+          throw Exception('Unexpected meditation detail response');
+        }
+      }
+
+      await _initializeVideo(
+        _details?.mediaFile.isNotEmpty == true
+            ? _details!.mediaFile
+            : 'https://vjs.zencdn.net/v/oceans.mp4',
+      );
+    } catch (error) {
+      debugPrint('Error loading meditation details: $error');
+      detailsError = 'Unable to load meditation details';
+      _details = MeditationDetailsModel.fallback();
+      await _initializeVideo(_details!.mediaFile);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDetailsLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _initializeVideo(String videoUrl) async {
+    final String safeVideoUrl = videoUrl.trim().isEmpty
+        ? 'https://vjs.zencdn.net/v/oceans.mp4'
+        : videoUrl;
+
+    _controller?.removeListener(_videoListener);
+    _controller?.dispose();
+    _controller = null;
+
+    if (mounted) {
+      setState(() {
+        _isVideoLoading = true;
+        _hasVideoError = false;
+      });
+    }
+
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse(safeVideoUrl),
+    );
+    _controller = controller;
+
+    try {
+      await controller.initialize();
+      await controller.setLooping(true);
+
+      if (mounted) {
+        controller.addListener(_videoListener);
+        await controller.play();
+        setState(() {
+          _isVideoLoading = false;
+        });
+      }
+    } catch (error) {
+      debugPrint('Video initialization failed: $error');
+      if (mounted) {
+        setState(() {
+          _isVideoLoading = false;
+          _hasVideoError = true;
+        });
+      }
+    }
+  }
+
+  void _videoListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _toggleVideoControls() {
+    if (mounted) {
+      setState(() {
+        _showVideoControls = !_showVideoControls;
+      });
+      if (_showVideoControls) {
+        _autoHideControls();
+      }
+    }
+  }
+
+  void _autoHideControls() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _showVideoControls) {
+        setState(() {
+          _showVideoControls = false;
+        });
+      }
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.removeListener(_videoListener);
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -75,6 +192,15 @@ class _MeditationDetailsState extends State<MeditationDetails> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isDetailsLoading && _details == null) {
+      return const ThemedScaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final MeditationDetailsModel details =
+        _details ?? MeditationDetailsModel.fallback();
+
     return ThemedScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -94,7 +220,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               SizedBox(height: 16.h),
 
               // Icons Row (Heart, Size Box, Share)
-              _buildIconsRow(),
+              _buildIconsRow(details),
 
               SizedBox(height: 20.h),
 
@@ -105,7 +231,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Meditation 101',
+                      details.title,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24.sp,
@@ -114,7 +240,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                     ),
                     SizedBox(height: 12.h),
                     Text(
-                      'Duration : ${_formatDuration(_controller.value.duration)}',
+                      'Duration : ${details.durationLabel}',
                       style: TextStyle(
                         color: AppColors.secondarycolor,
                         fontSize: 14.sp,
@@ -131,7 +257,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'This meditation is designed to gently slow your thoughts, soften tension, and bring you attention to a state of deep relaxation. Follow the breath, stay present, and let peaceful energy flow through you.',
+                      details.description,
                       style: TextStyle(
                         color: Color(0xFFD4A574),
                         fontSize: 13.sp,
@@ -147,7 +273,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               // Benefits Card
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: _buildBenefitsCard(),
+                child: _buildBenefitsCard(details),
               ),
 
               SizedBox(height: 24.h),
@@ -171,7 +297,6 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         children: [
-          // Back Arrow Icon
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Icon(
@@ -180,10 +305,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               size: 24.sp,
             ),
           ),
-
           Spacer(),
-
-          // Love/Favorite Icon
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
@@ -192,10 +314,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
             ),
             child: Image.asset(AppAssets.lovbe, width: 20.w, height: 20.w),
           ),
-
           SizedBox(width: 16.w),
-
-          // Download Icon
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
@@ -210,285 +329,292 @@ class _MeditationDetailsState extends State<MeditationDetails> {
   }
 
   Widget _buildVideoCard() {
+    final VideoPlayerController? controller = _controller;
+    final bool isInitialized = controller?.value.isInitialized ?? false;
+    final Duration currentPosition =
+        controller?.value.position ?? Duration.zero;
+    final Duration totalDuration = controller?.value.duration ?? Duration.zero;
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 24.w),
-      height: 260.h,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(16.r),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Stack(
-          children: [
-            // Video or Thumbnail
-            _isInitialized
-                ? SizedBox.expand(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: _controller.value.size.width,
-                        height: _controller.value.size.height,
-                        child: VideoPlayer(_controller),
+      child: Column(
+        children: [
+          Container(
+            height: 260.h,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.r),
+              child: Stack(
+                children: [
+                  if (isInitialized)
+                    GestureDetector(
+                      onTap: _toggleVideoControls,
+                      child: SizedBox.expand(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: controller!.value.size.width,
+                            height: controller.value.size.height,
+                            child: VideoPlayer(controller),
+                          ),
+                        ),
                       ),
-                    ),
-                  )
-                : Container(
-                    color: Colors.black38,
-                    child: Center(
-                      child: _hasError
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 40.sp,
-                                ),
-                                SizedBox(height: 12.h),
-                                Text(
-                                  "Failed to load video",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
+                    )
+                  else
+                    Container(
+                      color: Colors.black38,
+                      child: Center(
+                        child: _hasVideoError
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 40.sp,
                                   ),
-                                ),
-                                SizedBox(height: 12.h),
-                                TextButton(
-                                  onPressed: _initializeVideo,
-                                  child: Text(
-                                    "Retry",
+                                  SizedBox(height: 12.h),
+                                  Text(
+                                    'Failed to load video',
                                     style: TextStyle(
-                                      color: AppColors.primarycolor,
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(color: Colors.white),
-                                SizedBox(height: 12.h),
-                                Text(
-                                  "Loading Video...",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
+                                  SizedBox(height: 12.h),
+                                  TextButton(
+                                    onPressed: () {
+                                      final details =
+                                          _details ??
+                                          MeditationDetailsModel.fallback();
+                                      _initializeVideo(details.mediaFile);
+                                    },
+                                    child: Text(
+                                      'Retry',
+                                      style: TextStyle(
+                                        color: AppColors.primarycolor,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-
-            // Gradient overlay for better text visibility
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.2),
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.6),
-                  ],
-                ),
-              ),
-            ),
-
-            // Top right icons (small buttons and three dots)
-            Positioned(
-              top: 12.h,
-              right: 12.w,
-              child: Row(
-                children: [
-                  Image.asset(
-                    AppAssets.smallButtons,
-                    width: 32.w,
-                    height: 32.w,
-                  ),
-                  SizedBox(width: 8.w),
-                  GestureDetector(
-                    onTap: () => _showVideoOptionsMenu(context),
-                    child: Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                      size: 24.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Center Control Buttons
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _controller.seekTo(
-                        _controller.value.position - Duration(seconds: 10),
-                      );
-                    },
-                    child: Image.asset(
-                      AppAssets.secondaryButtons2,
-                      width: 40.w,
-                      height: 40.w,
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  GestureDetector(
-                    onTap: () {
-                      _controller.value.isPlaying
-                          ? _controller.pause()
-                          : _controller.play();
-                    },
-                    child: Container(
-                      width: 64.w,
-                      height: 64.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(AppAssets.mainController),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          color: Colors.white,
-                          size: 32.w,
-                        ),
+                                ],
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  Text(
+                                    _isVideoLoading
+                                        ? 'Loading Video...'
+                                        : 'Preparing Video...',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 16.w),
-                  GestureDetector(
-                    onTap: () {
-                      _controller.seekTo(
-                        _controller.value.position + Duration(seconds: 10),
-                      );
-                    },
-                    child: Image.asset(
-                      AppAssets.secondaryButtons,
-                      width: 40.w,
-                      height: 40.w,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Bottom Text and Time
-            Positioned(
-              bottom: 16.h,
-              left: 16.w,
-              right: 16.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Left Side: Title and Time
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  if (_showVideoControls && isInitialized)
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            'Meditation 01',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                          GestureDetector(
+                            onTap: () {
+                              final VideoPlayerController? controller =
+                                  _controller;
+                              if (controller == null) {
+                                return;
+                              }
+                              controller.seekTo(
+                                controller.value.position -
+                                    const Duration(seconds: 10),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(12.w),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.replay_10,
+                                color: Colors.white,
+                                size: 32.sp,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 6.h),
-                          Row(
+                          GestureDetector(
+                            onTap: () {
+                              final VideoPlayerController? controller =
+                                  _controller;
+                              if (controller == null) {
+                                return;
+                              }
+                              controller.value.isPlaying
+                                  ? controller.pause()
+                                  : controller.play();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(16.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.primarycolor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _controller?.value.isPlaying == true
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                                color: Colors.white,
+                                size: 40.sp,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              final VideoPlayerController? controller =
+                                  _controller;
+                              if (controller == null) {
+                                return;
+                              }
+                              controller.seekTo(
+                                controller.value.position +
+                                    const Duration(seconds: 10),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(12.w),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.forward_10,
+                                color: Colors.white,
+                                size: 32.sp,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (_showVideoControls && isInitialized)
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.black54],
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 8.h,
+                          ),
+                          child: Column(
                             children: [
-                              Text(
-                                'Season 1',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.85),
-                                  fontSize: 12.sp,
+                              SliderTheme(
+                                data: SliderThemeData(
+                                  trackHeight: 3.h,
+                                  thumbShape: RoundSliderThumbShape(
+                                    enabledThumbRadius: 6.w,
+                                    elevation: 0,
+                                  ),
+                                  overlayShape: RoundSliderOverlayShape(
+                                    overlayRadius: 8.w,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value:
+                                      isInitialized &&
+                                          totalDuration.inMilliseconds > 0
+                                      ? currentPosition.inMilliseconds
+                                                .toDouble() /
+                                            totalDuration.inMilliseconds
+                                                .toDouble()
+                                      : 0.0,
+                                  onChanged: (double value) {
+                                    if (controller != null) {
+                                      final Duration newPosition = Duration(
+                                        milliseconds:
+                                            (value *
+                                                    totalDuration
+                                                        .inMilliseconds)
+                                                .toInt(),
+                                      );
+                                      controller.seekTo(newPosition);
+                                    }
+                                  },
+                                  min: 0.0,
+                                  max: 1.0,
+                                  activeColor: AppColors.primarycolor,
+                                  inactiveColor: Colors.white.withOpacity(0.3),
                                 ),
                               ),
-                              SizedBox(width: 20.w),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 4.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4.r),
-                                ),
-                                child: Text(
-                                  _formatDuration(_controller.value.position),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _formatDuration(currentPosition),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                    Text(
+                                      _formatDuration(totalDuration),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-
-                      // Right Side: Duration
-                      Text(
-                        '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  ),
-
-                  SizedBox(height: 12.h),
-
-                  // Progress Bar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(2.r),
-                    child: LinearProgressIndicator(
-                      value: _isInitialized
-                          ? _controller.value.position.inMilliseconds /
-                                _controller.value.duration.inMilliseconds
-                          : 0.0,
-                      minHeight: 3.h,
-                      backgroundColor: Colors.white.withOpacity(0.3),
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
-                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildIconsRow() {
+  Widget _buildIconsRow(MeditationDetailsModel details) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         children: [
-          // Heart Icon with count
           Row(
             children: [
               Icon(Icons.favorite, color: Color(0xFFFF6B6B), size: 24.sp),
               SizedBox(width: 8.w),
               Text(
-                '89',
+                details.likesCount.toString(),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16.sp,
@@ -497,12 +623,8 @@ class _MeditationDetailsState extends State<MeditationDetails> {
               ),
             ],
           ),
-
           SizedBox(width: 16.w),
-
-          Spacer(),
-
-          // Share Icon
+          const Spacer(),
           Row(
             children: [
               Image.asset(
@@ -523,7 +645,11 @@ class _MeditationDetailsState extends State<MeditationDetails> {
     );
   }
 
-  Widget _buildBenefitsCard() {
+  Widget _buildBenefitsCard(MeditationDetailsModel details) {
+    final List<String> benefits = details.benefits.isNotEmpty
+        ? details.benefits
+        : MeditationDetailsModel.fallback().benefits;
+
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -542,14 +668,25 @@ class _MeditationDetailsState extends State<MeditationDetails> {
             ),
           ),
           SizedBox(height: 16.h),
-          _buildBenefitItem('Reduces stress and anxiety'),
-          SizedBox(height: 12.h),
-          _buildBenefitItem('Improves emotional well-being'),
-          SizedBox(height: 12.h),
-          _buildBenefitItem('Enhances self-awareness'),
+          ..._buildBenefitItems(benefits),
         ],
       ),
     );
+  }
+
+  List<Widget> _buildBenefitItems(List<String> benefits) {
+    if (benefits.isEmpty) {
+      return <Widget>[_buildBenefitItem('No benefits available yet')];
+    }
+
+    final List<Widget> items = <Widget>[];
+    for (int index = 0; index < benefits.length; index++) {
+      items.add(_buildBenefitItem(benefits[index]));
+      if (index != benefits.length - 1) {
+        items.add(SizedBox(height: 12.h));
+      }
+    }
+    return items;
   }
 
   Widget _buildBenefitItem(String text) {
@@ -557,9 +694,11 @@ class _MeditationDetailsState extends State<MeditationDetails> {
       children: [
         Image.asset(AppAssets.mark, width: 18.w, height: 18.w),
         SizedBox(width: 12.w),
-        Text(
-          text,
-          style: TextStyle(color: AppColors.secondarycolor, fontSize: 14.sp),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(color: AppColors.secondarycolor, fontSize: 14.sp),
+          ),
         ),
       ],
     );
@@ -625,37 +764,37 @@ class _MeditationDetailsState extends State<MeditationDetails> {
     );
   }
 
-  void _showVideoOptionsMenu(BuildContext context) {
-    showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(1000, 100, 20, 0),
-      color: Color(0xFFB88A5C),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
-      items: [
-        PopupMenuItem(
-          value: 'pip',
-          child: Text(
-            'picture in picture',
-            style: TextStyle(color: Colors.white, fontSize: 14.sp),
-          ),
-        ),
-        PopupMenuItem(
-          value: 'download',
-          child: Text(
-            'Download',
-            style: TextStyle(color: Colors.white, fontSize: 14.sp),
-          ),
-        ),
-      ],
-    ).then((value) {
-      if (value != null) {
-        // Handle menu item selection
-        if (value == 'pip') {
-          // Handle picture in picture
-        } else if (value == 'download') {
-          // Handle download
-        }
-      }
-    });
-  }
+  // void _showVideoOptionsMenu(BuildContext context) {
+  //   showMenu(
+  //     context: context,
+  //     position: RelativeRect.fromLTRB(1000, 100, 20, 0),
+  //     color: Color(0xFFB88A5C),
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+  //     items: [
+  //       PopupMenuItem(
+  //         value: 'pip',
+  //         child: Text(
+  //           'picture in picture',
+  //           style: TextStyle(color: Colors.white, fontSize: 14.sp),
+  //         ),
+  //       ),
+  //       PopupMenuItem(
+  //         value: 'download',
+  //         child: Text(
+  //           'Download',
+  //           style: TextStyle(color: Colors.white, fontSize: 14.sp),
+  //         ),
+  //       ),
+  //     ],
+  //   ).then((value) {
+  //     if (value != null) {
+  //       // Handle menu item selection
+  //       if (value == 'pip') {
+  //         // Handle picture in picture
+  //       } else if (value == 'download') {
+  //         // Handle download
+  //       }
+  //     }
+  //   });
+  // }
 }

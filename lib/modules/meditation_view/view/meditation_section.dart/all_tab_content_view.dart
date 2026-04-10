@@ -31,7 +31,7 @@ class AllTabContentView extends StatelessWidget {
       return ListView.separated(
         padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 30.h),
         itemCount: meditations.length,
-        separatorBuilder: (_, __) => SizedBox(height: 16.h),
+        separatorBuilder: (_, _) => SizedBox(height: 16.h),
         itemBuilder: (context, index) {
           final meditation = meditations[index];
 
@@ -42,8 +42,12 @@ class AllTabContentView extends StatelessWidget {
                 : 'Guided meditation',
             duration: meditation.durationLabel,
             imageContent: _fallbackAssetForIndex(index),
+            imageUrl: meditation.thumbnailUrl,
             onTap: () {
-              Get.toNamed(AppRoute.getMeditationDetails());
+              Get.toNamed(
+                AppRoute.getMeditationDetails(),
+                arguments: meditation.id,
+              );
             },
           );
         },

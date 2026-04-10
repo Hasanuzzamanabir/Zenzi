@@ -112,24 +112,11 @@ class MaditationVideoCardWidget extends StatelessWidget {
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
-              child: imageUrl != null && imageUrl!.trim().isNotEmpty
-                  ? Image.network(
-                      imageUrl!,
-                      height: 100.h,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) {
-                        return Image.asset(
-                          imageContent,
-                          height: 100.h,
-                          fit: BoxFit.contain,
-                        );
-                      },
-                    )
-                  : Image.asset(
-                      imageContent,
-                      height: 100.h,
-                      fit: BoxFit.contain,
-                    ),
+              child: Image.asset(
+                imageContent,
+                height: 100.h,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],
