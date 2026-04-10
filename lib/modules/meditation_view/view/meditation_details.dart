@@ -339,20 +339,7 @@ class _MeditationDetailsState extends State<MeditationDetails> {
             ),
           ),
           Spacer(),
-          GestureDetector(
-            onTap: () {
-              // Handle love action
-            },
-            child: Container(
-              padding: EdgeInsets.all(10.w),
-              decoration: BoxDecoration(
-                color: AppColors.congratsscrennbuttonclr,
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(AppAssets.lovbe, width: 20.w, height: 20.w),
-            ),
-          ),
-          SizedBox(width: 16.w),
+
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
