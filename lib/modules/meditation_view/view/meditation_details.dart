@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
@@ -221,6 +222,18 @@ class _MeditationDetailsState extends State<MeditationDetails> {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return "$minutes:$seconds";
+  }
+
+  Future<void> _shareMeditationVideo(MeditationDetailsModel details) async {
+    final String videoUrl = details.mediaFile.trim();
+    if (videoUrl.isEmpty || Uri.tryParse(videoUrl)?.hasAbsolutePath != true) {
+      Get.snackbar('Share', 'Video link is not available');
+      return;
+    }
+
+    await SharePlus.instance.share(
+      ShareParams(text: 'Watch this meditation video: $videoUrl'),
+    );
   }
 
   @override
@@ -677,20 +690,23 @@ class _MeditationDetailsState extends State<MeditationDetails> {
           ),
           SizedBox(width: 16.w),
           const Spacer(),
-          Row(
-            children: [
-              Image.asset(
-                AppAssets.computerArrowUp,
-                width: 20.w,
-                height: 20.w,
-                color: Color(0xFFD4A574),
-              ),
-              SizedBox(width: 6.w),
-              Text(
-                'share',
-                style: TextStyle(color: Color(0xFFD4A574), fontSize: 14.sp),
-              ),
-            ],
+          GestureDetector(
+            onTap: () => _shareMeditationVideo(details),
+            child: Row(
+              children: [
+                Image.asset(
+                  AppAssets.computerArrowUp,
+                  width: 20.w,
+                  height: 20.w,
+                  color: Color(0xFFD4A574),
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  'share',
+                  style: TextStyle(color: Color(0xFFD4A574), fontSize: 14.sp),
+                ),
+              ],
+            ),
           ),
         ],
       ),
