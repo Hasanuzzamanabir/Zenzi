@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:zenzi/core/values/app_assets.dart';
+import 'package:zenzi/modules/favourite/controller/favourite_lessons_controller.dart';
 import 'package:zenzi/modules/meditation_view/widget/maditation_video_card_widget.dart';
 import 'package:zenzi/routes/app_routes.dart';
 
@@ -11,42 +11,52 @@ class LessonsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 20.h),
-        Column(
-          children: [
-            MaditationVideoCardWidget(
-              title: 'Meditation 101',
-              subtitle: 'Techniques, Benefits, and a Beginner’s How-To',
-              duration: '10 min',
-              imageContent: AppAssets.medi,
-              onTap: () {
-                Get.toNamed(AppRoute.getMeditationDetails(), arguments: 10);
-              },
-            ),
-            SizedBox(height: 16.h),
-            MaditationVideoCardWidget(
-              title: 'Cardio Meditation',
-              subtitle: 'Techniques for Beginners',
-              duration: '10 min',
-              imageContent: AppAssets.cardio,
-              onTap: () {},
-            ),
-            SizedBox(height: 16.h),
-            MaditationVideoCardWidget(
-              title: 'Meditation 101',
-              subtitle: 'Techniques for Beginners',
-              duration: '10 min',
-              imageContent: AppAssets.deep,
-              onTap: () {},
-            ),
+    final controller = Get.find<FavouriteLessonsController>();
 
-            // MusicCardWidget(isFav: true),
-            SizedBox(height: 30.h),
-          ],
-        ),
-      ],
-    );
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return Padding(
+          padding: EdgeInsets.only(top: 50.h),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (controller.lessonsList.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: 50.h),
+          child: const Center(child: Text('No favorite lessons found!')),
+        );
+      }
+
+      return Column(
+        children: [
+          SizedBox(height: 20.h),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: controller.lessonsList.length,
+            separatorBuilder: (_, __) => SizedBox(height: 16.h),
+            itemBuilder: (context, index) {
+              final lesson = controller.lessonsList[index];
+
+              return MaditationVideoCardWidget(
+                title: lesson.title,
+                subtitle: lesson.description,
+                duration: lesson.durationLabel,
+                imageContent: AppAssets.medi,
+                imageUrl: lesson.thumbnailUrl,
+                onTap: () {
+                  Get.toNamed(
+                    AppRoute.getMeditationDetails(),
+                    arguments: lesson.id,
+                  );
+                },
+              );
+            },
+          ),
+          SizedBox(height: 30.h),
+        ],
+      );
+    });
   }
 }
