@@ -256,59 +256,19 @@ class _MeditationDetailsState extends State<MeditationDetails>
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Container(
-          width: double.infinity,
-          padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 28.h),
-          decoration: BoxDecoration(
-            color: AppColors.navbackground,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 48.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(999.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                'Video completed',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'You have finished this meditation video.',
-                style: TextStyle(
-                  color: AppColors.secondarycolor,
-                  fontSize: 14.sp,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
-                ),
-              ),
-            ],
-          ),
+        return CompletionBottomSheetContent(
+          sheetContext: context,
+          title: 'Well done!',
+          description: 'You have completed the meditation session.',
+          primaryLabel: 'Continue',
+          secondaryLabel: 'Replay',
+          onPrimaryPressed: () {
+            // Additional action for "Continue" can be added here
+          },
         );
       },
     );
   }
- 
 
   void _toggleVideoControls() {
     if (mounted) {
