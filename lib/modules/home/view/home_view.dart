@@ -28,6 +28,8 @@ class _HomeViewState extends State<HomeView> {
     EditProfileController(),
   );
 
+     final MoodController moodController = Get.put(MoodController());
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +49,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final moodController = Get.put(MoodController());
+ 
     final int currentHour = DateTime.now().hour;
     final bool isDay = currentHour >= 6 && currentHour < 18;
     return PopScope(
@@ -315,22 +317,26 @@ class _HomeViewState extends State<HomeView> {
                                       MainAxisAlignment.spaceBetween,
                                   children: List.generate(
                                     moodController.moods.length,
-                                    (index) => MoodWidget(
-                                      emoji:
-                                          moodController.moods[index]['emoji']!,
-                                      label:
-                                          moodController.moods[index]['label']!,
-                                      isSelected:
-                                          moodController
-                                              .selectedMoodIndex
-                                              .value ==
-                                          index,
-                                      onTap: () {
-                                        moodController.selectMood(index);
-                                        debugPrint(
-                                          'Home page - Selected mood: ${moodController.moods[index]['label']}',
-                                        );
-                                      },
+                                    (index) => Opacity(
+                                      opacity: moodController.selectedMoodIndex.value == index ? 1.0 : 0.5,
+                                      child: MoodWidget(
+                                        emoji:
+                                            moodController.moods[index]['emoji']!,
+                                        label:
+                                            moodController.moods[index]['label']!,
+                                        isSelected:
+                                            moodController
+                                                .selectedMoodIndex
+                                                .value ==
+                                            index,
+                                        onTap:
+                                         () {
+                                          moodController.selectMood(index);
+                                          debugPrint(
+                                            'Home page - Selected mood: ${moodController.moods[index]['label']}',
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -341,25 +347,6 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
 
-                    // Stack(
-                    //   children: [
-                    //     Image(image: Image.asset(AppAssets.meditate).image),
-                    //     Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: Positioned(
-                    //         left: 0,
-                    //         right: 0,
-                    //         child: Text(
-                    //           'Meditate',
-                    //           style: AppTextStyle.h1.copyWith(
-                    //             color: AppColors.primarytext,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    //SizedBox(height: 6.h),
                   ],
                 ),
               ),
