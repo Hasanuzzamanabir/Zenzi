@@ -48,6 +48,7 @@ class AppAssets {
   static const videocard = 'assets/image/meditation/videocard.png';
   static const levelup = 'assets/image/meditation/levelup.png';
   static const congretsgif = 'assets/gifs/congretsgif.gif';
+  static const simplification = 'assets/image/meditation/Simplification.png';
 
   //meditation icon
   static const computerArrowUp =

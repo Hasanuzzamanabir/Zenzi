@@ -11,6 +11,7 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/meditation_view/controller/meditations_like_controller.dart';
 import 'package:zenzi/modules/meditation_view/model/meditations_details_model.dart';
+import 'package:zenzi/modules/meditation_view/widget/complete_bottom_sheet.dart';
 
 class MeditationDetails extends StatefulWidget {
   const MeditationDetails({super.key});
@@ -212,88 +213,32 @@ class _MeditationDetailsState extends State<MeditationDetails> {
     _hasShownCompletionSheet = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _showVideoCompletedBottomSheet();
+        showModalBottomSheet<void>(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (BuildContext sheetContext) {
+            return CompletionBottomSheetContent(
+              title: 'Congratulations',
+              description: 'You have finished the lesson',
+              primaryLabel: 'Replay',
+              secondaryLabel: 'Next video',
+              sheetContext: sheetContext,
+              onPrimaryPressed: () {
+                final VideoPlayerController? videoController = _controller;
+                if (videoController != null) {
+                  videoController.seekTo(Duration.zero);
+                  videoController.play();
+                  _hasShownCompletionSheet = false;
+                }
+              },
+            );
+          },
+        );
       }
     });
   }
-
-  void _showVideoCompletedBottomSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          width: double.infinity,
-          padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 28.h),
-          decoration: BoxDecoration(
-            color: AppColors.navbackground,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 48.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(999.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                'Video completed',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'You have finished this meditation video.',
-                style: TextStyle(
-                  color: AppColors.secondarycolor,
-                  fontSize: 14.sp,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        final VideoPlayerController? videoController =
-                            _controller;
-                        if (videoController != null) {
-                          videoController.seekTo(Duration.zero);
-                          videoController.play();
-                          _hasShownCompletionSheet = false;
-                        }
-                      },
-                      child: const Text('Replay'),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Close'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+ 
 
   void _toggleVideoControls() {
     if (mounted) {
