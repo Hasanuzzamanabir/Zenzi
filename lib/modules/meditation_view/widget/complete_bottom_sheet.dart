@@ -86,24 +86,22 @@ class CompletionBottomSheetContent extends StatelessWidget {
           SizedBox(height: 20.h),
 
           /// Points
-          Obx(
-            () {
-              final int earned = progressController.pointsEarned.value;
-              final int total = progressController.totalPoints.value;
-              final String pointsLabel = earned > 0
-                  ? "You got $earned Points"
-                  : "Your total points: $total";
+          Obx(() {
+            final int earned = progressController.pointsEarned.value;
+            final int total = progressController.totalPoints.value;
+            final String pointsLabel = earned > 0
+                ? "You got $earned Points"
+                : "Your total points: $total";
 
-              return Text(
-                pointsLabel,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              );
-            },
-          ),
+            return Text(
+              pointsLabel,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          }),
 
           SizedBox(height: 12.h),
 
@@ -132,10 +130,10 @@ class CompletionBottomSheetContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.r),
               child: LinearProgressIndicator(
                 value: progressController.nextLevelThreshold.value <= 0
-                  ? 0
-                  : (progressController.totalPoints.value /
-                        progressController.nextLevelThreshold.value)
-                      .clamp(0.0, 1.0),
+                    ? 0
+                    : (progressController.totalPoints.value /
+                              progressController.nextLevelThreshold.value)
+                          .clamp(0.0, 1.0),
                 minHeight: 6.h,
                 backgroundColor: Colors.black,
                 valueColor: const AlwaysStoppedAnimation<Color>(

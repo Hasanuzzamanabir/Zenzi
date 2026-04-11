@@ -270,7 +270,7 @@ class _MeditationDetailsState extends State<MeditationDetails>
         return CompletionBottomSheetContent(
           sheetContext: context,
           title: 'Congratulations',
-          description: 'You got 50 Points',
+          description: 'You have finished the lesson',
           primaryLabel: 'Continue',
           secondaryLabel: 'Replay',
           onPrimaryPressed: () {
