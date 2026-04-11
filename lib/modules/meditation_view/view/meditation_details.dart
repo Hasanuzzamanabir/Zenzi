@@ -12,6 +12,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/meditation_view/controller/meditations_like_controller.dart';
+import 'package:zenzi/modules/meditation_view/controller/progressbar_controller.dart';
 import 'package:zenzi/modules/meditation_view/model/meditations_details_model.dart';
 import 'package:zenzi/modules/meditation_view/widget/complete_bottom_sheet.dart';
 
@@ -38,6 +39,7 @@ class _MeditationDetailsState extends State<MeditationDetails>
   bool _isLikeLoading = false;
   bool _showVideoControls = false;
   bool _hasShownCompletionSheet = false;
+  // bool _isProgressSent = false;
   String? detailsError;
 
   @override
@@ -213,7 +215,7 @@ class _MeditationDetailsState extends State<MeditationDetails>
     }
   }
 
-  void _handleVideoCompletion() {
+  Future<void> _handleVideoCompletion() async {
     final VideoPlayerController? controller = _controller;
     if (controller == null || _hasShownCompletionSheet) {
       return;
@@ -232,6 +234,15 @@ class _MeditationDetailsState extends State<MeditationDetails>
     }
 
     _hasShownCompletionSheet = true;
+    final progressController = Get.put(ProgressbarController());
+
+    if (_meditationId != null) {
+      await progressController.sendProgress(
+        meditationId: _meditationId!,
+        watchedSeconds: value.position.inSeconds,
+      );
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _showVideoCompletedBottomSheet();
@@ -258,8 +269,8 @@ class _MeditationDetailsState extends State<MeditationDetails>
       builder: (BuildContext context) {
         return CompletionBottomSheetContent(
           sheetContext: context,
-          title: 'Well done!',
-          description: 'You have completed the meditation session.',
+          title: 'Congratulations',
+          description: 'You got 50 Points',
           primaryLabel: 'Continue',
           secondaryLabel: 'Replay',
           onPrimaryPressed: () {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
+import 'package:zenzi/modules/meditation_view/controller/progressbar_controller.dart';
 
 class CompletionBottomSheetContent extends StatelessWidget {
   const CompletionBottomSheetContent({
@@ -27,6 +29,7 @@ class CompletionBottomSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progressController = Get.find<ProgressbarController>();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 28.h),
@@ -83,13 +86,23 @@ class CompletionBottomSheetContent extends StatelessWidget {
           SizedBox(height: 20.h),
 
           /// Points
-          Text(
-            "You got 50 Points",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-            ),
+          Obx(
+            () {
+              final int earned = progressController.pointsEarned.value;
+              final int total = progressController.totalPoints.value;
+              final String pointsLabel = earned > 0
+                  ? "You got $earned Points"
+                  : "Your total points: $total";
+
+              return Text(
+                pointsLabel,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            },
           ),
 
           SizedBox(height: 12.h),
@@ -99,12 +112,14 @@ class CompletionBottomSheetContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Left to reach level 2",
+                "Next level progress",
                 style: TextStyle(color: Colors.white70, fontSize: 12.sp),
               ),
-              Text(
-                "132/250",
-                style: TextStyle(color: Colors.white, fontSize: 12.sp),
+              Obx(
+                () => Text(
+                  "${progressController.progressToNextLevel.value}/${progressController.nextLevelThreshold.value}",
+                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                ),
               ),
             ],
           ),
@@ -112,14 +127,20 @@ class CompletionBottomSheetContent extends StatelessWidget {
           SizedBox(height: 8.h),
 
           /// Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.r),
-            child: LinearProgressIndicator(
-              value: 132 / 250,
-              minHeight: 6.h,
-              backgroundColor: Colors.black,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFFC68A47),
+          Obx(
+            () => ClipRRect(
+              borderRadius: BorderRadius.circular(10.r),
+              child: LinearProgressIndicator(
+                value: progressController.nextLevelThreshold.value <= 0
+                  ? 0
+                  : (progressController.totalPoints.value /
+                        progressController.nextLevelThreshold.value)
+                      .clamp(0.0, 1.0),
+                minHeight: 6.h,
+                backgroundColor: Colors.black,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFFC68A47),
+                ),
               ),
             ),
           ),
