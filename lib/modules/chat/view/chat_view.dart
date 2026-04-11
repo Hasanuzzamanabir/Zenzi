@@ -47,13 +47,18 @@ class ChatView extends GetView<ChatController> {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
+                    reverse: true,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 12,
                     ),
                     itemCount: controller.chatHistory.length,
                     itemBuilder: (context, index) {
-                      final chat = controller.chatHistory[index];
+                      final chat =
+                          controller.chatHistory[controller.chatHistory.length -
+                              1 -
+                              index];
                       final bool isUser =
                           chat.role.toLowerCase().trim() == 'human';
 

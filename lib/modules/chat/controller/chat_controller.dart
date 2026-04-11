@@ -8,6 +8,7 @@ import 'package:zenzi/modules/chat/model/chat_bot_model.dart';
 
 class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   ApiServices apiServices = ApiServices();
   RxBool isLoading = false.obs;
@@ -66,6 +67,7 @@ class ChatController extends GetxController {
             )
             .toList(),
       );
+      scrollToBottom();
       return true;
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch chat history');
@@ -105,9 +107,24 @@ class ChatController extends GetxController {
     return <dynamic>[];
   }
 
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) {
+        return;
+      }
+
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   void onClose() {
     messageController.dispose();
+    scrollController.dispose();
     super.onClose();
   }
 }
