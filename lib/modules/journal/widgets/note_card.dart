@@ -5,6 +5,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 class NoteCard extends StatelessWidget {
   const NoteCard({
     super.key,
+    required this.id,
     required this.date,
     required this.title,
     required this.description,
@@ -12,6 +13,7 @@ class NoteCard extends StatelessWidget {
     this.isDismissible = true,
   });
 
+  final int id;
   final String date;
   final String title;
   final String description;
@@ -60,7 +62,7 @@ class NoteCard extends StatelessWidget {
     }
 
     return Dismissible(
-      key: Key('${date}__$description'),
+      key: ValueKey(id),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         onDismissed?.call();

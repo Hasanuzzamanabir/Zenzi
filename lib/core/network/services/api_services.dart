@@ -51,6 +51,16 @@ class ApiServices {
     }
   }
 
+  Future<Response> delete(String path, {bool requireAuth = true}) async {
+    try {
+      return await dio(requireAuth).delete(path);
+    } on DioException catch (e) {
+      throw ApiErrorHandle.handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //Multipart File
   Future<MultipartFile> multipartFile(File file) async {
     return await MultipartFile.fromFile(

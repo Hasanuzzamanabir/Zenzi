@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
+import 'package:zenzi/modules/journal/controller/history_delete_controller.dart';
 import 'package:zenzi/modules/journal/controller/journal_controller.dart';
 import 'package:zenzi/modules/journal/widgets/note_card.dart';
 
@@ -81,6 +82,7 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(JournalController());
+    final deleteHistory = Get.put(HistoryDeleteController());
     final monthTitle = DateFormat('MMMM yyyy').format(_visibleMonth);
     final monthGrid = _buildDaysGrid(_visibleMonth);
 
@@ -170,10 +172,19 @@ class _HistoryPageState extends State<HistoryPage> {
                   itemBuilder: (_, index) {
                     final note = monthNotes[index];
                     return NoteCard(
+                      id: note.id,
                       date: note.date,
                       title: note.mood,
                       description: note.note,
                       isDismissible: true,
+                      onDismissed: () async {
+                        final deleted = await deleteHistory.deleteJournalEntry(
+                          note.id,
+                        );
+                        if (deleted) {
+                          controller.removeJournalEntry(note.id);
+                        }
+                      },
                     );
                   },
                 ),

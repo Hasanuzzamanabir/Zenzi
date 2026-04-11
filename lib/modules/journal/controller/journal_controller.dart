@@ -36,4 +36,8 @@ class JournalController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  void removeJournalEntry(int id) {
+    journalEntries.removeWhere((entry) => entry.id == id);
+  }
 }

@@ -112,13 +112,13 @@ class _MoreOptionState extends State<MoreOption> {
                         height: 1,
                         thickness: 1,
                       ),
-                      SettingItem(
-                        icon: Icons.file_download_outlined,
-                        title: 'Downloads',
-                        onTap: () {
-                          Get.toNamed(AppRoute.getDownloadView());
-                        },
-                      ),
+                      // SettingItem(
+                      //   icon: Icons.file_download_outlined,
+                      //   title: 'Downloads',
+                      //   onTap: () {
+                      //     Get.toNamed(AppRoute.getDownloadView());
+                      //   },
+                      // ),
                       Divider(
                         color: AppColors.primarytext,
                         height: 1,

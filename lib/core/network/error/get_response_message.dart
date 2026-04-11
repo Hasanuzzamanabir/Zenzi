@@ -1,5 +1,13 @@
 class GetResponseMessage {
   String getResponseMessage(dynamic body) {
+    if (body == null) {
+      return 'Operation completed successfully.';
+    }
+
+    if (body is String) {
+      return body;
+    }
+
     if (body is Map) {
       final data = body['data'];
 
@@ -10,10 +18,13 @@ class GetResponseMessage {
           }
         }
       }
+
+      final message = body['message'];
+      if (message != null) {
+        return message.toString();
+      }
     }
-    if (body['message'] != null) {
-      return body['message'].toString();
-    }
+
     return "An unknown error occurred.";
   }
 }
