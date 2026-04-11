@@ -23,10 +23,10 @@ class NoteCard extends StatelessWidget {
     final cardContent = Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(20.w),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.congratsscrennbuttonclr,
         borderRadius: BorderRadius.circular(20.r),
-
         border: Border.all(color: AppColors.primarylight, width: 1.w),
       ),
       child: Column(

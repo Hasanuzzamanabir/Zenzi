@@ -28,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
     EditProfileController(),
   );
 
-     final MoodController moodController = Get.put(MoodController());
+  final MoodController moodController = Get.put(MoodController());
 
   @override
   void initState() {
@@ -49,7 +49,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
- 
     final int currentHour = DateTime.now().hour;
     final bool isDay = currentHour >= 6 && currentHour < 18;
     return PopScope(
@@ -318,19 +317,24 @@ class _HomeViewState extends State<HomeView> {
                                   children: List.generate(
                                     moodController.moods.length,
                                     (index) => Opacity(
-                                      opacity: moodController.selectedMoodIndex.value == index ? 1.0 : 0.5,
+                                      opacity:
+                                          moodController
+                                                  .selectedMoodIndex
+                                                  .value ==
+                                              index
+                                          ? 1.0
+                                          : 0.5,
                                       child: MoodWidget(
-                                        emoji:
-                                            moodController.moods[index]['emoji']!,
-                                        label:
-                                            moodController.moods[index]['label']!,
+                                        emoji: moodController
+                                            .moods[index]['emoji']!,
+                                        label: moodController
+                                            .moods[index]['label']!,
                                         isSelected:
                                             moodController
                                                 .selectedMoodIndex
                                                 .value ==
                                             index,
-                                        onTap:
-                                         () {
+                                        onTap: () {
                                           moodController.selectMood(index);
                                           debugPrint(
                                             'Home page - Selected mood: ${moodController.moods[index]['label']}',
@@ -346,7 +350,6 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),

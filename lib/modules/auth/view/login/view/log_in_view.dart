@@ -15,7 +15,8 @@ import 'package:zenzi/core/widgets/text_label.dart';
 import 'package:zenzi/modules/auth/view/forgot_password/view/forgot_password_view.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/auth/view/signup/view/signup_view.dart';
-import 'package:zenzi/modules/bottom_navigation_bar/view/custom_buttom_navigation_bar.dart';
+import 'package:zenzi/modules/bottom_navigation_bar/controller/custom_bottom_navigation_bar_controller.dart';
+import 'package:zenzi/routes/app_routes.dart';
 
 // import '../../../../bottom_navigation_bar/view/custom_buttom_navigation_bar.dart'
 //     show CustomButtomNavigationBar;
@@ -158,7 +159,20 @@ class _LogInViewState extends State<LogInView> {
                                   password,
                                 );
                                 if (result) {
-                                  Get.off(() => CustomButtomNavigationBar());
+                                  final navController =
+                                      Get.isRegistered<
+                                        CustomBottomNavigationBarController
+                                      >()
+                                      ? Get.find<
+                                          CustomBottomNavigationBarController
+                                        >()
+                                      : Get.put(
+                                          CustomBottomNavigationBarController(),
+                                        );
+                                  navController.changeTabIndex(0);
+                                  Get.offAllNamed(
+                                    AppRoute.custombottomNavigationBar,
+                                  );
                                 }
                               },
                             ),

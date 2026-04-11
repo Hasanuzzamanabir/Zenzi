@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:zenzi/core/network/error/get_response_message.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 
 class MoodController extends GetxController {
@@ -30,10 +29,8 @@ class MoodController extends GetxController {
         data: {'mood': mood},
         requireAuth: true,
       );
-      final body = response.data;
-      final message = GetResponseMessage().getResponseMessage(body);
-      Get.snackbar(mood, message, snackPosition: SnackPosition.BOTTOM);
-      log(response.data);
+
+      log(response.data.toString());
     } catch (e) {
       log('Error posting mood: $e');
     } finally {

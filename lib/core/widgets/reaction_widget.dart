@@ -18,14 +18,14 @@ Widget iconBox(String asset) {
 /// MOOD WIDGET - Reusable stateless widget for mood selection
 /// Works with any controller - no business logic inside
 class MoodWidget extends StatelessWidget {
-  final String emoji;
+  final String? emoji;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const MoodWidget({
     super.key,
-    required this.emoji,
+    this.emoji,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -50,7 +50,10 @@ class MoodWidget extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: TextStyle(fontSize: isSelected ? 32.sp : 28.sp)),
+            Text(
+              emoji ?? '',
+              style: TextStyle(fontSize: isSelected ? 32.sp : 28.sp),
+            ),
             SizedBox(height: 6.h),
             Text(
               label,

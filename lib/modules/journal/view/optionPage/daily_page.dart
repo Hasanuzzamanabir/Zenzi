@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,14 +9,17 @@ import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/reaction_widget.dart';
 import 'package:zenzi/modules/home/controller/mood_controller.dart';
+import 'package:zenzi/modules/journal/controller/journal_controller.dart';
+import 'package:zenzi/modules/journal/controller/journal_today_controller.dart';
 
 class DailyPage extends StatelessWidget {
   const DailyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Separate controller instance for daily page - no conflict with home page
-    final dailyMoodController = Get.put(MoodController(), tag: 'daily');
+    final dailyMoodController = Get.put(MoodController());
+    final journalTodayController = Get.put(JournalTodayController());
+    final journalController = Get.put(JournalController());
     final noteController = TextEditingController();
 
     return Column(
@@ -56,7 +61,6 @@ class DailyPage extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(height: 20.h),
 
             // Note Input Card - Exact UI from reference image
@@ -122,24 +126,33 @@ class DailyPage extends StatelessWidget {
             // Save Button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.w),
-              child: AppButton(
-                title: 'Save Check-In',
-                onTap: () {
-                  final selectedMoodIndex =
-                      dailyMoodController.selectedMoodIndex.value;
-                  final note = noteController.text;
+              child: Obx(
+                () => AppButton(
+                  title: 'Save Check-In',
+                  isLoading: journalTodayController.isLoading.value,
+                  onTap: () async {
+                    final selectedMoodIndex =
+                        dailyMoodController.selectedMoodIndex.value;
+                    final note = noteController.text;
 
-                  if (selectedMoodIndex != -1) {
-                    final selectedMood =
-                        dailyMoodController.moods[selectedMoodIndex]['label'];
-                    debugPrint(
-                      'Saving check-in: Mood=$selectedMood, Note=$note',
-                    );
-                  } else {
-                    Get.snackbar('Error', 'Please select your mood first');
-                  }
-                },
-                backgroundColor: AppColors.primarycolor,
+                    if (selectedMoodIndex != -1) {
+                      final selectedMood = dailyMoodController
+                          .moods[selectedMoodIndex]['label']!;
+                      log('Saving check-in: Mood=$selectedMood, Note=$note');
+                      final success = await journalTodayController
+                          .dailyMoodSend(selectedMood, note);
+
+                      if (success) {
+                        await journalController.fetchJournalEntries();
+                        dailyMoodController.selectedMoodIndex.value = -1;
+                        noteController.clear();
+                      }
+                    } else {
+                      Get.snackbar('Error', 'Please select your mood first');
+                    }
+                  },
+                  backgroundColor: AppColors.primarycolor,
+                ),
               ),
             ),
 

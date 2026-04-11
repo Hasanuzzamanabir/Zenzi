@@ -5,7 +5,8 @@ import 'package:get/get.dart';
 import 'package:zenzi/core/network/error/get_response_message.dart';
 import 'package:zenzi/core/network/services/api_services.dart';
 import 'package:zenzi/core/token/token_storage.dart';
-import 'package:zenzi/modules/auth/view/login/view/log_in_view.dart';
+import 'package:zenzi/modules/bottom_navigation_bar/controller/custom_bottom_navigation_bar_controller.dart';
+import 'package:zenzi/routes/app_routes.dart';
 
 class LoginController extends GetxController {
   RxBool isObscure = true.obs;
@@ -63,7 +64,12 @@ class LoginController extends GetxController {
     try {
       resetPasswordVisibility();
       await TokenStorage.clearTokens();
-      Get.off(() => const LogInView());
+
+      if (Get.isRegistered<CustomBottomNavigationBarController>()) {
+        Get.delete<CustomBottomNavigationBarController>(force: true);
+      }
+
+      Get.offAllNamed(AppRoute.loginView);
       Get.snackbar('Success', 'Logged out successfully.');
     } catch (e) {
       log('Logout Error: $e');
