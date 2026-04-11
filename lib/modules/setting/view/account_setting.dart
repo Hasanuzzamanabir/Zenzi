@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/setting/widgets/build_menu_item.dart';
 
 class AccountSetting extends StatelessWidget {
   const AccountSetting({super.key});
@@ -41,7 +42,7 @@ class AccountSetting extends StatelessWidget {
             children: [
               SizedBox(height: 16.h),
               // Edit Profile Button
-              _buildMenuItem(
+              BuildMenuItem(
                 title: 'Edit Profile',
                 onTap: () {
                   Get.toNamed('/editProfile');
@@ -51,7 +52,7 @@ class AccountSetting extends StatelessWidget {
               SizedBox(height: 16.h),
 
               // Update Password Button
-              _buildMenuItem(
+              BuildMenuItem(
                 title: 'Update Password',
                 onTap: () {
                   Get.toNamed('/updatePassword');
@@ -61,7 +62,7 @@ class AccountSetting extends StatelessWidget {
               SizedBox(height: 16.h),
 
               // Account Deletion Button
-              _buildMenuItem(
+              BuildMenuItem(
                 title: 'Account Deletion',
                 onTap: () {
                   // Navigate to Account Deletion Page
@@ -70,34 +71,6 @@ class AccountSetting extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
-        decoration: BoxDecoration(
-          color: Color(0xFFB87333),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18.sp),
-          ],
         ),
       ),
     );
