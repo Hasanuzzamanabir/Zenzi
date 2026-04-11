@@ -447,14 +447,14 @@ class _MeditationDetailsState extends State<MeditationDetails>
           ),
           Spacer(),
 
-          Container(
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: AppColors.congratsscrennbuttonclr,
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset(AppAssets.download, width: 20.w, height: 20.w),
-          ),
+          // Container(
+          //   padding: EdgeInsets.all(10.w),
+          //   decoration: BoxDecoration(
+          //     color: AppColors.congratsscrennbuttonclr,
+          //     shape: BoxShape.circle,
+          //   ),
+          //   child: Image.asset(AppAssets.download, width: 20.w, height: 20.w),
+          // ),
         ],
       ),
     );

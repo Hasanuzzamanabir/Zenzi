@@ -11,27 +11,51 @@ class ChatView extends GetView<ChatController> {
   @override
   Widget build(BuildContext context) {
     return ThemedScaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Chat with Zenzi',
+          style: TextStyle(
+            color: AppColors.secondarycolor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: AppColors.secondarycolor),
+      ),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: SafeArea(
           child: Column(
             children: [
-              /// 🔹 Top Bar
-              _buildAppBar(),
-
               /// 🔹 Chat Messages
               Expanded(
-                child: Obx(
-                  () => ListView.builder(
+                child: Obx(() {
+                  if (controller.isHistoryLoading.value &&
+                      controller.chatHistory.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.chatHistory.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No chat found yet',
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 12,
                     ),
-                    itemCount: controller.messages.length,
+                    itemCount: controller.chatHistory.length,
                     itemBuilder: (context, index) {
-                      final message = controller.messages[index];
-                      final bool isUser = message['isUser'];
+                      final chat = controller.chatHistory[index];
+                      final bool isUser =
+                          chat.role.toLowerCase().trim() == 'human';
 
                       return Align(
                         alignment: isUser
@@ -51,7 +75,7 @@ class ChatView extends GetView<ChatController> {
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Text(
-                            message['text'],
+                            chat.content,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 13,
@@ -61,8 +85,8 @@ class ChatView extends GetView<ChatController> {
                         ),
                       );
                     },
-                  ),
-                ),
+                  );
+                }),
               ),
 
               /// 🔹 Message Input
@@ -75,33 +99,6 @@ class ChatView extends GetView<ChatController> {
   }
 
   // ===================== Widgets =====================
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: const Icon(
-              Icons.arrow_back,
-              color: AppColors.secondarycolor,
-              size: 18,
-            ),
-          ),
-          SizedBox(width: 100.w),
-          const Text(
-            'Chat with Zenzi',
-            style: TextStyle(
-              color: AppColors.secondarycolor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildMessageInput() {
     return Padding(
@@ -118,8 +115,9 @@ class ChatView extends GetView<ChatController> {
               child: TextField(
                 controller: controller.messageController,
                 textInputAction: TextInputAction.send,
-                onSubmitted: (_) => controller.sendMessage(),
-
+                onSubmitted: (value) async {
+                  await controller.sendMessage(value);
+                },
                 decoration: const InputDecoration(
                   hintText: "Type how you're feeling...",
                   hintStyle: TextStyle(
@@ -136,9 +134,26 @@ class ChatView extends GetView<ChatController> {
                 ),
               ),
             ),
-            IconButton(
-              onPressed: controller.sendMessage,
-              icon: const Icon(Icons.send),
+            Obx(
+              () => IconButton(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () async {
+                        await controller.sendMessage(
+                          controller.messageController.text,
+                        );
+                      },
+                icon: controller.isLoading.value
+                    ? SizedBox(
+                        width: 24.w,
+                        height: 24.w,
+                        child: CircularProgressIndicator(
+                          color: AppColors.subscriptioncolor2,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Icon(Icons.send),
+              ),
             ),
           ],
         ),
