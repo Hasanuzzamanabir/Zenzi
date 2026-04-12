@@ -38,8 +38,11 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
     final description = _descriptionController.text;
 
     if (name.isEmpty || email.isEmpty || description.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
+      Get.snackbar(
+        'Error',
+        'Please fill in all fields before sending.',
+        backgroundColor: AppColors.congratsscrennbuttonclr,
+        colorText: AppColors.primarytext,
       );
       return;
     }
