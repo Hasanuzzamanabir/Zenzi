@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_textfield.dart';
 import '../../../core/widgets/themed_scaffold.dart';
+import '../controller/help_and_support_controller.dart';
 
 class HelpAndSupportPage extends StatefulWidget {
   const HelpAndSupportPage({super.key});
@@ -15,6 +17,9 @@ class HelpAndSupportPage extends StatefulWidget {
 }
 
 class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
+  final HelpAndSupportController controller = Get.put(
+    HelpAndSupportController(),
+  );
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -28,7 +33,6 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
   }
 
   void _handleSend() {
-    // Handle send logic here
     final name = _nameController.text;
     final email = _emailController.text;
     final description = _descriptionController.text;
@@ -39,10 +43,16 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
       );
       return;
     }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Message sent successfully')));
+    controller.getHelpAndSupport(
+      name: name,
+      email: email,
+      description: description,
+      onSuccess: () {
+        _nameController.clear();
+        _emailController.clear();
+        _descriptionController.clear();
+      },
+    );
   }
 
   @override
@@ -132,7 +142,11 @@ class _HelpAndSupportPageState extends State<HelpAndSupportPage> {
                 ),
               ),
               SizedBox(height: 30.h),
-              AppButton(title: 'Send', onTap: _handleSend),
+              Obx(
+                () => controller.isLoading.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : AppButton(title: 'Send', onTap: _handleSend),
+              ),
             ],
           ),
         ),
