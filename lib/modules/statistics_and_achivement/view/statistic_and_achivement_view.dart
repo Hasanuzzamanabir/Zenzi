@@ -68,11 +68,7 @@ class StatisticAndAchivementView extends StatelessWidget {
             children: [
               StatisticAndAchivementWidget(),
               SizedBox(height: 16.h),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: StatisticAndAchivementWidgetView(),
-                ),
-              ),
+              Expanded(child: StatisticAndAchivementWidgetView()),
             ],
           ),
         ),

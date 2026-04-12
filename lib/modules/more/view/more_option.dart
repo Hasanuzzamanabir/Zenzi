@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -11,6 +12,7 @@ import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
 import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/themed_scaffold.dart';
+import 'package:zenzi/modules/affirmation/view/affirmationview.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/favourite/controller/favourite_affirm_controller.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
@@ -276,11 +278,16 @@ class _MoreOptionState extends State<MoreOption> {
                       SizedBox(height: 8.h),
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          'View More',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
+                        child: GestureDetector(
+                          onTap: () {
+                            Get.to(() => const AffirmationView());
+                          },
+                          child: Text(
+                            'View More',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                            ),
                           ),
                         ),
                       ),

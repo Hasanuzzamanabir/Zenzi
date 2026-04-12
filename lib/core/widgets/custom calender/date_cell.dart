@@ -4,27 +4,23 @@ import 'package:zenzi/core/widgets/custom%20calender/calender_colors.dart';
 
 class DateCell extends StatelessWidget {
   final int? day;
+  final bool isStreakDay;
   final double itemWidth;
   final double visualSize;
 
   const DateCell({
     required this.day,
+    required this.isStreakDay,
     required this.itemWidth,
     required this.visualSize,
     super.key,
   });
-
-  static const fireDays = {15, 16, 17, 18, 19, 20, 21, 22};
-  static const highlightDays = {1, 5, 9, 24, 26};
 
   @override
   Widget build(BuildContext context) {
     if (day == null) {
       return SizedBox(width: itemWidth, height: itemWidth);
     }
-
-    final isFire = fireDays.contains(day);
-    final isHighlight = highlightDays.contains(day);
 
     return SizedBox(
       width: itemWidth,
@@ -35,15 +31,15 @@ class DateCell extends StatelessWidget {
           height: visualSize,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isFire || isHighlight
+            color: isStreakDay
                 ? CalendarColors.dateCircleYellow
                 : CalendarColors.dateCircleWhite,
             shape: BoxShape.circle,
           ),
           child: Text(
-            isFire ? '🔥' : '$day',
+            isStreakDay ? '🔥' : '$day',
             style: TextStyle(
-              fontSize: isFire ? visualSize * 0.65 : visualSize * 0.55,
+              fontSize: isStreakDay ? visualSize * 0.65 : visualSize * 0.55,
               fontWeight: FontWeight.w600,
               color: CalendarColors.dateTextDark,
             ),

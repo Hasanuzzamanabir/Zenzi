@@ -5,15 +5,15 @@ import 'date_cell.dart';
 
 class WeekRow extends StatelessWidget {
   final List<int?> weekDays;
-  const WeekRow({required this.weekDays, super.key});
+  final Set<int> streakDays;
 
-  static const fireDays = {15, 16, 17, 18, 19, 20, 21, 22};
+  const WeekRow({required this.weekDays, required this.streakDays, super.key});
 
   @override
   Widget build(BuildContext context) {
     final streakIndices = <int>[];
     for (int i = 0; i < weekDays.length; i++) {
-      if (weekDays[i] != null && fireDays.contains(weekDays[i])) {
+      if (weekDays[i] != null && streakDays.contains(weekDays[i])) {
         streakIndices.add(i);
       }
     }
@@ -35,6 +35,7 @@ class WeekRow extends StatelessWidget {
                     .map(
                       (day) => DateCell(
                         day: day,
+                        isStreakDay: day != null && streakDays.contains(day),
                         itemWidth: itemWidth,
                         visualSize: visualSize,
                       ),

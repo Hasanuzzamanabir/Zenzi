@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/core/theme/app_text_style.dart';
@@ -10,7 +9,19 @@ import 'package:zenzi/modules/setting/controller/edit_profile_controller.dart';
 
 class ProfileCard extends StatelessWidget {
   final Color color;
-  const ProfileCard({super.key, required this.color});
+  final String? name;
+  final String? avatarUrl;
+  final String? levelTitle;
+  final int? points;
+
+  const ProfileCard({
+    super.key,
+    required this.color,
+    this.name,
+    this.avatarUrl,
+    this.levelTitle,
+    this.points,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +38,17 @@ class ProfileCard extends StatelessWidget {
       return '${BaseUrl.baseUrl}$normalizedPath';
     }
 
+    final fallbackProfile = controller.profile.value;
+    final resolvedName = (name ?? fallbackProfile?.name ?? 'Steven Smith')
+        .trim();
+    final resolvedLevel = (levelTitle ?? 'Grounded').trim().isEmpty
+        ? 'Grounded'
+        : (levelTitle ?? 'Grounded').trim();
+    final resolvedPoints = points ?? 598;
+    final resolvedAvatar = resolveAvatarUrl(
+      avatarUrl ?? fallbackProfile?.avatarUrl,
+    );
+
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -42,17 +64,13 @@ class ProfileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// Profile Image
-          Obx(() {
-            final profile = controller.profile.value;
-            final avatarUrl = resolveAvatarUrl(profile?.avatarUrl);
-            return CircleAvatar(
-              radius: 32.r,
-              backgroundImage: avatarUrl != null
-                  ? NetworkImage(avatarUrl)
-                  : const AssetImage('assets/image/home/profile.png')
-                        as ImageProvider,
-            );
-          }),
+          CircleAvatar(
+            radius: 32.r,
+            backgroundImage: resolvedAvatar != null
+                ? NetworkImage(resolvedAvatar)
+                : const AssetImage('assets/image/home/profile.png')
+                      as ImageProvider,
+          ),
 
           SizedBox(width: 14.w),
 
@@ -73,7 +91,7 @@ class ProfileCard extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  'Steven Smith',
+                  resolvedName.isEmpty ? 'Steven Smith' : resolvedName,
                   style: AppTextStyle.h2,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -83,7 +101,7 @@ class ProfileCard extends StatelessWidget {
                   mainAxisAlignment: .spaceBetween,
                   children: [
                     Text(
-                      'Level: Grounded',
+                      'Level: $resolvedLevel',
                       style: AppTextStyle.bodyMediumBold.copyWith(
                         color: AppColors.secondarycolor,
                       ),
@@ -101,7 +119,7 @@ class ProfileCard extends StatelessWidget {
                         //
                       ),
                       child: Text(
-                        '598 pts',
+                        '$resolvedPoints pts',
                         style: AppTextStyle.h3.copyWith(
                           color: AppColors.secondarycolor,
                         ),
