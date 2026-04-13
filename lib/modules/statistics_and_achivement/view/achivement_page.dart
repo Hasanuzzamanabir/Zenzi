@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:zenzi/core/base_url/base_url.dart';
 import 'package:zenzi/core/theme/app_colors.dart';
 import 'package:zenzi/modules/statistics_and_achivement/controller/achievement_controller.dart';
 import 'package:zenzi/modules/statistics_and_achivement/controller/activity_statistics_controller.dart';
@@ -12,6 +11,17 @@ import 'package:zenzi/modules/statistics_and_achivement/widget/profile_card.dart
 
 class AchivementPage extends StatelessWidget {
   const AchivementPage({super.key});
+
+  static const List<String> _localAchievementAssets = [
+    'assets/image/achivement/yoga1.png',
+    'assets/image/achivement/yoga2.png',
+    'assets/image/achivement/yoga3.png',
+    'assets/image/achivement/yoga4.png',
+    'assets/image/achivement/yoga5.png',
+    'assets/image/achivement/yoga6.png',
+    'assets/image/achivement/yoga7.png',
+    'assets/image/achivement/yoga8.png',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +120,13 @@ class AchivementPage extends StatelessWidget {
       ),
       itemCount: achievements.length,
       itemBuilder: (context, index) {
-        return _buildAchievementBadge(achievements[index]);
+        return _buildAchievementBadge(achievements[index], index);
       },
     );
   }
 
-  Widget _buildAchievementBadge(AchievementItem achievement) {
-    final imageUrl = _resolveImageUrl(achievement.badgeImage);
+  Widget _buildAchievementBadge(AchievementItem achievement, int index) {
+    final imageAssetPath = _resolveAssetPath(index);
 
     return GestureDetector(
       onTap: () {
@@ -133,7 +143,7 @@ class AchivementPage extends StatelessWidget {
                     child: SizedBox(
                       width: 120.w,
                       height: 120.w,
-                      child: _buildImage(imageUrl),
+                      child: _buildImage(imageAssetPath),
                     ),
                   ),
                   SizedBox(height: 16.h),
@@ -172,7 +182,7 @@ class AchivementPage extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            _buildImage(imageUrl),
+            _buildImage(imageAssetPath),
             if (!achievement.isUnlocked)
               Container(
                 color: Colors.black.withOpacity(0.6),
@@ -190,24 +200,13 @@ class AchivementPage extends StatelessWidget {
     );
   }
 
-  Widget _buildImage(String? imageUrl) {
-    if (imageUrl != null && imageUrl.isNotEmpty) {
-      return Image.network(
-        imageUrl,
+  Widget _buildImage(String? imageAssetPath) {
+    if (imageAssetPath != null && imageAssetPath.isNotEmpty) {
+      return Image.asset(
+        imageAssetPath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return _buildPlaceholder();
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
         },
       );
     }
@@ -227,14 +226,7 @@ class AchivementPage extends StatelessWidget {
     );
   }
 
-  String? _resolveImageUrl(String? rawUrl) {
-    if (rawUrl == null || rawUrl.trim().isEmpty) return null;
-
-    final trimmed = rawUrl.trim();
-    final uri = Uri.tryParse(trimmed);
-    if (uri != null && uri.hasScheme) return trimmed;
-
-    final normalizedPath = trimmed.startsWith('/') ? trimmed : '/$trimmed';
-    return '${BaseUrl.baseUrl}$normalizedPath';
+  String _resolveAssetPath(int index) {
+    return _localAchievementAssets[index % _localAchievementAssets.length];
   }
 }

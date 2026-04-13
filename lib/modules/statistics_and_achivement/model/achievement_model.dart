@@ -46,7 +46,8 @@ class AchievementItem {
       id: (json['id'] as num?)?.toInt() ?? 0,
       name: (json['name'] ?? '').toString(),
       description: (json['description'] as String?),
-      badgeImage: (json['badge_image'] as String?),
+      badgeImage:
+          (json['badge_image'] as String?) ?? (json['icon_url'] as String?),
       isUnlocked: (json['is_unlocked'] as bool?) ?? false,
     );
   }

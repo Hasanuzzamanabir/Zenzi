@@ -15,6 +15,8 @@ import 'package:zenzi/core/widgets/themed_scaffold.dart';
 import 'package:zenzi/modules/affirmation/view/affirmationview.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/favourite/controller/favourite_affirm_controller.dart';
+import 'package:zenzi/modules/journal/controller/journal_controller.dart';
+import 'package:zenzi/modules/more/controller/view_status_achievements_controllder.dart';
 import 'package:zenzi/modules/more/widget/build_favourite.dart';
 import 'package:zenzi/modules/more/widget/builds_state_item.dart';
 import 'package:zenzi/modules/more/widget/seeting_item.dart';
@@ -37,11 +39,16 @@ class _MoreOptionState extends State<MoreOption> {
   );
 
   final favouriteCountController = Get.put(FavouriteAffirmController());
+  final journalController = Get.put(JournalController());
+
+  final ViewStatusAchievementsControllder viewStatusAchievementsControllder =
+      Get.put(ViewStatusAchievementsControllder());
 
   @override
   void initState() {
     super.initState();
     editProfileController.fetchProfile();
+    journalController.fetchJournalEntries();
   }
 
   String? resolveAvatarUrl(String? url) {
@@ -72,6 +79,57 @@ class _MoreOptionState extends State<MoreOption> {
         ),
       ],
     );
+  }
+
+  Color _moodColor(String? mood) {
+    switch (mood?.trim().toUpperCase()) {
+      case 'GREAT':
+        return Colors.green;
+      case 'GOOD':
+        return Colors.lightGreen;
+      case 'OKAY':
+        return Colors.yellow;
+      case 'LOW':
+        return Colors.orange;
+      case 'ANXIOUS':
+        return Colors.red.shade400;
+      default:
+        return Colors.white;
+    }
+  }
+
+  String _weekdayShort(int weekday) {
+    const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    return labels[weekday - 1];
+  }
+
+  String _normalizeDateKey(String rawDate) {
+    if (rawDate.length >= 10) {
+      return rawDate.substring(0, 10);
+    }
+    return rawDate;
+  }
+
+  List<Widget> _buildLast7DayMoodDots() {
+    final latestEntryByDate = <String, dynamic>{};
+    for (final entry in journalController.journalEntries) {
+      final dateKey = _normalizeDateKey(entry.date);
+      final existing = latestEntryByDate[dateKey];
+
+      if (existing == null || entry.id > existing.id) {
+        latestEntryByDate[dateKey] = entry;
+      }
+    }
+
+    final today = DateTime.now();
+    return List.generate(7, (index) {
+      final day = today.subtract(Duration(days: 6 - index));
+      final dateKey =
+          '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+      final mood = latestEntryByDate[dateKey]?.mood as String?;
+
+      return _buildMoodDot(_moodColor(mood), _weekdayShort(day.weekday));
+    });
   }
 
   @override
@@ -158,87 +216,96 @@ class _MoreOptionState extends State<MoreOption> {
                 SizedBox(height: 16.h),
 
                 // Stats & Achievements Card
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundhorizon,
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: AppColors.cardborder, width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          StatItem(
-                            value: '7',
-                            label: 'Streak',
-                            image: Image.asset(
-                              AppAssets.vector5,
-                              width: 24.w,
-                              height: 24.h,
+                Obx(() {
+                  final controller =
+                      viewStatusAchievementsControllder.achievement.value;
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundhorizon,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: AppColors.cardborder, width: 1),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            StatItem(
+                              value: controller?.currentSteak.toString() ?? '0',
+                              label: 'Streak',
+                              image: Image.asset(
+                                AppAssets.vector5,
+                                width: 24.w,
+                                height: 24.h,
+                              ),
+                              textColor: AppColors.digitcolor,
                             ),
-                            textColor: AppColors.digitcolor,
-                          ),
-                          StatItem(
-                            value: '42',
-                            label: 'Sessions',
-                            image: Image.asset(
-                              AppAssets.icon5,
-                              width: 24.w,
-                              height: 24.h,
+                            StatItem(
+                              value:
+                                  controller?.totalSessions.toString() ?? '0',
+                              label: 'Sessions',
+                              image: Image.asset(
+                                AppAssets.icon5,
+                                width: 24.w,
+                                height: 24.h,
+                              ),
+                              textColor: AppColors.boxbreathingcolor1,
                             ),
-                            textColor: AppColors.boxbreathingcolor1,
-                          ),
-                          StatItem(
-                            value: '320',
-                            label: 'Minutes',
-                            image: Image.asset(
-                              AppAssets.icon6,
-                              width: 24.w,
-                              height: 24.h,
+                            StatItem(
+                              value: controller?.totalMinutes.toString() ?? '0',
+                              label: 'Minutes',
+                              image: Image.asset(
+                                AppAssets.icon6,
+                                width: 24.w,
+                                height: 24.h,
+                              ),
+                              textColor: AppColors.digitcolor2,
                             ),
-                            textColor: AppColors.digitcolor2,
-                          ),
-                          StatItem(
-                            value: 'Grounded',
-                            label: 'Level',
-                            image: Image.asset(
-                              AppAssets.icon7,
-                              width: 24.w,
-                              height: 24.h,
+                            StatItem(
+                              value:
+                                  controller?.currentLevel.toString() ??
+                                  'Grounded',
+                              label: 'Level',
+                              image: Image.asset(
+                                AppAssets.icon7,
+                                width: 24.w,
+                                height: 24.h,
+                              ),
+                              textColor: Color(0xFFFF9C2A),
                             ),
-                            textColor: Color(0xFFFF9C2A),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(AppRoute.getStatisticAndAchivementPage());
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.primarycolor,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Text(
-                            'View Full Stats & Achievements',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoute.getStatisticAndAchivementPage(),
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            decoration: BoxDecoration(
+                              color: AppColors.primarycolor,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Text(
+                              'View Full Stats & Achievements',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                }),
                 SizedBox(height: 16.h),
 
                 // Quote Section
@@ -339,17 +406,11 @@ class _MoreOptionState extends State<MoreOption> {
                         ),
                       ),
                       SizedBox(height: 12.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildMoodDot(Colors.green, 'M'),
-                          _buildMoodDot(Colors.green, 'T'),
-                          _buildMoodDot(Colors.yellow, 'W'),
-                          _buildMoodDot(Colors.orange, 'T'),
-                          _buildMoodDot(Colors.red.shade400, 'F'),
-                          _buildMoodDot(Colors.white, 'S'),
-                          _buildMoodDot(Colors.white, 'S'),
-                        ],
+                      Obx(
+                        () => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: _buildLast7DayMoodDots(),
+                        ),
                       ),
                       SizedBox(height: 12.h),
                       TextButton(
