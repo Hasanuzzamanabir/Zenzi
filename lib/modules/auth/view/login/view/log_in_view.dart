@@ -12,6 +12,7 @@ import 'package:zenzi/core/values/app_assets.dart';
 import 'package:zenzi/core/widgets/app_button.dart';
 import 'package:zenzi/core/widgets/app_textfield.dart';
 import 'package:zenzi/core/widgets/text_label.dart';
+import 'package:zenzi/modules/auth/google_auth/google_auth_controller.dart';
 import 'package:zenzi/modules/auth/view/forgot_password/view/forgot_password_view.dart';
 import 'package:zenzi/modules/auth/view/login/controller/login_controller.dart';
 import 'package:zenzi/modules/auth/view/signup/view/signup_view.dart';
@@ -32,11 +33,13 @@ class _LogInViewState extends State<LogInView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   late final LoginController _controller;
+  late final GoogleAuthController _googleAuthController;
 
   @override
   void initState() {
     super.initState();
     _controller = Get.put(LoginController());
+    _googleAuthController = Get.put(GoogleAuthController());
 
     _controller.resetPasswordVisibility();
   }
@@ -202,10 +205,41 @@ class _LogInViewState extends State<LogInView> {
                             ],
                           ),
                           SizedBox(height: 20.h),
-                          Image.asset(
-                            AppAssets.google,
-                            width: 48.w,
-                            height: 48.h,
+                          Obx(
+                            () => GestureDetector(
+                              onTap: _googleAuthController.isLoading.value
+                                  ? null
+                                  : () async {
+                                      final result = await _googleAuthController
+                                          .loginWithGoogle();
+                                      if (result) {
+                                        final navController =
+                                            Get.isRegistered<
+                                              CustomBottomNavigationBarController
+                                            >()
+                                            ? Get.find<
+                                                CustomBottomNavigationBarController
+                                              >()
+                                            : Get.put(
+                                                CustomBottomNavigationBarController(),
+                                              );
+                                        navController.changeTabIndex(0);
+                                        Get.offAllNamed(
+                                          AppRoute.custombottomNavigationBar,
+                                        );
+                                      }
+                                    },
+                              child: Opacity(
+                                opacity: _googleAuthController.isLoading.value
+                                    ? 0.6
+                                    : 1,
+                                child: Image.asset(
+                                  AppAssets.google,
+                                  width: 48.w,
+                                  height: 48.h,
+                                ),
+                              ),
+                            ),
                           ),
                           SizedBox(height: 20.h),
                           RichText(

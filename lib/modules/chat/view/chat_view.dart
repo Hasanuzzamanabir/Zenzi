@@ -123,6 +123,7 @@ class ChatView extends GetView<ChatController> {
                 onSubmitted: (value) async {
                   await controller.sendMessage(value);
                 },
+                style: const TextStyle(color: Colors.black, fontSize: 14),
                 decoration: const InputDecoration(
                   hintText: "Type how you're feeling...",
                   hintStyle: TextStyle(

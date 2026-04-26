@@ -69,6 +69,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                         title: 'Send',
                         isLoading: controller.isLoading.value,
                         onTap: () async {
+                          if (_emailController.text.trim().isEmpty) {
+                            Get.snackbar("Error", "Email is required");
+                            return;
+                          }
+
                           final result = await controller
                               .sendResetPasswordEmail(
                                 _emailController.text.trim(),
