@@ -1,3 +1,3 @@
 class BaseUrl {
-  static const String baseUrl = 'http://10.10.13.20:8004';
+  static const String baseUrl = 'https://clubby-andy-irksomely.ngrok-free.dev';
 }
